@@ -1,6 +1,7 @@
 """Generate the Osho Decor border (trims) price list PDF.
 
-Selling price = dealing price + 10% margin, rounded UP to the next whole rupee.
+Selling price = dealing price + 10% margin, rounded UP to the next multiple of ₹5
+(so every price ends in 0 or 5 and is never below dealing + 10%).
 Edit COLLECTIONS / MARGIN below and run:  python3 build_price_list.py
 """
 
@@ -25,6 +26,7 @@ ASSETS = os.path.join(HERE, "assets")
 OUT = os.path.join(HERE, "Osho_Decor_Border_Price_List.pdf")
 
 MARGIN = Fraction(10, 100)          # 10% over dealing price
+ROUND_TO = 5                        # prices end in 0 or 5
 LIST_DATE = date(2026, 9, 26)
 LIST_REF = "OD/BPL/01"
 
@@ -88,8 +90,8 @@ COLLECTIONS = [
 
 
 def selling_price(dealing):
-    """Dealing price + margin, always rounded up to the next whole rupee."""
-    return ceil(Fraction(dealing) * (1 + MARGIN))
+    """Dealing price + margin, always rounded UP to the next multiple of 5 (ends in 0 or 5)."""
+    return ceil(Fraction(dealing) * (1 + MARGIN) / ROUND_TO) * ROUND_TO
 
 
 def inr(v):
