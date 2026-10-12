@@ -7,8 +7,8 @@ Corrections
   * Premiere Texture-1 and Premiere Texture-2 each list
         Cera  - Rate Rs. 365 / RRP 920
         Clare - Rate Rs. 285 / RRP 720
-    (Osho Signature list), and Cera / Clare at the existing Your Price, Cut and
-    Roll rates (Textura Homes list). Later serial numbers shift accordingly.
+    (Osho Signature list), and Cera Rs.365 / Clare Rs.285 Your Price with matching
+    Cut and Roll rates (Textura Homes list). Later serial numbers shift accordingly.
   * Textura Homes list: "Crom" -> "Croma".
   * Osho Signature list: Jute Craft RRP "990" set in Arial like every other cell
     (it was the only cell in Calibri).
@@ -152,15 +152,25 @@ def correct_textura():
 
     row = lambda k: 51 + k * 17               # page 2: row k top (header is 34-51)
     # rows 20 Cera(9), 21 Clare(9), 22 Natural(10), 23-24 Foldscape(11), 25-26 Thread(12), end 27
+    # Premiere Texture Cera / Clare: new Your Price; Cut and Roll follow the list's own
+    # rule (Cut = Your x 0.8075, Roll = Your x 0.7125, rounded) - matches every row.
+    def prices(page):
+        out = []
+        for k, (old, your) in {20: (("Rs.350", "Rs.283", "Rs.249"), 365),
+                               21: (("Rs.275", "Rs.222", "Rs.196"), 285)}.items():
+            new = (your, int(your * 0.8075 + 0.5), int(your * 0.7125 + 0.5))
+            out += [(find(page, o, row(k) + 1.9), f"Rs.{n}", "right") for o, n in zip(old, new)]
+        return out
+
     pt = [s for s in spans(p2) if s["text"] == "Premiere Texture-1/2"]
     replace(p2, [(pt[0], "Premiere Texture-1", "left"), (pt[1], "Premiere Texture-1", "left"),
-                 (find(p2, "10"), "11", "center")]
+                 (find(p2, "10"), "11", "center")] + prices(p2)
             + [(s, "12", "center") for s in spans(p2) if s["text"] == "11"]
             + [(s, "13", "center") for s in spans(p2) if s["text"] == "12"], font)
     pt = [s for s in spans(p2b) if s["text"] == "Premiere Texture-1/2"]
     replace(p2b, [(pt[0], "Premiere Texture-2", "left"), (pt[1], "Premiere Texture-2", "left"),
                   (find(p2b, "9", row(20) + 1.9), "10", "center"),
-                  (find(p2b, "9", row(21) + 1.9), "10", "center")], font)
+                  (find(p2b, "9", row(21) + 1.9), "10", "center")] + prices(p2b), font)
 
     out = pymupdf.open()
     out.insert_pdf(work, from_page=0, to_page=0)
