@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premiere Texture-2 · Osho Signature · Textura Homes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12141c;
+  --ink-soft:#1e2230;
+  --linen:#f2efe4;
+  --linen-line: rgba(18,20,28,0.15);
+  --rust:#2c5f5a;
+  --brass:#c98a2c;
+  --brass-soft:#e3b463;
+  --moss:#586170;
+  --row-alt: rgba(18,20,28,0.035);
+  --max: 960px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--linen); color:var(--ink);
+  font-family:'IBM Plex Sans', sans-serif; line-height:1.5;
+}
+.mono{font-family:'IBM Plex Mono', monospace; letter-spacing:0.01em;}
+h1,h2,h3{font-family:'Fraunces', serif; margin:0; font-weight:600;}
+a{ color:inherit; text-decoration:none; }
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+
+.hero{
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%);
+  color:var(--linen); padding: 2.6rem 1.5rem 1.8rem;
+}
+.hero-inner{ max-width:var(--max); margin:0 auto; }
+.brand-mark{ font-size:0.76rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--brass-soft); margin:0 0 0.4rem; }
+.osho-title{ font-size: clamp(2rem, 6vw, 3rem); line-height:0.98; font-weight:700; font-variation-settings:'opsz' 90; }
+.osho-title em{ font-style:normal; color:var(--brass-soft); }
+.hero-sub{ margin-top:0.6rem; font-size:0.9rem; color:rgba(237,230,211,0.75); }
+
+.crumb-bar{
+  position:sticky; top:0; z-index:20;
+  background:var(--linen); border-bottom:1px solid var(--linen-line);
+  padding:0.8rem 1.5rem;
+}
+.crumb-inner{ max-width:var(--max); margin:0 auto; display:flex; align-items:center; gap:0.4rem; font-size:0.86rem; flex-wrap:wrap; }
+.crumb{ color:var(--moss); }
+.crumb.current{ color:var(--ink); font-weight:600; }
+.crumb-sep{ color:rgba(28,24,17,0.35); }
+
+main{ max-width:var(--max); margin:0 auto; padding:2.2rem 1.5rem 3rem; }
+.step-title{ font-size:1.5rem; margin-bottom:0.3rem; }
+.step-sub{ color:var(--moss); font-size:0.92rem; margin:0 0 1.6rem; }
+
+.book-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin-bottom:2.4rem; }
+@media (max-width:640px){ .book-grid{ grid-template-columns:1fr; } }
+.book-card{
+  display:block; background:#fbf7ec; border:1px solid var(--linen-line);
+  border-top:4px solid var(--ink); padding:1.4rem 1.3rem;
+}
+.book-card.millennium{ border-top-color:var(--rust); }
+.book-card.elite{ border-top-color:var(--brass); }
+.book-card h2{ font-size:1.3rem; margin-bottom:0.4rem; }
+.book-card p{ margin:0 0 0.8rem; font-size:0.88rem; color:rgba(28,24,17,0.68); }
+
+.collection-list{ display:flex; flex-direction:column; border-top:1px solid var(--linen-line); }
+.collection-row{
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:0.85rem 0.2rem; border-bottom:1px solid var(--linen-line);
+}
+.collection-row:hover{ background:var(--row-alt); }
+.collection-row .name{ font-family:'Fraunces',serif; font-size:1.02rem; }
+.collection-row .meta{ font-size:0.8rem; color:var(--moss); display:flex; gap:0.9rem; align-items:center; }
+
+table.price-table{ width:100%; border-collapse:collapse; font-size:0.92rem; }
+.price-table thead th{
+  text-align:left; font-weight:600; font-size:0.72rem; text-transform:uppercase;
+  letter-spacing:0.08em; color:var(--moss); padding:0.4rem 0.6rem; border-bottom:1px solid var(--ink);
+}
+.price-table td{ padding:0.55rem 0.6rem; border-bottom:1px solid var(--linen-line); }
+.price-table tbody tr:nth-child(even){ background:var(--row-alt); }
+.price-table td.sn{ color:var(--moss); width:2.6rem; }
+.price-table td.rrp, .price-table th.rrp{ text-align:right; }
+.price-table td.name{ font-weight:500; }
+
+.back-link{
+  display:inline-block; background:none; border:1px solid var(--linen-line);
+  padding:0.5rem 1rem; font-size:0.86rem; margin-top:1.6rem;
+}
+.back-link:hover{ background:var(--row-alt); }
+
+footer{ background:var(--ink); color:var(--linen); padding:2.2rem 1.5rem 2rem; margin-top:1rem; }
+.footer-inner{ max-width:var(--max); margin:0 auto; }
+footer h4{ font-family:'Fraunces',serif; font-weight:600; font-size:0.98rem; margin:0 0 0.6rem; color:var(--brass-soft); }
+footer ul{ margin:0; padding-left:1.1rem; font-size:0.88rem; color:rgba(237,230,211,0.85); }
+footer li{ margin-bottom:0.35rem; }
+.foot-brand{ font-size:0.78rem; color:rgba(237,230,211,0.5); margin-top:1.2rem; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="brand-mark">Textura Homes</p>
+    <h1 class="osho-title">Osho <em>Signature</em></h1>
+  </div>
+</header>
+<main>
+
+    <h2 class="step-title">Premiere Texture-2</h2>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Design Name</th>
+          <th class="rrp">RRP</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr>
+            <td class="name">Cera</td>
+            <td class="rrp mono">Rs. 920</td>
+          </tr>
+          <tr>
+            <td class="name">Clare</td>
+            <td class="rrp mono">Rs. 720</td>
+          </tr>
+      </tbody>
+    </table>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <h4>Terms &amp; notes</h4>
+    <ul>
+      <li>GST as applicable.</li>
+    </ul>
+    <p class="foot-brand mono">Textura Homes — Osho Signature — Allover Series</p>
+  </div>
+</footer>
+
+</body>
+</html>
