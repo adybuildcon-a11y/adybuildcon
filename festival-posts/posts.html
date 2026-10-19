@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Festival Posts</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500.ttf);font-weight:500}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-700.ttf);font-weight:700}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600i.ttf);font-weight:600;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Tiro;src:url(assets/fonts/TiroDevanagariHindi-400.ttf)}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:center}
+.post{position:relative;width:1080px;height:1350px;overflow:hidden;font-family:Poppins}
+.post>svg.scene{position:absolute;inset:0}
+.layer{position:absolute;left:0;right:0;text-align:center}
+
+/* titles */
+.hi{font-family:Tiro;font-size:104px;line-height:1.25}
+.en{font-family:Cinzel;font-weight:500;font-size:28px;letter-spacing:.42em;display:flex;align-items:center;justify-content:center;gap:22px}
+.en i{display:block;width:70px;height:1px}
+.en b{font-weight:500;margin-right:-.42em}
+.msg{font-family:Corm;font-style:italic;font-weight:500;font-size:35px;line-height:1.25;padding:0 130px}
+.sign{font-family:Cinzel;font-size:17px;letter-spacing:.3em;margin-top:10px}
+
+/* footer */
+.foot{position:absolute;left:0;right:0;bottom:0;height:300px;text-align:center}
+.foot .brand{position:absolute;left:0;right:0;top:28px;display:flex;justify-content:center}
+.foot .brand img{height:76px}
+.foot .cols{position:absolute;left:70px;right:70px;top:124px;display:grid;grid-template-columns:1fr 1px 1fr;gap:30px;text-align:left}
+.foot .cols .rule{width:1px}
+.foot h6{font-family:Poppins;font-weight:600;font-size:16px;letter-spacing:.18em;margin-bottom:6px}
+.foot p{font-size:17px;line-height:1.5;font-weight:400}
+.foot .contact{position:absolute;left:0;right:0;bottom:20px;font-size:21px;font-weight:500;letter-spacing:.04em;display:flex;justify-content:center;gap:12px;align-items:center}
+.foot .contact svg{width:20px;height:20px}
+
+/* Osho Signature wordmark */
+.wordmark{font-family:Cinzel;font-weight:600;font-size:40px;letter-spacing:.34em;display:flex;align-items:center;gap:22px;margin-right:-.34em}
+.wordmark i{display:block;width:60px;height:1px}
+.wordmark small{display:block;font-family:Corm;font-style:italic;font-weight:500;font-size:20px;letter-spacing:.06em;margin-top:2px}
+
+/* themes */
+.decor{color:#F6EEDC}
+.decor .hi{background:linear-gradient(180deg,#FFE7A3 10%,#E7B04A 60%,#C98A2C 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.decor .en{color:#F6EEDC}
+.decor .en i{background:linear-gradient(90deg,transparent,#E20886)}
+.decor .en i:last-child{background:linear-gradient(90deg,#E20886,transparent)}
+.decor .msg{color:#F3E7CF}
+.decor .sign{color:#E7B04A;opacity:.9}
+.decor .foot{background:rgba(6,7,16,.55);border-top:1px solid rgba(231,176,74,.55)}
+.decor .foot h6{color:#E7B04A}
+.decor .foot p{color:#E9E2D2}
+.decor .foot .rule{background:rgba(231,176,74,.4)}
+.decor .foot .contact{color:#FFFFFF}
+
+.sig{color:#1F2A44}
+.sig .hi{background:linear-gradient(180deg,#C9A24E 0%,#A27A2A 55%,#7E5C1C 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sig .en{color:#1F2A44}
+.sig .en i{background:linear-gradient(90deg,transparent,#A27A2A)}
+.sig .en i:last-child{background:linear-gradient(90deg,#A27A2A,transparent)}
+.sig .msg{color:#2B3350}
+.sig .sign{color:#A27A2A}
+.sig .foot{background:#1F2A44;border-top:3px solid #B8923F}
+.sig .foot h6{color:#D8B66A}
+.sig .foot p{color:#E8E2D4}
+.sig .foot .rule{background:rgba(216,182,106,.45)}
+.sig .foot .contact{color:#FFFFFF}
+.sig .wordmark{color:#E2C47F}
+.sig .wordmark i{background:#B8923F}
+.sig .wordmark small{color:#E8E2D4}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const W = 1080, H = 1350;
+
+/* ------------------------------------------------------------------ helpers */
+let uid = 0;
+const id = p => `${p}${++uid}`;
+const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+
+function glow(cx, cy, r, color, op = .6) {
+  const g = id('gl');
+  return `<defs><radialGradient id="${g}"><stop offset="0" stop-color="${color}" stop-opacity="${op}"/>
+    <stop offset=".45" stop-color="${color}" stop-opacity="${op * .35}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${g})"/>`;
+}
+
+function flame(x, y, s = 1) {
+  const g = id('fl'), g2 = id('fi');
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    <defs><linearGradient id="${g}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF7A1A"/><stop offset=".55" stop-color="#FFB627"/><stop offset="1" stop-color="#FFE9A8"/></linearGradient>
+    <linearGradient id="${g2}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFF6D6"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient></defs>
+    ${glow(0, -22, 70, '#FFB547', .55)}
+    <path d="M0,0 C-15,-10 -14,-32 0,-58 C14,-32 15,-10 0,0Z" fill="url(#${g})"/>
+    <path d="M0,-4 C-6,-10 -6,-22 0,-34 C6,-22 6,-10 0,-4Z" fill="url(#${g2})"/></g>`;
+}
+
+function diya(x, y, s = 1, body = ['#C2571E', '#7A2E0E'], rim = '#E7B04A') {
+  const g = id('dy');
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    <defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${body[0]}"/><stop offset="1" stop-color="${body[1]}"/></linearGradient></defs>
+    <ellipse cx="0" cy="46" rx="62" ry="7" fill="#000" opacity=".25"/>
+    <path d="M-70,0 C-62,34 -30,46 0,46 C30,46 62,34 70,0 C40,-8 -40,-8 -70,0Z" fill="url(#${g})"/>
+    <path d="M-70,0 C-40,-8 40,-8 70,0 C40,8 -40,8 -70,0Z" fill="#3B1606"/>
+    <path d="M-70,0 C-40,-8 40,-8 70,0" fill="none" stroke="${rim}" stroke-width="3"/>
+    <path d="M-48,20 C-20,30 20,30 48,20" fill="none" stroke="${rim}" stroke-width="2.4" stroke-dasharray="2 7" stroke-linecap="round"/>
+    <path d="M-58,10 C-28,20 28,20 58,10" fill="none" stroke="${rim}" stroke-width="1.6" opacity=".7"/>
+    ${flame(0, -4, 1)}</g>`;
+}
+
+function toran(width, y = 0, seg = 6, depth = 70) {
+  let out = '';
+  const step = width / seg;
+  // string of mango leaves along the top
+  for (let x = 12; x < width; x += 26) {
+    out += `<path d="M${x},${y + 4} q-9,22 0,42 q9,-20 0,-42z" fill="${x % 52 < 26 ? '#2F7D4F' : '#3E9A5F'}" opacity=".95"/>`;
+  }
+  out += `<line x1="0" y1="${y + 4}" x2="${width}" y2="${y + 4}" stroke="#C98A2C" stroke-width="3"/>`;
+  for (let i = 0; i < seg; i++) {
+    const x0 = i * step, x1 = x0 + step, cx = x0 + step / 2;
+    for (let t = 0; t <= 1.0001; t += 1 / 14) {
+      const px = (1 - t) * (1 - t) * x0 + 2 * (1 - t) * t * cx + t * t * x1;
+      const py = y + 18 + 2 * (1 - t) * t * depth * 2 * .5 * 2;
+      const c = Math.round(t * 14) % 2 ? '#F7A21B' : '#E9690F';
+      out += `<circle cx="${px}" cy="${py}" r="11" fill="${c}"/><circle cx="${px}" cy="${py}" r="4" fill="#9C3A06" opacity=".55"/>`;
+    }
+    if (i) {   // hanging drop
+      out += `<line x1="${x0}" y1="${y + 18}" x2="${x0}" y2="${y + 70}" stroke="#E9690F" stroke-width="2"/>
+        <circle cx="${x0}" cy="${y + 76}" r="10" fill="#F7A21B"/><circle cx="${x0}" cy="${y + 96}" r="8" fill="#E9690F"/>
+        <path d="M${x0 - 6},${y + 104} l6,16 l6,-16z" fill="#C98A2C"/>`;
+    }
+  }
+  return out;
+}
+
+function lantern(x, y, len, s = 1, c1 = '#E20886', c2 = '#F4B740') {
+  const g = id('ln');
+  return `<line x1="${x}" y1="0" x2="${x}" y2="${y}" stroke="#C98A2C" stroke-width="2"/>
+  <g transform="translate(${x} ${y}) scale(${s})">
+    <defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c1}"/><stop offset=".5" stop-color="${c2}"/><stop offset="1" stop-color="${c1}"/></linearGradient></defs>
+    ${glow(0, 70, 120, '#FFB547', .35)}
+    <path d="M-14,0 h28 l26,34 h-80z" fill="#C98A2C"/>
+    <path d="M-40,34 h80 l14,40 l-14,40 h-80 l-14,-40z" fill="url(#${g})" opacity=".95"/>
+    <path d="M-40,34 l-14,40 l14,40 M40,34 l14,40 l-14,40 M0,34 v80 M-20,34 l-6,40 l6,40 M20,34 l6,40 l-6,40" stroke="#7A1B4A" stroke-width="1.6" fill="none" opacity=".6"/>
+    <path d="M-40,114 h80 l-26,30 h-28z" fill="#C98A2C"/>
+    ${[-12, -4, 4, 12].map(t => `<path d="M${t},144 v${len}" stroke="${t % 8 ? c2 : c1}" stroke-width="3"/>`).join('')}
+  </g>`;
+}
+
+function rangoli(cx, cy, R, colors) {
+  let out = `<g transform="translate(${cx} ${cy})" opacity=".9">`;
+  const rings = [[R, 24, R * .2, colors[0]], [R * .78, 16, R * .2, colors[1]], [R * .56, 12, R * .17, colors[2]], [R * .36, 8, R * .14, colors[3]]];
+  out += `<circle r="${R + 18}" fill="none" stroke="${colors[1]}" stroke-width="2" stroke-dasharray="3 9" opacity=".7"/>`;
+  for (const [r, n, pl, c] of rings) {
+    for (let i = 0; i < n; i++) {
+      const a = i * 360 / n;
+      out += `<path transform="rotate(${a}) translate(0 ${-r + pl})" d="M0,0 C${pl * .45},${-pl * .4} ${pl * .3},${-pl * .9} 0,${-pl} C${-pl * .3},${-pl * .9} ${-pl * .45},${-pl * .4} 0,0Z" fill="${c}" opacity=".9"/>`;
+    }
+    out += `<circle r="${r - pl - 6}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".6"/>`;
+  }
+  return out + '</g>';
+}
+
+function bow(x, y, s, rot, gold = '#E7B04A', string = '#F6EEDC', withFlame = true, fletch = '#E20886') {
+  const g = id('bw');
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">
+    <defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE3A0"/><stop offset=".5" stop-color="${gold}"/><stop offset="1" stop-color="#9A6516"/></linearGradient></defs>
+    <path d="M-30,-262 L-104,0 L-30,262" fill="none" stroke="${string}" stroke-width="2.4"/>
+    <path d="M-44,-268 C-30,-284 -6,-276 -2,-258 C14,-232 120,-150 122,0 C120,150 14,232 -2,258 C-6,276 -30,284 -44,268"
+          fill="none" stroke="url(#${g})" stroke-width="13" stroke-linecap="round"/>
+    <path d="M-2,-258 C14,-232 120,-150 122,0 C120,150 14,232 -2,258" fill="none" stroke="#FFF2C9" stroke-width="2" opacity=".55"/>
+    <rect x="111" y="-30" width="22" height="60" rx="5" fill="#8E1B3E"/><path d="M111,-20 h22 M111,-6 h22 M111,8 h22 M111,22 h22" stroke="${gold}" stroke-width="2"/>
+    <line x1="-104" y1="0" x2="304" y2="0" stroke="${gold}" stroke-width="6"/><line x1="-104" y1="-1.5" x2="300" y2="-1.5" stroke="#FFF2C9" stroke-width="1.4" opacity=".6"/>
+    <path d="M300,-15 L346,0 L300,15 L310,0Z" fill="${gold}"/>
+    <path d="M-104,0 l-26,-20 h34 l20,20 l-20,20 h-34z" fill="${fletch}" opacity=".9"/>
+    <path d="M-78,0 l-22,-14 M-78,0 l-22,14 M-90,0 l-22,-14 M-90,0 l-22,14" stroke="#FFD1E8" stroke-width="1.6"/>
+    ${withFlame ? `<g transform="translate(352 0) rotate(90)">${flame(0, 0, 1.1)}</g>` : ''}
+  </g>`;
+}
+
+function rays(cx, cy, r0, r1, n, color, op) {
+  let out = `<g opacity="${op}">`;
+  for (let i = 0; i < n; i++) {
+    const a = i * 2 * Math.PI / n, a2 = a + Math.PI / n * .35;
+    out += `<path d="M${cx + r0 * Math.cos(a)},${cy + r0 * Math.sin(a)} L${cx + r1 * Math.cos(a)},${cy + r1 * Math.sin(a)} L${cx + r1 * Math.cos(a2)},${cy + r1 * Math.sin(a2)}Z" fill="${color}"/>`;
+  }
+  return out + '</g>';
+}
+
+function coin(x, y, r, tilt = .42) {
+  const g = id('cn');
+  return `<g transform="translate(${x} ${y})">
+    <defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE7A0"/><stop offset=".5" stop-color="#E2AE45"/><stop offset="1" stop-color="#A26D1B"/></linearGradient></defs>
+    <ellipse cx="0" cy="${r * tilt * .35}" rx="${r}" ry="${r * tilt}" fill="#8A5A14"/>
+    <ellipse cx="0" cy="0" rx="${r}" ry="${r * tilt}" fill="url(#${g})"/>
+    <ellipse cx="0" cy="0" rx="${r * .74}" ry="${r * tilt * .74}" fill="none" stroke="#9A6516" stroke-width="1.6" opacity=".7"/></g>`;
+}
+
+function coinStack(x, y, r, n) {
+  let out = '';
+  for (let i = 0; i < n; i++) out += coin(x, y - i * r * .19, r);
+  return out;
+}
+
+function kalash(x, y, s = 1) {
+  const g = id('ks'), g2 = id('kc');
+  let leaves = '';
+  for (let i = -2; i <= 2; i++) {
+    leaves += `<path transform="rotate(${i * 22} 0 -128)" d="M0,-128 C-16,-160 -12,-205 0,-232 C12,-205 16,-160 0,-128Z" fill="${i % 2 ? '#2F7D4F' : '#3E9A5F'}"/>
+      <path transform="rotate(${i * 22} 0 -128)" d="M0,-132 V-226" stroke="#1F5E39" stroke-width="1.5"/>`;
+  }
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    <defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8A5A14"/><stop offset=".3" stop-color="#F2C766"/><stop offset=".55" stop-color="#E2AE45"/><stop offset="1" stop-color="#7A4E10"/></linearGradient>
+    <radialGradient id="${g2}" cx=".4" cy=".35"><stop offset="0" stop-color="#9B6A3A"/><stop offset="1" stop-color="#4E2E14"/></radialGradient></defs>
+    ${glow(0, -20, 300, '#FFC766', .28)}
+    ${leaves}
+    <ellipse cx="0" cy="-178" rx="44" ry="56" fill="url(#${g2})"/>
+    <path d="M-28,-212 q28,-30 56,0" fill="none" stroke="#C9A06A" stroke-width="3"/>
+    <path d="M-44,-140 C-44,-104 -132,-84 -132,2 C-132,78 -74,116 -60,126 L60,126 C74,116 132,78 132,2 C132,-84 44,-104 44,-140Z" fill="url(#${g})"/>
+    <ellipse cx="0" cy="-140" rx="66" ry="14" fill="#E2AE45" stroke="#8A5A14" stroke-width="2"/>
+    <path d="M-120,-36 C-60,-20 60,-20 120,-36" fill="none" stroke="#B3122E" stroke-width="7"/>
+    <path d="M-131,-8 C-60,8 60,8 131,-8" fill="none" stroke="#B3122E" stroke-width="4"/>
+    <text x="0" y="56" text-anchor="middle" font-family="Tiro" font-size="60" fill="#B3122E">श्री</text>
+    <ellipse cx="0" cy="128" rx="64" ry="10" fill="#7A4E10"/></g>`;
+}
+
+function arch(x0, y0, x1, y1) {     // rectangle with a semicircular top
+  const r = (x1 - x0) / 2;
+  return `M${x0},${y1} L${x0},${y0 + r} A${r},${r} 0 0 1 ${x1},${y0 + r} L${x1},${y1} Z`;
+}
+
+function drapes(top, bottom, base = '#1F2A44', dark = '#121A2E', light = '#34416A', trim = '#B8923F') {
+  const gL = id('dr'), gR = id('dr');
+  const folds = (gid, flip) => {
+    let stops = '';
+    const n = 9;
+    for (let i = 0; i <= n; i++) {
+      const o = i / n;
+      stops += `<stop offset="${o}" stop-color="${i % 2 ? light : dark}"/>`;
+      if (i < n) stops += `<stop offset="${o + .5 / n}" stop-color="${base}"/>`;
+    }
+    return `<linearGradient id="${gid}" x1="${flip ? 1 : 0}" y1="0" x2="${flip ? 0 : 1}" y2="0">${stops}</linearGradient>`;
+  };
+  const tie = top + (bottom - top) * .56;
+  const L = `M0,${top} L250,${top} C230,${top + 200} 150,${tie - 150} 118,${tie} C140,${tie + 90} 200,${bottom - 120} 214,${bottom} L0,${bottom} Z`;
+  const R = `M${W},${top} L${W - 250},${top} C${W - 230},${top + 200} ${W - 150},${tie - 150} ${W - 118},${tie} C${W - 140},${tie + 90} ${W - 200},${bottom - 120} ${W - 214},${bottom} L${W},${bottom} Z`;
+  // valance with swags
+  let val = `<rect x="0" y="0" width="${W}" height="${top + 30}" fill="${base}"/>`;
+  const sw = 5, step = W / sw;
+  let swag = `M0,${top + 30}`;
+  for (let i = 0; i < sw; i++) swag += ` Q${i * step + step / 2},${top + 110} ${(i + 1) * step},${top + 30}`;
+  val += `<path d="${swag} L${W},0 L0,0Z" fill="${base}"/>`;
+  val += `<path d="${swag}" fill="none" stroke="${trim}" stroke-width="5"/>`;
+  val += `<path d="${swag.replace(/(\d+\.?\d*),(\d+\.?\d*)/g, (m, a, b) => `${a},${+b + 12}`)}" fill="none" stroke="${trim}" stroke-width="2" stroke-dasharray="2 6" opacity=".9"/>`;
+  for (let i = 1; i < sw; i++) val += `<circle cx="${i * step}" cy="${top + 32}" r="11" fill="${trim}"/><path d="M${i * step - 7},${top + 40} l7,40 l7,-40z" fill="${trim}"/>`;
+  return `<defs>${folds(gL, false)}${folds(gR, true)}</defs>
+    <path d="${L}" fill="url(#${gL})"/><path d="${R}" fill="url(#${gR})"/>
+    <path d="M250,${top} C230,${top + 200} 150,${tie - 150} 118,${tie} C140,${tie + 90} 200,${bottom - 120} 214,${bottom}" fill="none" stroke="${trim}" stroke-width="3"/>
+    <path d="M${W - 250},${top} C${W - 230},${top + 200} ${W - 150},${tie - 150} ${W - 118},${tie} C${W - 140},${tie + 90} ${W - 200},${bottom - 120} ${W - 214},${bottom}" fill="none" stroke="${trim}" stroke-width="3"/>
+    <rect x="-4" y="${tie - 16}" width="130" height="30" rx="14" fill="${trim}"/><circle cx="126" cy="${tie - 1}" r="16" fill="#D8B66A" stroke="#7E5C1C" stroke-width="2"/>
+    <rect x="${W - 126}" y="${tie - 16}" width="130" height="30" rx="14" fill="${trim}"/><circle cx="${W - 126}" cy="${tie - 1}" r="16" fill="#D8B66A" stroke="#7E5C1C" stroke-width="2"/>
+    ${val}`;
+}
+
+function sparkle(x, y, r, c, op = 1) {
+  return `<path d="M${x},${y - r} Q${x},${y} ${x + r},${y} Q${x},${y} ${x},${y + r} Q${x},${y} ${x - r},${y} Q${x},${y} ${x},${y - r}Z" fill="${c}" opacity="${op}"/>`;
+}
+
+function firework(cx, cy, r, c, n = 28) {
+  let out = `<g opacity=".85">`;
+  for (let i = 0; i < n; i++) {
+    const a = i * 2 * Math.PI / n;
+    out += `<line x1="${cx + r * .25 * Math.cos(a)}" y1="${cy + r * .25 * Math.sin(a)}" x2="${cx + r * Math.cos(a)}" y2="${cy + r * Math.sin(a)}" stroke="${c}" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="${cx + r * 1.08 * Math.cos(a)}" cy="${cy + r * 1.08 * Math.sin(a)}" r="2.6" fill="${c}"/>`;
+  }
+  return out + '</g>';
+}
+
+function stars(n, x0, y0, x1, y1, c) {
+  let out = '';
+  for (let i = 0; i < n; i++) out += `<circle cx="${x0 + rnd() * (x1 - x0)}" cy="${y0 + rnd() * (y1 - y0)}" r="${.8 + rnd() * 1.8}" fill="${c}" opacity="${.3 + rnd() * .6}"/>`;
+  return out;
+}
+
+/* ------------------------------------------------------------------ shared text + footer */
+const ADDRESS = {
+  showroomTitle: 'OSHO INTERNATIONAL',
+  showroom: ['1/29, 2nd Floor, WHS Timber Market,', 'Opp. Richi Rich Banquet, Near Mayapuri', 'Metro Station, Delhi 110015'],
+  warehouseTitle: 'OUR WAREHOUSE',
+  warehouse: ['Plot No. 11, Sector 25 Part 2,', 'Industrial Area, Sector 25,', 'Panipat, Haryana 132104'],
+  phone: '+91 98105 27231',
+};
+const phoneIcon = c => `<svg viewBox="0 0 24 24"><path fill="${c}" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`;
+
+function footer(brandHtml, iconColor) {
+  return `<div class="foot">
+    <div class="brand">${brandHtml}</div>
+    <div class="cols">
+      <div><h6>ADDRESS : ${ADDRESS.showroomTitle}</h6><p>${ADDRESS.showroom.join('<br>')}</p></div>
+      <div class="rule"></div>
+      <div><h6>${ADDRESS.warehouseTitle}</h6><p>${ADDRESS.warehouse.join('<br>')}</p></div>
+    </div>
+    <div class="contact">${phoneIcon(iconColor)}<span>CONTACT : ${ADDRESS.phone}</span></div>
+  </div>`;
+}
+const decorBrand = `<img src="assets/osho-decor-logo-white.png" alt="Osho Decor">`;
+const sigBrand = `<div><div class="wordmark"><i></i>OSHO SIGNATURE<i></i></div></div>`;
+
+function titles(top, hi, en) {
+  return `<div class="layer" style="top:${top}px"><div class="hi">${hi}</div>
+    <div class="en"><i></i><b>${en}</b><i></i></div></div>`;
+}
+function message(top, text, sign) {
+  return `<div class="layer" style="top:${top}px"><p class="msg">${text}</p><p class="sign">${sign}</p></div>`;
+}
+
+/* ------------------------------------------------------------------ the six posts */
+const posts = [];
+
+// 1. Osho Decor - Dussehra
+posts.push({ name: 'osho-decor-dussehra', cls: 'decor', html: () => {
+  const bg = id('bg');
+  const svg = `<svg class="scene" viewBox="0 0 ${W} ${H}">
+    <defs><radialGradient id="${bg}" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#2B2347"/><stop offset=".6" stop-color="#16152E"/><stop offset="1" stop-color="#0C0C1C"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${bg})"/>
+    ${stars(70, 30, 120, 1050, 1060, '#F6EEDC')}
+    ${glow(540, 630, 420, '#F5A623', .38)}
+    ${rays(540, 630, 150, 500, 40, '#F5B647', .10)}
+    <circle cx="540" cy="630" r="236" fill="none" stroke="#E7B04A" stroke-width="1.5" opacity=".55"/>
+    <circle cx="540" cy="630" r="252" fill="none" stroke="#E7B04A" stroke-width="1" stroke-dasharray="2 8" opacity=".6"/>
+    ${bow(470, 640, .92, -28)}
+    ${toran(W, 0, 6, 34)}
+    ${[[140, 880], [940, 880]].map(([x, y]) => diya(x, y, .62)).join('')}
+  </svg>`;
+  return svg + titles(150, 'शुभ दशहरा', 'Happy Dussehra')
+    + message(918, 'May the triumph of good over evil fill your life<br>with courage, truth and success.', '— Warm wishes from Osho Decor —')
+    + footer(decorBrand, '#E7B04A');
+} });
+
+// 2. Osho Decor - Dhanteras
+posts.push({ name: 'osho-decor-dhanteras', cls: 'decor', html: () => {
+  const bg = id('bg');
+  let coins = '';
+  [[330, 832, 34, 6], [750, 836, 34, 8], [396, 866, 28, 3], [690, 872, 28, 4]].forEach(([x, y, r, n]) => coins += coinStack(x, y, r, n));
+  [[455, 878], [500, 888], [585, 886], [628, 878], [540, 896], [262, 870], [818, 874]].forEach(([x, y]) => coins += coin(x, y, 24));
+  const svg = `<svg class="scene" viewBox="0 0 ${W} ${H}">
+    <defs><radialGradient id="${bg}" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#4A1630"/><stop offset=".6" stop-color="#2A0E1E"/><stop offset="1" stop-color="#160711"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${bg})"/>
+    ${stars(60, 30, 40, 1050, 1060, '#FFE3A0')}
+    ${rangoli(540, 620, 290, ['#E20886', '#E7B04A', '#F6EEDC', '#E7B04A'])}
+    <circle cx="540" cy="620" r="188" fill="#2A0E1E" opacity=".75"/>
+    ${kalash(540, 690, 1.02)}
+    ${coins}
+    ${diya(160, 820, .74)}${diya(920, 820, .74)}
+    ${[[110, 420], [970, 460], [200, 300], [880, 300]].map(([x, y]) => sparkle(x, y, 14, '#FFE3A0', .9)).join('')}
+  </svg>`;
+  return svg + titles(70, 'शुभ धनतेरस', 'Happy Dhanteras')
+    + message(922, 'May Goddess Lakshmi bless your home and business<br>with health, wealth and prosperity.', '— Warm wishes from Osho Decor —')
+    + footer(decorBrand, '#E7B04A');
+} });
+
+// 3. Osho Decor - Diwali
+posts.push({ name: 'osho-decor-diwali', cls: 'decor', html: () => {
+  const bg = id('bg');
+  const svg = `<svg class="scene" viewBox="0 0 ${W} ${H}">
+    <defs><radialGradient id="${bg}" cx=".5" cy=".55" r=".8"><stop offset="0" stop-color="#22264F"/><stop offset=".6" stop-color="#141633"/><stop offset="1" stop-color="#0A0B1C"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${bg})"/>
+    ${stars(90, 20, 20, 1060, 1060, '#F6EEDC')}
+    ${firework(170, 420, 80, '#E20886')}${firework(915, 400, 70, '#2CC6B4')}${firework(900, 600, 44, '#E7B04A')}${firework(185, 620, 40, '#E7B04A')}
+    ${lantern(105, 120, 40, .9)}${lantern(975, 160, 40, .9, '#2C8C86', '#F4B740')}
+    ${rangoli(540, 650, 250, ['#E20886', '#E7B04A', '#2CC6B4', '#F6EEDC'])}
+    ${diya(540, 662, 1.2)}
+    ${[[300, 848, .78], [425, 872, .84], [655, 872, .84], [780, 848, .78]].map(([x, y, s]) => diya(x, y, s)).join('')}
+  </svg>`;
+  return svg + titles(180, 'शुभ दीपावली', 'Happy Diwali')
+    + message(922, 'May the glow of diyas fill your home with happiness,<br>peace and vibrant new beginnings.', '— Warm wishes from Osho Decor —')
+    + footer(decorBrand, '#E7B04A');
+} });
+
+// Osho Signature: ivory room, navy drapes, arched window with the festival scene
+function sigScene(inner, archFill) {
+  const bg = id('bg'), cl = id('cl');
+  const ax0 = 300, ax1 = 780, ay0 = 318, ay1 = 872;
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}">
+    <defs><linearGradient id="${bg}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F2E7"/><stop offset="1" stop-color="#EAE1CF"/></linearGradient>
+      <clipPath id="${cl}"><path d="${arch(ax0, ay0, ax1, ay1)}"/></clipPath></defs>
+    <rect width="${W}" height="${H}" fill="url(#${bg})"/>
+    ${Array.from({ length: 60 }, (_, i) => `<line x1="0" y1="${i * 18}" x2="${W}" y2="${i * 18}" stroke="#D9CDB4" stroke-width=".6" opacity=".35"/>`).join('')}
+    <path d="${arch(ax0 - 26, ay0 - 26, ax1 + 26, ay1 + 8)}" fill="#E8DCC2" stroke="#B8923F" stroke-width="2"/>
+    <path d="${arch(ax0, ay0, ax1, ay1)}" fill="${archFill}"/>
+    <g clip-path="url(#${cl})">${inner}</g>
+    <path d="${arch(ax0, ay0, ax1, ay1)}" fill="none" stroke="#B8923F" stroke-width="5"/>
+    <path d="${arch(ax0 - 14, ay0 - 14, ax1 + 14, ay1)}" fill="none" stroke="#B8923F" stroke-width="1.5"/>
+    <rect x="${ax0 - 40}" y="${ay1}" width="${ax1 - ax0 + 80}" height="22" fill="#1F2A44"/><rect x="${ax0 - 40}" y="${ay1}" width="${ax1 - ax0 + 80}" height="4" fill="#B8923F"/>
+    ${drapes(0, 1052)}
+  </svg>`;
+}
+
+// 4. Osho Signature - Dussehra
+posts.push({ name: 'osho-signature-dussehra', cls: 'sig', html: () => {
+  const sky = id('sk');
+  const inner = `<defs><linearGradient id="${sky}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F2A44"/><stop offset=".55" stop-color="#7A4B4E"/><stop offset="1" stop-color="#E59A4B"/></linearGradient></defs>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="url(#${sky})"/>
+    ${stars(40, 300, 318, 780, 580, '#FFF4D6')}
+    ${glow(540, 750, 260, '#FFC766', .55)}
+    ${bow(505, 612, .72, -30, '#E2C47F', '#FFF4D6', true, '#B8923F')}`;
+  return sigScene(inner, '#1F2A44') + titles(104, 'शुभ दशहरा', 'Happy Dussehra')
+    + message(916, 'As good triumphs over evil, may your home<br>be filled with grace and lasting joy.', '— Osho Signature —')
+    + footer(sigBrand, '#D8B66A');
+} });
+
+// 5. Osho Signature - Dhanteras
+posts.push({ name: 'osho-signature-dhanteras', cls: 'sig', html: () => {
+  let coins = '';
+  [[420, 848, 30, 7], [660, 848, 30, 9], [470, 862, 24, 3], [612, 864, 24, 4]].forEach(([x, y, r, n]) => coins += coinStack(x, y, r, n));
+  [[520, 868], [565, 866]].forEach(([x, y]) => coins += coin(x, y, 22));
+  const inner = `<rect x="0" y="0" width="${W}" height="${H}" fill="#1F2A44"/>
+    ${stars(40, 300, 330, 780, 640, '#FFF4D6')}
+    ${rangoli(540, 628, 228, ['#B8923F', '#D8B66A', '#E8E2D4', '#D8B66A'])}
+    <circle cx="540" cy="628" r="150" fill="#1F2A44" opacity=".8"/>
+    ${kalash(540, 702, .88)}
+    ${coins}`;
+  return sigScene(inner, '#1F2A44') + titles(104, 'शुभ धनतेरस', 'Happy Dhanteras')
+    + message(916, 'May prosperity and good fortune find their way<br>into every corner of your home.', '— Osho Signature —')
+    + footer(sigBrand, '#D8B66A');
+} });
+
+// 6. Osho Signature - Diwali
+posts.push({ name: 'osho-signature-diwali', cls: 'sig', html: () => {
+  const sky = id('sk');
+  const inner = `<defs><linearGradient id="${sky}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#121A30"/><stop offset="1" stop-color="#2A3560"/></linearGradient></defs>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="url(#${sky})"/>
+    ${stars(70, 300, 330, 780, 860, '#FFF4D6')}
+    ${firework(430, 480, 70, '#E2C47F')}${firework(660, 430, 56, '#F2D9A0')}${firework(610, 620, 40, '#E2C47F')}${firework(420, 660, 32, '#F2D9A0')}
+    <rect x="300" y="806" width="480" height="66" fill="#0E1426" opacity=".6"/>
+    ${[[395, 836, .64], [540, 826, .8], [685, 836, .64]].map(([x, y, s]) => diya(x, y, s, ['#C9A24E', '#7E5C1C'], '#F2D9A0')).join('')}`;
+  return sigScene(inner, '#121A30') + titles(104, 'शुभ दीपावली', 'Happy Diwali')
+    + message(916, 'May your home glow with light, love<br>and timeless elegance this Diwali.', '— Osho Signature —')
+    + footer(sigBrand, '#D8B66A');
+} });
+
+const root = document.getElementById('root');
+for (const p of posts) {
+  const s = document.createElement('section');
+  s.className = `post ${p.cls}`;
+  s.id = p.name;
+  s.innerHTML = p.html();
+  root.appendChild(s);
+}
+document.fonts.ready.then(() => document.body.setAttribute('data-ready', '1'));
+</script>
+</body>
+</html>
