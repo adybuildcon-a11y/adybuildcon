@@ -72,6 +72,9 @@ body{background:#777;display:flex;flex-direction:column;gap:40px;padding:40px;al
 .sig .foot p{color:#E8E2D4}
 .sig .foot .rule{background:rgba(216,182,106,.45)}
 .sig .foot .contact{color:#FFFFFF}
+.foot.slim .brand{top:62px}
+.foot.slim .brand img{height:104px}
+.foot.slim .contact{bottom:58px;font-size:23px}
 .sig .wordmark{color:#E2C47F}
 .sig .wordmark i{background:#B8923F}
 .sig .wordmark small{color:#E8E2D4}
@@ -301,7 +304,11 @@ const ADDRESS = {
 };
 const phoneIcon = c => `<svg viewBox="0 0 24 24"><path fill="${c}" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`;
 
-function footer(brandHtml, iconColor) {
+function footer(brandHtml, iconColor, withAddress = true) {
+  if (!withAddress) return `<div class="foot slim">
+    <div class="brand">${brandHtml}</div>
+    <div class="contact">${phoneIcon(iconColor)}<span>CONTACT : ${ADDRESS.phone}</span></div>
+  </div>`;
   return `<div class="foot">
     <div class="brand">${brandHtml}</div>
     <div class="cols">
@@ -313,7 +320,7 @@ function footer(brandHtml, iconColor) {
   </div>`;
 }
 const decorBrand = `<img src="assets/osho-decor-logo-white.png" alt="Osho Decor">`;
-const sigBrand = `<div><div class="wordmark"><i></i>OSHO SIGNATURE<i></i></div></div>`;
+const sigBrand = `<img src="assets/osho-decor-logo-white.png" alt="Osho Decor">`;   // same Osho Decor logo; no address on Signature posts
 
 function titles(top, hi, en) {
   return `<div class="layer" style="top:${top}px"><div class="hi">${hi}</div>
@@ -415,7 +422,7 @@ posts.push({ name: 'osho-signature-dussehra', cls: 'sig', html: () => {
     ${bow(505, 612, .72, -30, '#E2C47F', '#FFF4D6', true, '#B8923F')}`;
   return sigScene(inner, '#1F2A44') + titles(104, 'शुभ दशहरा', 'Happy Dussehra')
     + message(916, 'As good triumphs over evil, may your home<br>be filled with grace and lasting joy.', '— Osho Signature —')
-    + footer(sigBrand, '#D8B66A');
+    + footer(sigBrand, '#D8B66A', false);
 } });
 
 // 5. Osho Signature - Dhanteras
@@ -431,7 +438,7 @@ posts.push({ name: 'osho-signature-dhanteras', cls: 'sig', html: () => {
     ${coins}`;
   return sigScene(inner, '#1F2A44') + titles(104, 'शुभ धनतेरस', 'Happy Dhanteras')
     + message(916, 'May prosperity and good fortune find their way<br>into every corner of your home.', '— Osho Signature —')
-    + footer(sigBrand, '#D8B66A');
+    + footer(sigBrand, '#D8B66A', false);
 } });
 
 // 6. Osho Signature - Diwali
@@ -445,7 +452,7 @@ posts.push({ name: 'osho-signature-diwali', cls: 'sig', html: () => {
     ${[[395, 836, .64], [540, 826, .8], [685, 836, .64]].map(([x, y, s]) => diya(x, y, s, ['#C9A24E', '#7E5C1C'], '#F2D9A0')).join('')}`;
   return sigScene(inner, '#121A30') + titles(104, 'शुभ दीपावली', 'Happy Diwali')
     + message(916, 'May your home glow with light, love<br>and timeless elegance this Diwali.', '— Osho Signature —')
-    + footer(sigBrand, '#D8B66A');
+    + footer(sigBrand, '#D8B66A', false);
 } });
 
 const root = document.getElementById('root');
