@@ -11,6 +11,7 @@
 @font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600i.ttf);font-weight:600;font-style:italic}
 @font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
 @font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Fraunces;src:url(assets/fonts/Fraunces-700.ttf);font-weight:700}
 @font-face{font-family:Tiro;src:url(assets/fonts/TiroDevanagariHindi-400.ttf)}
 @font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
 @font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
@@ -41,7 +42,10 @@ body{background:#777;display:flex;flex-direction:column;gap:40px;padding:40px;al
 .foot .contact{position:absolute;left:0;right:0;bottom:20px;font-size:21px;font-weight:500;letter-spacing:.04em;display:flex;justify-content:center;gap:12px;align-items:center}
 .foot .contact svg{width:20px;height:20px}
 
-/* Osho Signature wordmark */
+/* Osho Signature logo, as in the product guide: Fraunces bold, "Signature" in brass */
+.osho-title{font-family:Fraunces;font-weight:700;font-size:78px;line-height:1;color:#F2EFE4;letter-spacing:-.005em}
+.osho-title em{font-style:normal;color:#E3B463}
+/* Osho Signature wordmark (unused) */
 .wordmark{font-family:Cinzel;font-weight:600;font-size:40px;letter-spacing:.34em;display:flex;align-items:center;gap:22px;margin-right:-.34em}
 .wordmark i{display:block;width:60px;height:1px}
 .wordmark small{display:block;font-family:Corm;font-style:italic;font-weight:500;font-size:20px;letter-spacing:.06em;margin-top:2px}
@@ -67,12 +71,12 @@ body{background:#777;display:flex;flex-direction:column;gap:40px;padding:40px;al
 .sig .en i:last-child{background:linear-gradient(90deg,#A27A2A,transparent)}
 .sig .msg{color:#2B3350}
 .sig .sign{color:#A27A2A}
-.sig .foot{background:#1F2A44;border-top:3px solid #B8923F}
+.sig .foot{background:linear-gradient(180deg,#12141C 0%,#1E2230 100%);border-top:3px solid #C98A2C}
 .sig .foot h6{color:#D8B66A}
 .sig .foot p{color:#E8E2D4}
 .sig .foot .rule{background:rgba(216,182,106,.45)}
 .sig .foot .contact{color:#FFFFFF}
-.foot.slim .brand{top:62px}
+.foot.slim .brand{top:78px}
 .foot.slim .brand img{height:104px}
 .foot.slim .contact{bottom:58px;font-size:23px}
 .sig .wordmark{color:#E2C47F}
@@ -320,7 +324,7 @@ function footer(brandHtml, iconColor, withAddress = true) {
   </div>`;
 }
 const decorBrand = `<img src="assets/osho-decor-logo-white.png" alt="Osho Decor">`;
-const sigBrand = `<img src="assets/osho-decor-logo-white.png" alt="Osho Decor">`;   // same Osho Decor logo; no address on Signature posts
+const sigBrand = `<div class="osho-title">Osho <em>Signature</em></div>`;   // product-guide logo; no address on Signature posts
 
 function titles(top, hi, en) {
   return `<div class="layer" style="top:${top}px"><div class="hi">${hi}</div>
