@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Decor Diwali Card - Full Photo</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500.ttf);font-weight:500}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600i.ttf);font-weight:600;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Tiro;src:url(assets/fonts/TiroDevanagariHindi-400.ttf)}
+@font-face{font-family:Vibes;src:url(assets/fonts/GreatVibes-400.ttf)}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+@page{size:5in 7in;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777}
+:root{--night:#130A12;--plum:#2A1638;--pink:#E20886;--gold:#D9A645;--gold-l:#F0C66A;--ivory:#F6EEDC}
+.card{position:relative;width:1500px;height:2100px;overflow:hidden;font-family:Poppins;background:var(--night);color:var(--ivory)}
+
+/* photo: full-width crop under the greeting; tray centred on the card axis */
+.photo{position:absolute;left:0;top:448px;width:1500px;height:1020px;overflow:hidden}
+.photo img{position:absolute;left:-60px;top:0;width:1560px;height:1020px}
+.photo:after{content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,#130A12 0%,rgba(19,10,18,.6) 9%,rgba(19,10,18,0) 22%),
+    linear-gradient(0deg,#130A12 0%,rgba(19,10,18,.8) 10%,rgba(19,10,18,0) 26%),
+    radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 58%,rgba(0,0,0,.4) 100%)}
+
+/* gold keyline over the whole card */
+.frame{position:absolute;inset:36px;border:2px solid rgba(240,198,106,.85);pointer-events:none}
+.frame:after{content:"";position:absolute;inset:10px;border:1px solid rgba(240,198,106,.45)}
+
+.layer{position:absolute;left:0;right:0;text-align:center}
+.kicker{font-family:Cinzel;font-weight:500;font-size:30px;letter-spacing:.5em;margin-right:-.5em;color:#F3E2B8}
+.script{font-family:Vibes;font-size:210px;line-height:1.05;
+  background:linear-gradient(180deg,#FFF1C9 5%,#F0C66A 50%,#C98A2C 95%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 6px 18px rgba(0,0,0,.55))}
+.hi{font-family:Tiro;font-size:54px;line-height:1.2;color:#FFFFFF;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+
+.divider{display:flex;align-items:center;justify-content:center;gap:18px}
+.divider i{display:block;width:150px;height:1.5px;background:var(--gold)}
+.divider b{display:block;width:14px;height:14px;transform:rotate(45deg);background:var(--pink)}
+
+.letter{font-family:Corm;color:#EFE4CC;padding:0 220px}
+.letter .dear{font-style:italic;font-weight:600;font-size:46px;color:var(--gold-l);margin-bottom:8px}
+.letter p{font-weight:500;font-size:40px;line-height:1.38}
+.letter .regards{font-style:italic;font-size:40px;margin-top:22px;color:#D9CDB5}
+.letter .regards span{font-family:Cinzel;font-style:normal;font-weight:600;font-size:32px;letter-spacing:.22em;color:var(--gold-l)}
+
+.band{position:absolute;left:36px;right:36px;bottom:36px;height:300px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;
+  background:linear-gradient(180deg,#2A1638,#1C0E26);text-align:center;color:#EFE6D6}
+.band:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--gold-l),var(--pink),var(--gold-l))}
+.band .logo{height:84px}
+.band .cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:44px;text-align:center;width:1180px}
+.band .rule{background:rgba(231,176,74,.45)}
+.band h6{font-weight:600;font-size:19px;letter-spacing:.16em;color:var(--gold-l);margin-bottom:4px}
+.band p{font-size:19px;line-height:1.45}
+.band .contact{font-size:25px;font-weight:500;letter-spacing:.04em;color:#fff;display:flex;justify-content:center;align-items:center;gap:12px}
+.band .contact svg{width:24px;height:24px}
+</style>
+</head>
+<body>
+<section class="card" id="card">
+  <div class="photo"><img src="assets/diya-tray.jpg" alt=""></div>
+
+  <!-- text on the image: dark upper part of the photo -->
+  <div class="layer" style="top:104px"><div class="kicker">WISHING YOU A</div></div>
+  <div class="layer" style="top:146px"><div class="script">Happy Diwali</div></div>
+  <div class="layer" style="top:382px"><div class="hi">शुभ दीपावली</div></div>
+  <div class="layer" style="top:470px"><div class="divider"><i></i><b></b><i></i></div></div>
+  <div class="layer letter" id="msg">
+    <div class="dear">Dear Valued Partner,</div>
+    <p>May the festival of lights fill your home and business with joy, prosperity and success. Thank you for your continued trust &mdash; we look forward to growing together.</p>
+    <div class="regards">With warm regards, <span>&nbsp;TEAM OSHO DECOR</span></div>
+  </div>
+
+  <div class="band">
+    <img class="logo" src="assets/osho-decor-logo-white.png" alt="Osho Decor">
+    <div class="cols">
+      <div><h6>OSHO INTERNATIONAL</h6><p>1/29, 2nd Floor, WHS Timber Market, Opp. Richi Rich<br>Banquet, Near Mayapuri Metro Station, Delhi 110015</p></div>
+      <div class="rule"></div>
+      <div><h6>OUR WAREHOUSE</h6><p>Plot No. 11, Sector 25 Part 2, Industrial Area,<br>Sector 25, Panipat, Haryana 132104</p></div>
+    </div>
+    <div class="contact"><svg viewBox="0 0 24 24"><path fill="#F0C66A" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg><span>CONTACT : +91 98105 27231</span></div>
+  </div>
+  <div class="frame"></div>
+</section>
+<script>
+/* Even spacing below the photo: equal gaps photo-fade -> divider -> message -> footer band */
+const H = 2100;
+Promise.all([document.fonts.ready, new Promise(r => { const i = document.querySelector('.photo img'); i.complete ? r() : i.onload = r; })]).then(() => {
+  const top = 1380, bottom = H - 36 - 300;   // photo fade end, band top
+  const blocks = [document.getElementById('msg')];
+  const hts = blocks.map(b => b.getBoundingClientRect().height);
+  const gap = (bottom - top - hts.reduce((a, b) => a + b, 0)) / (blocks.length + 1);
+  let y = top + gap;
+  blocks.forEach((b, i) => { b.style.top = y + 'px'; y += hts[i] + gap; });
+  document.body.setAttribute('data-gap', gap.toFixed(1));
+  document.body.setAttribute('data-ready', '1');
+});
+</script>
+</body>
+</html>

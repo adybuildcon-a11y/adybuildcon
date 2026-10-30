@@ -13,7 +13,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "output")
 CARDS = [("diwali-card.html", "osho-decor-diwali-card"),
          ("diwali-card-2.html", "osho-decor-diwali-card-2"),
-         ("diwali-card-3.html", "osho-decor-diwali-card-3-photo")]
+         ("diwali-card-3.html", "osho-decor-diwali-card-3-photo"),
+         ("diwali-card-4.html", "osho-decor-diwali-card-4-full-photo")]
 
 
 def chromium():
