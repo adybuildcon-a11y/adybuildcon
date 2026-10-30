@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Decor Diwali Card - Design 2</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500.ttf);font-weight:500}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600i.ttf);font-weight:600;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Tiro;src:url(assets/fonts/TiroDevanagariHindi-400.ttf)}
+@font-face{font-family:Vibes;src:url(assets/fonts/GreatVibes-400.ttf)}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+@page{size:5in 7in;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777}
+:root{--plum:#2A1638;--plum-2:#4A1A45;--pink:#C2186B;--gold:#B8862E;--gold-l:#E7B04A;--ink:#2B2233;--ivory:#F7F1E6}
+.card{position:relative;width:1500px;height:2100px;overflow:hidden;font-family:Poppins;background:var(--ivory)}
+.card>svg{position:absolute;inset:0}
+.layer{position:absolute;left:0;right:0;text-align:center}
+
+/* greeting block (centred under the arch) */
+.hi{font-family:Tiro;font-size:54px;line-height:1.2;color:var(--pink);letter-spacing:.02em;margin-top:6px}
+.script{font-family:Vibes;font-size:190px;line-height:1.08;
+  background:linear-gradient(180deg,#D9A645 0%,#B8862E 55%,#8A5A14 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.divider{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:18px}
+.divider i{display:block;width:150px;height:1.5px;background:var(--gold)}
+.divider b{display:block;width:14px;height:14px;transform:rotate(45deg);background:var(--pink)}
+
+/* message */
+.letter{font-family:Corm;color:var(--ink);padding:0 230px}
+.letter .dear{font-style:italic;font-weight:600;font-size:48px;color:var(--plum-2);margin-bottom:10px}
+.letter p{font-weight:500;font-size:42px;line-height:1.4}
+.letter .regards{font-style:italic;font-size:40px;margin-top:24px;color:#4A3F52}
+.letter .team{font-family:Cinzel;font-weight:600;font-size:34px;letter-spacing:.26em;margin-right:-.26em;color:var(--gold);margin-top:2px}
+
+/* footer band */
+.band{position:absolute;left:40px;right:40px;bottom:40px;height:300px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;background:linear-gradient(180deg,#2A1638,#1E0F2A);text-align:center;color:#EFE6D6}
+.band:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--gold-l),var(--pink),var(--gold-l))}
+.band .logo{height:84px}
+.band .cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:40px;text-align:left;width:1140px}
+.band .rule{background:rgba(231,176,74,.45)}
+.band h6{font-weight:600;font-size:19px;letter-spacing:.16em;color:var(--gold-l);margin-bottom:4px}
+.band p{font-size:19px;line-height:1.45}
+.band .contact{font-size:25px;font-weight:500;letter-spacing:.04em;color:#fff;display:flex;justify-content:center;align-items:center;gap:12px}
+.band .contact svg{width:24px;height:24px}
+</style>
+</head>
+<body>
+<section class="card" id="card"></section>
+<script>
+const W = 1500, H = 2100;
+</script>
+<script src="assets/motifs.js"></script>
+<script>
+/* Layout grid (px): border inset 40 | arch x 330-1170, y 120-1060 | greeting 1100-1440 | message 1470-1780 | band 1770-2060 */
+const CX = W / 2;
+const A = { x0: 390, x1: 1110, y0: 128, y1: 930 };
+const R = (A.x1 - A.x0) / 2;
+const archPath = (x0, y0, x1, y1) => { const r = (x1 - x0) / 2; return `M${x0},${y1} L${x0},${y0 + r} A${r},${r} 0 0 1 ${x1},${y0 + r} L${x1},${y1} Z`; };
+
+function archScene() {
+  const sky = id('sky'), cl = id('cl'), floor = id('fl');
+  const floorY = A.y1 - 150;
+  return `
+  <defs>
+    <linearGradient id="${sky}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#160B24"/><stop offset=".6" stop-color="#2A1638"/><stop offset="1" stop-color="#4A1A45"/></linearGradient>
+    <linearGradient id="${floor}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A1640"/><stop offset="1" stop-color="#240E2C"/></linearGradient>
+    <clipPath id="${cl}"><path d="${archPath(A.x0, A.y0, A.x1, A.y1)}"/></clipPath>
+  </defs>
+  <path d="${archPath(A.x0 - 34, A.y0 - 34, A.x1 + 34, A.y1)}" fill="#EFE3CC"/>
+  <path d="${archPath(A.x0 - 34, A.y0 - 34, A.x1 + 34, A.y1)}" fill="none" stroke="#B8862E" stroke-width="2"/>
+  <path d="${archPath(A.x0, A.y0, A.x1, A.y1)}" fill="url(#${sky})"/>
+  <g clip-path="url(#${cl})">
+    ${stars(60, A.x0, A.y0, A.x1, 640, '#F6EEDC')}
+    <!-- three lanterns on the centre axis, centre one lowest -->
+    ${lantern(CX - 180, 290, 34, .9)}
+    ${lantern(CX, 350, 38, 1.05, '#E20886', '#F4B740')}
+    ${lantern(CX + 180, 290, 34, .9, '#2C8C86', '#F4B740')}
+    <!-- floor plane -->
+    <rect x="${A.x0}" y="${floorY}" width="${A.x1 - A.x0}" height="${A.y1 - floorY}" fill="url(#${floor})"/>
+    <line x1="${A.x0}" y1="${floorY}" x2="${A.x1}" y2="${floorY}" stroke="#B8862E" stroke-width="1.5" opacity=".6"/>
+    ${glow(CX, floorY - 30, 300, '#F5A623', .42)}
+    <!-- rangoli laid flat on the floor -->
+    <g transform="translate(${CX} ${floorY + 70}) scale(1 .34) translate(${-CX} ${-(floorY + 70)})">
+      ${rangoli(CX, floorY + 70, 250, ['#E20886', '#E7B04A', '#2CC6B4', '#F6EEDC'])}
+    </g>
+    ${diya(CX, floorY + 52, 1.45)}
+    ${diya(CX - 220, floorY + 88, .74)}${diya(CX + 220, floorY + 88, .74)}
+  </g>
+  <path d="${archPath(A.x0, A.y0, A.x1, A.y1)}" fill="none" stroke="#B8862E" stroke-width="5"/>
+  <rect x="${A.x0 - 60}" y="${A.y1}" width="${A.x1 - A.x0 + 120}" height="18" fill="#2A1638"/>
+  <rect x="${A.x0 - 60}" y="${A.y1}" width="${A.x1 - A.x0 + 120}" height="3" fill="#B8862E"/>`;
+}
+
+function page() {
+  const paper = id('pp');
+  return `<svg viewBox="0 0 ${W} ${H}">
+    <defs><radialGradient id="${paper}" cx=".5" cy=".35" r=".85"><stop offset="0" stop-color="#FBF7EF"/><stop offset="1" stop-color="#EFE5D3"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${paper})"/>
+    <g opacity=".06">${rangoli(CX, 600, 700, ['#B8862E', '#B8862E', '#B8862E', '#B8862E'])}</g>
+    <rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="#B8862E" stroke-width="2.5"/>
+    <rect x="54" y="54" width="${W - 108}" height="${H - 108}" fill="none" stroke="#B8862E" stroke-width="1" opacity=".6"/>
+    ${archScene()}
+  </svg>`;
+}
+
+const phone = `<svg viewBox="0 0 24 24"><path fill="#E7B04A" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`;
+
+document.getElementById('card').innerHTML = page() + `
+  <div class="layer" id="greet">
+    <div class="script">Happy Diwali</div>
+    <div class="hi">शुभ दीपावली</div>
+    <div class="divider"><i></i><b></b><i></i></div>
+  </div>
+
+  <div class="layer letter" id="msg">
+    <div class="dear">Dear Valued Partner,</div>
+    <p>May the festival of lights fill your home and business with joy, prosperity and success. Thank you for your continued trust &mdash; we look forward to growing together.</p>
+    <div class="regards">With warm regards, <span style="font-family:Cinzel;font-style:normal;font-weight:600;font-size:32px;letter-spacing:.22em;color:#B8862E">&nbsp;TEAM OSHO DECOR</span></div>
+  </div>
+
+  <div class="band">
+    <img class="logo" src="assets/osho-decor-logo-white.png" alt="Osho Decor">
+    <div class="cols">
+      <div><h6>OSHO INTERNATIONAL</h6><p>1/29, 2nd Floor, WHS Timber Market, Opp. Richi Rich<br>Banquet, Near Mayapuri Metro Station, Delhi 110015</p></div>
+      <div class="rule"></div>
+      <div><h6>OUR WAREHOUSE</h6><p>Plot No. 11, Sector 25 Part 2, Industrial Area,<br>Sector 25, Panipat, Haryana 132104</p></div>
+    </div>
+    <div class="contact">${phone}<span>CONTACT : +91 98105 27231</span></div>
+  </div>`;
+/* Even vertical rhythm: identical gaps arch -> greeting -> message -> footer band */
+document.fonts.ready.then(() => {
+  const top = A.y1 + 18, bottom = H - 40 - 300;           // arch sill bottom, band top
+  const blocks = [document.getElementById('greet'), document.getElementById('msg')];
+  const hts = blocks.map(b => b.getBoundingClientRect().height);
+  const gap = (bottom - top - hts.reduce((a, b) => a + b, 0)) / (blocks.length + 1);
+  let y = top + gap;
+  blocks.forEach((b, i) => { b.style.top = y + 'px'; y += hts[i] + gap; });
+  document.body.setAttribute('data-gap', gap.toFixed(1));
+  document.body.setAttribute('data-ready', '1');
+});
+</script>
+</body>
+</html>
