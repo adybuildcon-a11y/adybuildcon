@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Decor Diwali Card</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500.ttf);font-weight:500}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600i.ttf);font-weight:600;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Tiro;src:url(assets/fonts/TiroDevanagariHindi-400.ttf)}
+@font-face{font-family:Vibes;src:url(assets/fonts/GreatVibes-400.ttf)}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+@page{size:5in 7in;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777}
+.card{position:relative;width:1500px;height:2100px;overflow:hidden;font-family:Poppins;color:#F6EEDC}
+.card>svg{position:absolute;inset:0}
+.layer{position:absolute;left:0;right:0;text-align:center}
+
+.kicker{font-family:Cinzel;font-weight:500;font-size:34px;letter-spacing:.5em;margin-right:-.5em;color:#F3E2B8}
+.script{font-family:Vibes;font-size:230px;line-height:1.05;
+  background:linear-gradient(180deg,#FFF0C2 8%,#F0C060 50%,#C98A2C 92%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  padding:0 40px}
+.hi{font-family:Tiro;font-size:66px;color:#F6EEDC;display:flex;align-items:center;justify-content:center;gap:28px}
+.hi i{display:block;width:120px;height:2px;background:linear-gradient(90deg,transparent,#E20886)}
+.hi i:last-child{background:linear-gradient(90deg,#E20886,transparent)}
+
+.letter{font-family:Corm;color:#F3E7CF;padding:0 200px}
+.letter .dear{font-style:italic;font-weight:600;font-size:52px;color:#F0C060;margin-bottom:14px}
+.letter p{font-weight:500;font-size:44px;line-height:1.38}
+.letter .regards{font-style:italic;font-size:42px;margin-top:26px}
+.letter .team{font-family:Cinzel;font-weight:600;font-size:36px;letter-spacing:.24em;margin-right:-.24em;color:#F0C060;margin-top:4px}
+
+.foot .logo{height:90px}
+.foot .cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:36px;text-align:left;margin:16px 215px 0}
+.foot .rule{background:rgba(231,176,74,.45)}
+.foot h6{font-weight:600;font-size:20px;letter-spacing:.16em;color:#E7B04A;margin-bottom:4px}
+.foot p{font-size:20px;line-height:1.45;color:#E9E2D2}
+.foot .contact{margin-top:14px;font-size:27px;font-weight:500;letter-spacing:.04em;color:#fff;display:flex;justify-content:center;align-items:center;gap:14px}
+.foot .contact svg{width:26px;height:26px}
+</style>
+</head>
+<body>
+<section class="card" id="card"></section>
+<script>
+const W = 1500, H = 2100;
+</script>
+<script src="assets/motifs.js"></script>
+<script>
+const GOLD = '#E7B04A';
+const IN = 58;                 // frame inset
+
+function frame() {
+  const cl = id('fr');
+  let corners = '';
+  for (const [x, y] of [[IN, IN], [W - IN, IN], [IN, H - IN], [W - IN, H - IN]])
+    corners += rangoli(x, y, 96, [GOLD, '#E20886', '#F6EEDC', GOLD]);
+  return `<defs><clipPath id="${cl}"><rect x="${IN}" y="${IN}" width="${W - 2 * IN}" height="${H - 2 * IN}"/></clipPath></defs>
+    <g clip-path="url(#${cl})">${corners}</g>
+    <rect x="${IN - 16}" y="${IN - 16}" width="${W - 2 * IN + 32}" height="${H - 2 * IN + 32}" fill="none" stroke="${GOLD}" stroke-width="4"/>
+    <rect x="${IN}" y="${IN}" width="${W - 2 * IN}" height="${H - 2 * IN}" fill="none" stroke="${GOLD}" stroke-width="1.5" opacity=".9"/>
+    <rect x="${IN + 12}" y="${IN + 12}" width="${W - 2 * IN - 24}" height="${H - 2 * IN - 24}" fill="none" stroke="${GOLD}" stroke-width="1" stroke-dasharray="2 10" opacity=".7"/>`;
+}
+
+function scene() {
+  const bg = id('bg');
+  return `<svg viewBox="0 0 ${W} ${H}">
+    <defs><radialGradient id="${bg}" cx=".5" cy=".42" r=".8"><stop offset="0" stop-color="#3A1E4A"/><stop offset=".55" stop-color="#1E1230"/><stop offset="1" stop-color="#0E0918"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${bg})"/>
+    ${stars(120, 80, 80, W - 80, 1300, '#F6EEDC')}
+    <g opacity=".045">${rangoli(W / 2, 1010, 640, [GOLD, GOLD, GOLD, GOLD])}</g>
+    ${frame()}
+    ${lantern(250, 150, 50, 1.15)}${lantern(W - 250, 150, 50, 1.15, '#2C8C86', '#F4B740')}
+    ${firework(250, 820, 70, '#E20886')}${firework(W - 250, 790, 60, '#2CC6B4')}${firework(330, 1040, 40, GOLD)}${firework(W - 320, 1010, 44, GOLD)}
+    ${glow(W / 2, 1000, 420, '#F5A623', .30)}
+    ${rangoli(W / 2, 1000, 250, ['#E20886', GOLD, '#2CC6B4', '#F6EEDC'])}
+    ${diya(W / 2, 1018, 1.55)}
+    ${[[455, 1235, .8], [600, 1262, .88], [900, 1262, .88], [1045, 1235, .8]].map(([x, y, s]) => diya(x, y, s)).join('')}
+  </svg>`;
+}
+
+const phone = `<svg viewBox="0 0 24 24"><path fill="#E7B04A" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`;
+
+document.getElementById('card').innerHTML = scene() + `
+  <div class="layer" style="top:268px"><div class="kicker">WISHING YOU A</div></div>
+  <div class="layer" style="top:318px"><div class="script">Happy Diwali</div></div>
+  <div class="layer" style="top:590px"><div class="hi"><i></i>शुभ दीपावली<i></i></div></div>
+
+  <div class="layer letter" style="top:1312px">
+    <div class="dear">Dear Valued Partner,</div>
+    <p>May the festival of lights fill your home and business with joy, prosperity and success. Thank you for your continued trust &mdash; we look forward to growing together in the year ahead.</p>
+    <div class="regards">With warm regards,</div>
+    <div class="team">Team Osho Decor</div>
+  </div>
+
+  <div class="layer foot" style="top:1728px">
+    <img class="logo" src="assets/osho-decor-logo-white.png" alt="Osho Decor">
+    <div class="cols">
+      <div><h6>OSHO INTERNATIONAL</h6><p>1/29, 2nd Floor, WHS Timber Market,<br>Opp. Richi Rich Banquet, Near Mayapuri<br>Metro Station, Delhi 110015</p></div>
+      <div class="rule"></div>
+      <div><h6>OUR WAREHOUSE</h6><p>Plot No. 11, Sector 25 Part 2,<br>Industrial Area, Sector 25,<br>Panipat, Haryana 132104</p></div>
+    </div>
+    <div class="contact">${phone}<span>CONTACT : +91 98105 27231</span></div>
+  </div>`;
+document.fonts.ready.then(() => document.body.setAttribute('data-ready', '1'));
+</script>
+</body>
+</html>
