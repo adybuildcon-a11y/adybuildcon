@@ -23,7 +23,7 @@ body{background:#777}
 .card{position:relative;width:1500px;height:2100px;overflow:hidden;font-family:Poppins;background:var(--night);color:var(--ivory)}
 
 /* photo: full-width crop under the greeting; tray centred on the card axis */
-.photo{position:absolute;left:0;top:448px;width:1500px;height:1020px;overflow:hidden}
+.photo{position:absolute;left:0;top:448px;width:1500px;height:880px;overflow:hidden}
 .photo img{position:absolute;left:-60px;top:0;width:1560px;height:1020px}
 .photo:after{content:"";position:absolute;inset:0;
   background:
@@ -48,7 +48,8 @@ body{background:#777}
 
 .letter{font-family:Corm;color:#EFE4CC;padding:0 120px}
 .letter .dear{font-style:italic;font-weight:600;font-size:60px;color:var(--gold-l);margin-bottom:10px}
-.letter p{font-weight:500;font-size:54px;line-height:1.32}
+.letter p{font-weight:500;font-size:50px;line-height:1.3}
+.letter p.thanks{font-size:42px;color:#D9CDB5;margin-top:16px}
 .letter .regards{font-style:italic;font-size:44px;margin-top:22px;color:#D9CDB5}
 .letter .regards span{font-family:Cinzel;font-style:normal;font-weight:600;font-size:36px;letter-spacing:.22em;color:var(--gold-l)}
 
@@ -76,6 +77,7 @@ body{background:#777}
   <div class="layer letter" id="msg">
     <div class="dear">Dear Folks,</div>
     <p>May this Diwali light up your home<br>with joy, prosperity and endless smiles.</p>
+    <p class="thanks">Thank you for being part of the Osho Decor family &mdash;<br>here&rsquo;s to a bright and vibrant year ahead.</p>
     <div class="regards">With warm regards, <span>&nbsp;TEAM OSHO DECOR</span></div>
   </div>
 
@@ -94,7 +96,7 @@ body{background:#777}
 /* Even spacing below the photo: equal gaps photo-fade -> divider -> message -> footer band */
 const H = 2100;
 Promise.all([document.fonts.ready, new Promise(r => { const i = document.querySelector('.photo img'); i.complete ? r() : i.onload = r; })]).then(() => {
-  const top = 1380, bottom = H - 36 - 300;   // photo fade end, band top
+  const top = 1250, bottom = H - 36 - 300;   // photo fade end, band top
   const blocks = [document.getElementById('msg')];
   const hts = blocks.map(b => b.getBoundingClientRect().height);
   const gap = (bottom - top - hts.reduce((a, b) => a + b, 0)) / (blocks.length + 1);
