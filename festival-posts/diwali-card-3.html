@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Decor Diwali Card - Photo Edition</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500.ttf);font-weight:500}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600i.ttf);font-weight:600;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Tiro;src:url(assets/fonts/TiroDevanagariHindi-400.ttf)}
+@font-face{font-family:Vibes;src:url(assets/fonts/GreatVibes-400.ttf)}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+@page{size:5in 7in;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777}
+:root{--plum:#2A1638;--plum-2:#4A1A45;--pink:#C2186B;--gold:#B8862E;--gold-l:#E7B04A;--ink:#2B2233;--ivory:#F7F1E6}
+.card{position:relative;width:1500px;height:2100px;overflow:hidden;font-family:Poppins;background:var(--ivory)}
+.card>svg{position:absolute;inset:0}
+.layer{position:absolute;left:0;right:0;text-align:center}
+
+/* greeting block (centred under the arch) */
+.hi{font-family:Tiro;font-size:54px;line-height:1.2;color:var(--pink);letter-spacing:.02em;margin-top:6px}
+.script{font-family:Vibes;font-size:190px;line-height:1.08;
+  background:linear-gradient(180deg,#D9A645 0%,#B8862E 55%,#8A5A14 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.divider{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:18px}
+.divider i{display:block;width:150px;height:1.5px;background:var(--gold)}
+.divider b{display:block;width:14px;height:14px;transform:rotate(45deg);background:var(--pink)}
+
+/* message */
+.letter{font-family:Corm;color:var(--ink);padding:0 230px}
+.letter .dear{font-style:italic;font-weight:600;font-size:48px;color:var(--plum-2);margin-bottom:10px}
+.letter p{font-weight:500;font-size:42px;line-height:1.4}
+.letter .regards{font-style:italic;font-size:40px;margin-top:24px;color:#4A3F52}
+.letter .team{font-family:Cinzel;font-weight:600;font-size:34px;letter-spacing:.26em;margin-right:-.26em;color:var(--gold);margin-top:2px}
+
+/* footer band */
+.band{position:absolute;left:40px;right:40px;bottom:40px;height:300px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;background:linear-gradient(180deg,#2A1638,#1E0F2A);text-align:center;color:#EFE6D6}
+.band:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--gold-l),var(--pink),var(--gold-l))}
+.band .logo{height:84px}
+.band .cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:44px;text-align:center;width:1180px}
+.band .rule{background:rgba(231,176,74,.45)}
+.band h6{font-weight:600;font-size:19px;letter-spacing:.16em;color:var(--gold-l);margin-bottom:4px}
+.band p{font-size:19px;line-height:1.45}
+.band .contact{font-size:25px;font-weight:500;letter-spacing:.04em;color:#fff;display:flex;justify-content:center;align-items:center;gap:12px}
+.band .contact svg{width:24px;height:24px}
+</style>
+</head>
+<body>
+<section class="card" id="card"></section>
+<script>
+const W = 1500, H = 2100;
+</script>
+<script src="assets/motifs.js"></script>
+<script>
+/* Layout grid (px): border inset 40 | photo arch x 340-1160, y 120-960 | greeting | message | band 1760-2060.
+   Vertical gaps between arch, greeting, message and band are measured and made equal at render time. */
+const CX = W / 2;
+const A = { x0: 340, x1: 1160, y0: 120, y1: 960 };
+const archPath = (x0, y0, x1, y1) => { const r = (x1 - x0) / 2; return `M${x0},${y1} L${x0},${y0 + r} A${r},${r} 0 0 1 ${x1},${y0 + r} L${x1},${y1} Z`; };
+
+/* photo: 2000x1308, tray centred near (1050, 640) */
+const PHOTO = { src: 'assets/diya-tray.jpg', w: 2000, h: 1308, fx: 1050, fy: 640, scale: .70 };
+
+function archScene() {
+  const cl = id('cl'), vig = id('vg'), base = id('bs'), sh = id('sh');
+  const s = PHOTO.scale, iw = PHOTO.w * s, ih = PHOTO.h * s;
+  const ix = CX - PHOTO.fx * s, iy = (A.y0 + A.y1) / 2 + 20 - PHOTO.fy * s;
+  return `
+  <defs>
+    <clipPath id="${cl}"><path d="${archPath(A.x0, A.y0, A.x1, A.y1)}"/></clipPath>
+    <radialGradient id="${vig}" cx=".5" cy=".55" r=".72"><stop offset=".55" stop-color="#0B0508" stop-opacity="0"/><stop offset="1" stop-color="#0B0508" stop-opacity=".55"/></radialGradient>
+    <linearGradient id="${base}" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#1A0B18" stop-opacity="0"/><stop offset="1" stop-color="#1A0B18" stop-opacity=".55"/></linearGradient>
+    <filter id="${sh}" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#3A2410" flood-opacity=".28"/></filter>
+  </defs>
+  <!-- ivory mat + keylines -->
+  <path d="${archPath(A.x0 - 30, A.y0 - 30, A.x1 + 30, A.y1)}" fill="#F1E6D0" filter="url(#${sh})"/>
+  <path d="${archPath(A.x0 - 30, A.y0 - 30, A.x1 + 30, A.y1)}" fill="none" stroke="#B8862E" stroke-width="2"/>
+  <path d="${archPath(A.x0 - 14, A.y0 - 14, A.x1 + 14, A.y1)}" fill="none" stroke="#B8862E" stroke-width="1" opacity=".55"/>
+  <!-- photograph -->
+  <g clip-path="url(#${cl})">
+    <rect x="${A.x0}" y="${A.y0}" width="${A.x1 - A.x0}" height="${A.y1 - A.y0}" fill="#120A0A"/>
+    <image href="${PHOTO.src}" x="${ix}" y="${iy}" width="${iw}" height="${ih}" preserveAspectRatio="none"/>
+    <rect x="${A.x0}" y="${A.y0}" width="${A.x1 - A.x0}" height="${A.y1 - A.y0}" fill="url(#${vig})"/>
+    <rect x="${A.x0}" y="${A.y0}" width="${A.x1 - A.x0}" height="${A.y1 - A.y0}" fill="url(#${base})"/>
+  </g>
+  <path d="${archPath(A.x0, A.y0, A.x1, A.y1)}" fill="none" stroke="#B8862E" stroke-width="6"/>
+  <path d="${archPath(A.x0 + 5, A.y0 + 5, A.x1 - 5, A.y1)}" fill="none" stroke="#F2D9A0" stroke-width="1.2" opacity=".7"/>
+  <!-- sill -->
+  <rect x="${A.x0 - 70}" y="${A.y1}" width="${A.x1 - A.x0 + 140}" height="20" fill="#2A1638"/>
+  <rect x="${A.x0 - 70}" y="${A.y1}" width="${A.x1 - A.x0 + 140}" height="3" fill="#B8862E"/>`;
+}
+
+function page() {
+  const paper = id('pp');
+  return `<svg viewBox="0 0 ${W} ${H}">
+    <defs><radialGradient id="${paper}" cx=".5" cy=".32" r=".9"><stop offset="0" stop-color="#FCF8F1"/><stop offset="1" stop-color="#EEE3CF"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${paper})"/>
+    <rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="#B8862E" stroke-width="2.5"/>
+    <rect x="54" y="54" width="${W - 108}" height="${H - 108}" fill="none" stroke="#B8862E" stroke-width="1" opacity=".6"/>
+    ${archScene()}
+  </svg>`;
+}
+
+const phone = `<svg viewBox="0 0 24 24"><path fill="#E7B04A" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`;
+
+document.getElementById('card').innerHTML = page() + `
+  <div class="layer" id="greet">
+    <div class="script">Happy Diwali</div>
+    <div class="hi">शुभ दीपावली</div>
+    <div class="divider"><i></i><b></b><i></i></div>
+  </div>
+
+  <div class="layer letter" id="msg">
+    <div class="dear">Dear Valued Partner,</div>
+    <p>May the festival of lights fill your home and business with joy, prosperity and success. Thank you for your continued trust &mdash; we look forward to growing together.</p>
+    <div class="regards">With warm regards, <span style="font-family:Cinzel;font-style:normal;font-weight:600;font-size:32px;letter-spacing:.22em;color:#B8862E">&nbsp;TEAM OSHO DECOR</span></div>
+  </div>
+
+  <div class="band">
+    <img class="logo" src="assets/osho-decor-logo-white.png" alt="Osho Decor">
+    <div class="cols">
+      <div><h6>OSHO INTERNATIONAL</h6><p>1/29, 2nd Floor, WHS Timber Market, Opp. Richi Rich<br>Banquet, Near Mayapuri Metro Station, Delhi 110015</p></div>
+      <div class="rule"></div>
+      <div><h6>OUR WAREHOUSE</h6><p>Plot No. 11, Sector 25 Part 2, Industrial Area,<br>Sector 25, Panipat, Haryana 132104</p></div>
+    </div>
+    <div class="contact">${phone}<span>CONTACT : +91 98105 27231</span></div>
+  </div>`;
+/* Even vertical rhythm: identical gaps arch -> greeting -> message -> footer band */
+document.fonts.ready.then(() => {
+  const top = A.y1 + 18, bottom = H - 40 - 300;           // arch sill bottom, band top
+  const blocks = [document.getElementById('greet'), document.getElementById('msg')];
+  const hts = blocks.map(b => b.getBoundingClientRect().height);
+  const gap = (bottom - top - hts.reduce((a, b) => a + b, 0)) / (blocks.length + 1);
+  let y = top + gap;
+  blocks.forEach((b, i) => { b.style.top = y + 'px'; y += hts[i] + gap; });
+  document.body.setAttribute('data-gap', gap.toFixed(1));
+  document.body.setAttribute('data-ready', '1');
+});
+</script>
+</body>
+</html>
