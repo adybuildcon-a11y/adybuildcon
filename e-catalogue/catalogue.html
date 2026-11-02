@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Decor - Fabric E-Catalogue</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500.ttf);font-weight:500}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-700.ttf);font-weight:700}
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Light.ttf);font-weight:300}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+@page{size:A4;margin:0}
+:root{--pink:#E20886;--plum:#22122E;--plum-2:#341B45;--ink:#24202A;--muted:#6E6774;--line:#E6DED2;--paper:#FBF8F3;--gold:#B8862E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#8a8a8a}
+body{font-family:Poppins;color:var(--ink)}
+.page{position:relative;width:794px;height:1123px;overflow:hidden;background:var(--paper);margin:0 auto 24px;page-break-after:always;break-after:page}
+@media print{html,body{background:none}.page{margin:0}}
+
+/* ---------- collection page ---------- */
+.head{position:absolute;left:48px;right:48px;top:30px;height:40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.head img{height:26px}
+.head .sec{font-size:9.5px;font-weight:500;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+.top{position:absolute;left:48px;right:48px;top:92px}
+.title{display:flex;align-items:flex-end;gap:18px}
+.title .no{font-family:Corm;font-weight:600;font-size:64px;line-height:.8;color:var(--pink)}
+.title h2{font-family:Corm;font-weight:700;font-size:44px;line-height:.95;letter-spacing:.01em;color:var(--plum)}
+.title .type{font-size:10.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.specs{margin-top:22px;display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.specs div{flex:1;padding:9px 12px 9px 0}
+.specs div+div{padding-left:14px;border-left:1px solid var(--line)}
+.specs dt{font-size:8.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.specs dd{font-size:12px;font-weight:500;color:var(--ink);margin-top:2px;line-height:1.3}
+.note{margin-top:12px;font-family:Corm;font-style:italic;font-size:17px;color:var(--muted)}
+.gallery{position:absolute;left:48px;right:48px;top:258px;bottom:74px}
+.gallery img{position:absolute;display:block;border-radius:3px;background:#fff;box-shadow:0 1px 2px rgba(34,18,46,.10),0 8px 22px rgba(34,18,46,.10)}
+.foot{position:absolute;left:48px;right:48px;bottom:26px;height:30px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);font-size:9px;color:var(--muted);letter-spacing:.04em}
+.foot b{font-weight:600;color:var(--plum)}
+.foot .pg{font-family:Cinzel;font-weight:600;font-size:11px;color:var(--pink)}
+
+/* ---------- cover ---------- */
+.cover{background:var(--plum)}
+.cover .mosaic{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:281px;gap:0;opacity:.55}
+.cover .mosaic div{background-size:cover;background-position:center 65%}
+.cover .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(34,18,46,.55) 0%,rgba(34,18,46,.82) 38%,rgba(34,18,46,.97) 62%,#22122E 100%)}
+.cover .frame{position:absolute;inset:26px;border:1px solid rgba(255,255,255,.55)}
+.cover .logo{position:absolute;left:0;right:0;top:110px;text-align:center}
+.cover .logo img{height:70px}
+.cover .big{position:absolute;left:0;right:0;top:520px;text-align:center;color:#fff}
+.cover .big .k{font-family:Cinzel;font-weight:500;font-size:14px;letter-spacing:.55em;margin-right:-.55em;color:#F3D7E6}
+.cover .big h1{font-family:Corm;font-weight:600;font-size:92px;line-height:1;margin-top:14px}
+.cover .big h1 em{font-style:italic;font-weight:500;color:#F7B9D9}
+.cover .big .rule{width:70px;height:2px;background:var(--pink);margin:26px auto}
+.cover .big .cats{font-size:12px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;color:#E9DFF0}
+.cover .meta{position:absolute;left:60px;right:60px;bottom:64px;display:flex;justify-content:space-between;align-items:flex-end;color:#E9DFF0;font-size:11px;line-height:1.6}
+.cover .meta b{display:block;font-weight:600;color:#fff;letter-spacing:.14em;font-size:10px;margin-bottom:2px}
+.cover .meta .r{text-align:right}
+
+/* ---------- contents ---------- */
+.toc h2{position:absolute;left:48px;top:96px;font-family:Corm;font-weight:700;font-size:52px;color:var(--plum)}
+.toc .intro{position:absolute;left:48px;right:300px;top:168px;font-family:Corm;font-style:italic;font-size:18px;line-height:1.4;color:var(--muted)}
+.toc .cols{position:absolute;left:48px;right:48px;top:250px;columns:2;column-gap:44px}
+.toc .grp{break-inside:avoid;margin-bottom:22px}
+.toc .grp h3{font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--pink);padding-bottom:6px;border-bottom:1.5px solid var(--plum);margin-bottom:4px}
+.toc .grp p{font-size:10px;color:var(--muted);margin:4px 0 6px;line-height:1.45}
+.toc .row{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px dotted #D9CFC1;font-size:12.5px}
+.toc .row span:first-child{font-family:Corm;font-weight:700;font-size:17px;color:var(--plum)}
+.toc .row i{flex:1}
+.toc .row small{font-size:9.5px;color:var(--muted)}
+.toc .row b{font-family:Cinzel;font-weight:600;font-size:12px;color:var(--pink);min-width:20px;text-align:right}
+
+/* ---------- back ---------- */
+.back{background:var(--plum);color:#EDE4F2}
+.back .frame{position:absolute;inset:26px;border:1px solid rgba(255,255,255,.55)}
+.back .logo{position:absolute;left:0;right:0;top:250px;text-align:center}
+.back .logo img{height:76px}
+.back .thanks{position:absolute;left:0;right:0;top:380px;text-align:center;font-family:Corm;font-style:italic;font-size:28px;color:#F7B9D9}
+.back .grid{position:absolute;left:100px;right:100px;top:500px;display:grid;grid-template-columns:1fr 1fr;gap:40px 60px}
+.back h6{font-size:10px;font-weight:600;letter-spacing:.2em;color:#F7B9D9;margin-bottom:8px}
+.back p{font-size:13px;line-height:1.65}
+.back .bottom{position:absolute;left:90px;right:90px;bottom:64px;line-height:1.6;text-align:center;font-size:10px;letter-spacing:.14em;color:#BFAFCB}
+</style>
+</head>
+<body>
+<div id="book"></div>
+<script>
+/* ---------------------------------------------------------------- data */
+const CONTACT = {
+  phones: ['+91 98105 27231', '+91 98105 59026'],
+  email: 'oshodecor@gmail.com',
+  showroom: ['Osho International', '1/29, 2nd Floor, WHS Timber Market,', 'Opp. Richi Rich Banquet, Near Mayapuri', 'Metro Station, Delhi 110015'],
+  warehouse: ['Plot No. 11, Sector 25 Part 2,', 'Industrial Area, Sector 25,', 'Panipat, Haryana 132104'],
+};
+
+// Only details printed on the supplier cards (or given with the photos) are listed.
+const GROUPS = [
+ { name: 'Curtain Fabrics', blurb: 'Textured, linen-look and printed fabrics for main curtains and soft furnishing.', items: [
+   { name: 'Matty', type: 'Plain curtain fabric', cards: ['matty-1', 'matty-2'], specs: { Shades: '60', 'Shade Nos.': 'MATTY-1401 – 1464' } },
+   { name: 'Virinche', type: 'Textured curtain fabric', cards: ['virinche-1', 'virinche-2'], specs: { Shades: '27', 'Shade Nos.': 'SR. 701 – 727' } },
+   { name: 'Glory Cotton', type: 'Cotton-look curtain fabric', cards: ['glory-cotton'], specs: { Shades: '35' } },
+   { name: 'Tussah', type: 'Textured curtain fabric', cards: ['tussah-1', 'tussah-2'], specs: { Composition: '100% Polyester', Width: '48"', Shades: '19', 'Shade Nos.': 'SR. 901 – 919' } },
+   { name: 'Belford', type: 'Linen-look curtain fabric', cards: ['belford-1', 'belford-2', 'belford-3'], specs: { Composition: '100% Polyester', Shades: '35', 'Shade Nos.': 'SR. 01 – 35' } },
+   { name: 'Victoria', type: 'Printed curtain fabric', cards: ['victoria-1', 'victoria-2'], specs: { Composition: '50% Polyester, 50% Cotton', Width: '54"', Weight: '340 GSM', Designs: '21' } },
+   { name: 'Berkshire Linen', type: 'Linen blend curtain fabric', cards: ['berkshire-linen'], specs: { Composition: '55% Linen, 45% Rayon', Width: '54"', Weight: '430 GSM', Shades: '12' } },
+   { name: 'Edwin', type: 'Textured curtain fabric', cards: ['edwin'], specs: { Composition: '87% Polyester, 13% Cotton', Width: '54"', Weight: '260 GSM', Shades: '14' } },
+ ]},
+ { name: 'Blackout & Dimout', blurb: 'Room-darkening fabrics for bedrooms, media rooms and hospitality spaces.', items: [
+   { name: 'Neo Crest', type: '100% blackout fabric', cards: ['neo-crest'], specs: { Blackout: '100%', 'Shade Nos.': '101 – 110' } },
+   { name: 'Blackout 90+', type: '90%+ blackout fabric', cards: ['blackout-90'], specs: { Blackout: '90%+', Shades: '10', 'Shade Nos.': '01 – 27' } },
+   { name: 'Blackout Lining', type: '85% blackout lining fabric', cards: ['lining-85'], specs: { Blackout: '85%', Use: 'Curtain lining', Shades: '30', 'Shade Nos.': '01 – 32' } },
+   { name: 'Glorious Dimout', type: 'Dimout fabric', cards: ['glorious-dimout'], specs: { Shades: '56', 'Shade Nos.': '601 – 658' } },
+   { name: 'Paris Dimout', type: 'Textured blackout fabric', cards: ['paris-dimout'], specs: { Shades: '18', 'Shade Nos.': '1101 – 1118' } },
+   { name: 'Lord Dimout', type: 'Textured blackout fabric', cards: ['lord-dimout'], specs: { Shades: '23', 'Shade Nos.': '424 – 2134' } },
+   { name: 'Icon Dimout', type: 'Textured blackout fabric', cards: ['icon-dimout'], specs: { Shades: '23', 'Shade Nos.': '1901 – 1925' } },
+   { name: 'Vegas Dimout', type: 'Textured dimout fabric', cards: ['vegas-dimout-1', 'vegas-dimout-2'], specs: { Composition: '100% Polyester', Width: '54"', Weight: '260 GSM', Shades: '22', 'Shade Nos.': '3201 – 3222' } },
+   { name: 'Dimout Dreams', type: 'Embossed dimout fabric', cards: ['dimout-dreams'], specs: { Finish: 'Embossed', Shades: '18', 'Shade Nos.': '01 – 30' } },
+ ]},
+ { name: 'Sheers & Voiles', blurb: 'Light, airy sheers that soften daylight while keeping privacy.', items: [
+   { name: 'Voil', type: 'Voile sheer', cards: ['voil'], specs: { Shades: '35', 'Shade Nos.': 'VOIL-1601 – 1637' } },
+   { name: 'Taspa Sheer', type: 'Linen sheer', cards: ['taspa-sheer'], specs: { Shades: '17', 'Shade Nos.': '2501 – 2520' } },
+   { name: 'Thailand Sheer', type: 'Linen sheer', cards: ['thailand-sheer'], specs: { 'Shade Nos.': '2553 – 2570' } },
+   { name: 'Milan Sheer', type: 'Linen sheer', cards: ['milan-sheer'], specs: { 'Shade Nos.': '2651 – 2669' } },
+   { name: 'Ebiza Sheer', type: 'Linen sheer', cards: ['ebiza-sheer'], specs: { Shades: '17', 'Shade Nos.': '2601 – 2620' } },
+   { name: 'Brazil Sheer', type: 'Linen sheer', cards: ['brazil-sheer'], specs: { 'Shade Nos.': '2701 – 2720' } },
+   { name: 'Sienna', type: 'Designer sheer', cards: ['sienna'], specs: { Composition: '65% Viscose, 35% Polyester', Width: '137 cm', Weight: '65 GSM', Care: 'Dry clean only', Designs: '10' } },
+ ]},
+ { name: 'Velvet & Satin', blurb: 'Rich velvet for statement drapery and smooth satin for linings.', items: [
+   { name: 'Polo', type: 'Velvet', cards: ['polo-velvet'], specs: { Weight: '220 GSM', Shades: '21', 'Shade Nos.': 'POLO-2 – 72' } },
+   { name: 'Ritz Satin', type: 'Satin lining', cards: ['ritz-satin-1', 'ritz-satin-2'], specs: { Use: 'Curtain lining', Shades: '33', 'Shade Nos.': '151 – 189, White' } },
+ ]},
+ { name: 'More Shade Ranges', blurb: 'Additional ranges available on request.', items: [
+   { name: 'Series 800', type: 'Curtain fabric', cards: ['series-800'], specs: { Shades: '14', 'Shade Nos.': '801 – 830' } },
+   { name: 'Series 8050', type: 'Textured curtain fabric', cards: ['series-8050'], specs: { Shades: '8', 'Shade Nos.': '8051 – 8058' } },
+ ]},
+];
+
+/* ---------------------------------------------------------------- build */
+const card = n => `assets/cards/${n}.jpg`;
+const book = document.getElementById('book');
+const FIRST = 3;                 // cover = 1, contents = 2
+let pageNo = FIRST, no = 0;
+GROUPS.forEach(g => g.items.forEach(it => { it.no = ++no; it.page = pageNo++; it.group = g.name; }));
+const all = GROUPS.flatMap(g => g.items);
+
+const foot = p => `<div class="foot"><span><b>OSHO DECOR</b> &nbsp;·&nbsp; Always Vibrant.</span>
+  <span>${CONTACT.phones.join(' &nbsp;|&nbsp; ')} &nbsp;|&nbsp; ${CONTACT.email}</span><span class="pg">${String(p).padStart(2, '0')}</span></div>`;
+
+// cover
+const mosaic = ['matty-1', 'voil', 'polo-velvet', 'glorious-dimout', 'ritz-satin-2', 'berkshire-linen', 'dimout-dreams', 'edwin',
+  'paris-dimout', 'taspa-sheer', 'victoria-1', 'lord-dimout', 'sienna', 'virinche-2', 'icon-dimout', 'tussah-1'];
+book.insertAdjacentHTML('beforeend', `<section class="page cover">
+  <div class="mosaic">${mosaic.map(m => `<div style="background-image:url(${card(m)})"></div>`).join('')}</div>
+  <div class="veil"></div><div class="frame"></div>
+  <div class="logo"><img src="assets/osho-decor-logo-white.png" alt="Osho Decor"></div>
+  <div class="big"><div class="k">FABRIC E-CATALOGUE</div><h1>The <em>Collection</em></h1><div class="rule"></div>
+    <div class="cats">Curtains &nbsp;·&nbsp; Sheers &nbsp;·&nbsp; Blackout &amp; Dimout &nbsp;·&nbsp; Velvet &amp; Satin</div></div>
+  <div class="meta"><div><b>SHOWROOM</b>${CONTACT.showroom.slice(1).join('<br>')}</div>
+    <div class="r"><b>ENQUIRIES</b>${CONTACT.phones.join('<br>')}<br>${CONTACT.email}</div></div>
+</section>`);
+
+// contents
+book.insertAdjacentHTML('beforeend', `<section class="page toc">
+  <div class="head"><img src="assets/osho-decor-logo.png" alt="Osho Decor"><span class="sec">Contents</span></div>
+  <h2>Contents</h2>
+  <p class="intro">${all.length} collections of curtain fabrics, sheers, blackout and dimout fabrics, velvet and satin &mdash; each with its full shade card.</p>
+  <div class="cols">${GROUPS.map(g => `<div class="grp"><h3>${g.name}</h3><p>${g.blurb}</p>
+    ${g.items.map(it => `<div class="row"><span>${it.name}</span><small>${it.specs.Shades ? it.specs.Shades + ' shades' : it.specs.Designs ? it.specs.Designs + ' designs' : ''}</small><i></i><b>${String(it.page).padStart(2, '0')}</b></div>`).join('')}</div>`).join('')}</div>
+  ${foot(2)}
+</section>`);
+
+// collection pages
+for (const it of all) {
+  const specs = Object.entries(it.specs).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  book.insertAdjacentHTML('beforeend', `<section class="page coll" data-cards="${it.cards.join(',')}">
+    <div class="head"><img src="assets/osho-decor-logo.png" alt="Osho Decor"><span class="sec">${it.group}</span></div>
+    <div class="top"><div class="title"><div class="no">${String(it.no).padStart(2, '0')}</div><div><h2>${it.name}</h2><div class="type">${it.type}</div></div></div>
+    <dl class="specs">${specs}</dl>
+    <div class="note">${GROUPS.find(g => g.name === it.group).blurb}</div></div>
+    <div class="gallery">${it.cards.map(c => `<img src="${card(c)}" alt="${it.name} shade card">`).join('')}</div>
+    ${foot(it.page)}
+  </section>`);
+}
+
+// back cover
+book.insertAdjacentHTML('beforeend', `<section class="page back"><div class="frame"></div>
+  <div class="logo"><img src="assets/osho-decor-logo-white.png" alt="Osho Decor"></div>
+  <div class="thanks">Thank you for choosing Osho Decor</div>
+  <div class="grid">
+    <div><h6>SHOWROOM</h6><p>${CONTACT.showroom.join('<br>')}</p></div>
+    <div><h6>WAREHOUSE</h6><p>${CONTACT.warehouse.join('<br>')}</p></div>
+    <div><h6>CALL / WHATSAPP</h6><p>${CONTACT.phones.join('<br>')}</p></div>
+    <div><h6>EMAIL</h6><p>${CONTACT.email}</p></div>
+  </div>
+  <div class="bottom">Shade colours may vary slightly from the actual fabric due to photography and screen settings. Please confirm with a physical swatch.</div>
+</section>`);
+
+/* ---------------------------------------------------------------- gallery layout
+   Justified rows: try every way of splitting the cards into 1-3 rows (keeping order),
+   scale to fit the gallery box, keep the split that shows the cards largest, centre it. */
+function layout(gal) {
+  const imgs = [...gal.querySelectorAll('img')];
+  const W = gal.clientWidth, H = gal.clientHeight, G = 16;
+  const ar = imgs.map(i => i.naturalWidth / i.naturalHeight);
+  const splits = [];
+  const rec = (start, rows) => {
+    if (start === ar.length) { splits.push(rows); return; }
+    if (rows.length === 3) return;
+    for (let e = start + 1; e <= ar.length; e++) rec(e, [...rows, [start, e]]);
+  };
+  rec(0, []);
+  let best = null;
+  for (const rows of splits) {
+    const rh = rows.map(([a, b]) => (W - G * (b - a - 1)) / ar.slice(a, b).reduce((s, x) => s + x, 0));
+    const tot = rh.reduce((s, x) => s + x, 0) + G * (rows.length - 1);
+    const k = Math.min(1, H / tot);
+    const area = rows.reduce((s, [a, b], r) => s + ar.slice(a, b).reduce((t, x) => t + x * (rh[r] * k) ** 2, 0), 0);
+    if (!best || area > best.area) best = { rows, rh, k, tot, area };
+  }
+  const { rows, rh, k, tot } = best;
+  let y = (H - tot * k) / 2;
+  rows.forEach(([a, b], r) => {
+    const h = rh[r] * k, rowW = ar.slice(a, b).reduce((s, x) => s + x * h, 0) + G * (b - a - 1);
+    let x = (W - rowW) / 2;
+    for (let i = a; i < b; i++) {
+      Object.assign(imgs[i].style, { left: x + 'px', top: y + 'px', width: ar[i] * h + 'px', height: h + 'px' });
+      x += ar[i] * h + G;
+    }
+    y += h + G;
+  });
+}
+const imgsLoaded = Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+Promise.all([document.fonts.ready, imgsLoaded]).then(() => {
+  document.querySelectorAll('.coll').forEach(p => { const t = p.querySelector('.top'); p.querySelector('.gallery').style.top = (t.offsetTop + t.offsetHeight + 26) + 'px'; });
+  document.querySelectorAll('.gallery').forEach(layout);
+  document.body.setAttribute('data-pages', document.querySelectorAll('.page').length);
+  document.body.setAttribute('data-ready', '1');
+});
+</script>
+</body>
+</html>
