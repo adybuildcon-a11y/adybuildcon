@@ -14,13 +14,14 @@ def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=exe[-1] if exe else None)
         page = browser.new_page(viewport={"width": 1200, "height": 1500})
-        page.goto("file://" + os.path.join(HERE, "lakshmi-dhanteras.html"))
-        page.wait_for_selector("body[data-ready='1']")
-        page.wait_for_timeout(300)
-        for i, name in enumerate(NAMES, 7):
-            path = os.path.join(HERE, "output", f"{i}-{name}.png")
-            page.locator(f"#{name}").screenshot(path=path)
-            print("wrote", path)
+        for html, suffix in [("lakshmi-dhanteras.html", ""), ("lakshmi-dhanteras-9810559026.html", "-9810559026")]:
+            page.goto("file://" + os.path.join(HERE, html))
+            page.wait_for_selector("body[data-ready='1']")
+            page.wait_for_timeout(300)
+            for i, name in enumerate(NAMES, 7):
+                path = os.path.join(HERE, "output", f"{i}-{name}{suffix}.png")
+                page.locator(f"#{name}{suffix}").screenshot(path=path)
+                print("wrote", path)
         browser.close()
 
 
