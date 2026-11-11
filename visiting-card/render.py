@@ -24,7 +24,7 @@ def main(plain=False):
         for side in ("front", "back"):
             page.locator(f"#{side}").screenshot(path=os.path.join(OUT, f"card-{side}{tag}.png"))
         if not plain:
-            page.pdf(path=os.path.join(OUT, "The_Furnish_Atelier_Kamlesh_Agrawal_Osho.pdf"),
+            page.pdf(path=os.path.join(OUT, "The_Furnish_Atellier_Kamlesh_Agrawal_Osho.pdf"),
                      width="8.5in", height="4.7708in", scale=0.64, print_background=True,
                      margin={"top": "0", "right": "0", "bottom": "0", "left": "0"})
         browser.close()
