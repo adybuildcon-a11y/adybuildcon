@@ -267,7 +267,7 @@ def build(path, books, bds, spine_in, stack_mm):
         for q in b["issues"]:
             qs.append((b["name"], q))
     qs.append(("3 Pass Blackout", EXTRA["issue"]))
-    qs.append(("All", f"19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder (as in the Response reference). Confirm card leaves rather than rigid greyboard (10 cm, too thick)."))
+    qs.append(("All", f"19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder (as in the reference binder). Confirm card leaves rather than rigid greyboard (10 cm, too thick)."))
     qs.append(("All", "Photos: one lifestyle photo per book is needed for the covers. Placeholder curtain art is printed until supplied."))
     why = {"Shade": "Liner prints shade numbers", "Fold": "Changes board size and price", "Main": "Hero swatch & cover"}
     for i, (bk, q) in enumerate(qs, 1):

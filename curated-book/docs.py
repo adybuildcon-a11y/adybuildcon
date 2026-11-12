@@ -87,7 +87,7 @@ def design_guide(books, bds, spine_in, stack_mm):
     # 2 overview
     pend = [bd for bd in bds if not bd["ready"]]
     add(f'''<div class="k">01 · At a glance</div><h1>One book, twenty mood-boards</h1>
-      <p class="lead">A 4-ring master binder holds one fold-out mood-board leaf per collection, as in the Response reference. Each board opens on a hero swatch of the main fabric and a measured grid of every curated shade. The front of each board carries a photo and the collection name - and no company branding anywhere.</p>
+      <p class="lead">A 4-ring master binder holds one fold-out mood-board leaf per collection, as in the reference binder. Each board opens on a hero swatch of the main fabric and a measured grid of every curated shade. The front of each board carries a photo and the collection name - and no company branding anywhere.</p>
       <div class="cols" style="margin:.3in 0">
         <div class="tile"><b>20</b><span>collections from the book list</span></div>
         <div class="tile"><b>19</b><span>boards (Eeco Dimout + Double Shade share one)</span></div>
@@ -424,7 +424,7 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
     # questions
     qs = [(b["name"], q) for b in books for q in b["issues"]]
     qs.append(("3 Pass Blackout", EXTRA["issue"]))
-    qs.append(("All", f"Binder: 19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder. Confirm card leaves (as in the Response reference) rather than rigid greyboard (10 cm, too thick for rings)."))
+    qs.append(("All", f"Binder: 19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder. Confirm card leaves (as in the reference binder) rather than rigid greyboard (10 cm, too thick for rings)."))
     qs.append(("All", "One lifestyle photo per collection is needed for the covers (placeholder curtain art prints until then)."))
     trs = "".join(f"<tr><td>{i}</td><td><b>{esc(bk)}</b></td><td>{esc(q)}</td></tr>" for i, (bk, q) in enumerate(qs, 1))
     add(f'<div class="k">Decisions needed</div><h1>Open questions</h1><table><tr><th>#</th><th>Book</th><th>Question</th></tr>{trs}</table>')
