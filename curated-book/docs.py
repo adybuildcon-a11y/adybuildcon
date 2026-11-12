@@ -256,7 +256,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <tr><td>1</td><td>Book number</td><td>Cinzel 9 pt, tracked 0.3 em - position in the master book</td></tr>
       <tr><td>2</td><td>Collection name</td><td>Cormorant SemiBold caps, auto-fitted to the column, max 46 pt; long names break by word</td></tr>
       <tr><td>3</td><td>Category line</td><td>Cinzel 10.5 pt between double rules (as on the Neo Luna sample)</td></tr>
-      <tr><td>4</td><td>Arch photo window</td><td>{bw * .525 - .62:.2f} × 9.65 in, cream frame 0.13 in. Lifestyle photo; vector curtain art until supplied</td></tr>
+      <tr><td>4</td><td>Arch photo window</td><td>{bw * .525 - .62:.2f} × 9.65 in, cream frame 0.13 in. Lifestyle photo; vector curtain illustration (final), or a lifestyle photo if supplied</td></tr>
       <tr><td>5</td><td>Facts</td><td>Shade count, width, GSM - only values from the notes / price list</td></tr>
       <tr><td>6</td><td>Light-control scale</td><td>6 steps, this book's level filled</td></tr>
       <tr><td>7</td><td>Index tab</td><td>0.2 in strip in the level colour on the hinge edge, book No. in white</td></tr></table>
@@ -286,7 +286,7 @@ def design_guide(books, bds, spine_in, stack_mm):
 
     # 12 photo direction
     aw = bw * .525 - .62
-    add(f'''<div class="k">12 · Photography</div><h1>One photo per collection</h1>
+    add(f'''<div class="k">12 · Photography</div><h1>Cover art: illustration now, photo optional</h1>
       <div class="cols"><div style="flex:1"><table><tr><th>Spec</th><th>Value</th></tr>
       <tr><td>Window</td><td>Arch {aw:.2f} × 9.65 in (board cover) · 5.1 × 6.95 in (master front)</td></tr>
       <tr><td>Minimum size</td><td>{int(aw * 300)} × {int(9.65 * 300)} px (300 dpi) · master 1530 × 2085 px</td></tr>
@@ -296,7 +296,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <h2>Do</h2><ul><li>Real fabric of that collection, main shade</li><li>Soft side light, neutral walls, wooden or stone floor</li><li>Same camera height and white balance for all 20</li></ul>
       <h2>Don't</h2><ul><li>No logos, text, watermarks or supplier branding in the photo</li><li>No stock image you have no licence for</li><li>No heavy filters - colour must match the swatch</li></ul></div>
       <div style="flex:1"><table><tr><th>No.</th><th>Book</th><th>File name</th><th>Photo</th></tr>
-      {"".join(f'<tr><td>{b["seq"]:02d}</td><td>{esc(b["name"])}</td><td>{b["id"]}.jpg</td><td>Needed</td></tr>' for b in books)}</table></div></div>''')
+      {"".join(f'<tr><td>{b["seq"]:02d}</td><td>{esc(b["name"])}</td><td>{b["id"]}.jpg</td><td>Optional</td></tr>' for b in books)}</table></div></div>''')
 
     # 13 print spec
     add(f'''<div class="k">13 · Print & finishing</div><h1>Production specification</h1>
@@ -313,7 +313,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <li>Board sequence 01-20 matches the binder back index</li>
       <li>Every swatch sits inside its frame; shade No. matches the fabric</li>
       <li>Slot IDs match the Shade Register; blank lines filled or labelled</li>
-      <li>Cover photo present (slug no longer says placeholder)</li>
+      <li>Cover art approved - illustrated curtain or supplied photo</li>
       <li>Boards close flat; panel C folds inside without buckling</li>
       <li>Index tabs visible on the hinge edge, colours correct per level</li>
       <li>Binder closes with all 19 leaves; rings turn freely</li></ul></div></div>''')
@@ -425,7 +425,7 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
     qs = [(b["name"], q) for b in books for q in b["issues"]]
     qs.append(("3 Pass Blackout", EXTRA["issue"]))
     qs.append(("All", f"Binder: 19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder. Confirm card leaves (as in the reference binder) rather than rigid greyboard (10 cm, too thick for rings)."))
-    qs.append(("All", "One lifestyle photo per collection is needed for the covers (placeholder curtain art prints until then)."))
+    qs.append(("All", "Covers use illustrated curtain art (final). Optional: supply a lifestyle photo per collection to replace it."))
     trs = "".join(f"<tr><td>{i}</td><td><b>{esc(bk)}</b></td><td>{esc(q)}</td></tr>" for i, (bk, q) in enumerate(qs, 1))
     add(f'<div class="k">Decisions needed</div><h1>Open questions</h1><table><tr><th>#</th><th>Book</th><th>Question</th></tr>{trs}</table>')
 
@@ -463,7 +463,7 @@ def book_proof(books, bds, spine_in):
       <div style="flex:1"><div class="k">Book proof</div><h1 style="font-size:40pt">Curated Fabrics<br>Collection</h1>
       <p class="lead">The finished book as a customer sees it: the binder front, then every collection leaf - closed (photo + name), opened (the mood-board) and its back.</p>
       <p style="margin-top:.25in">4-D-ring binder {W} × {H} in · {len(bds)} fold-out leaves 9 × 12 in · ordered sheer → lining.<br>
-      Curtain artwork in the arches is a placeholder until the lifestyle photos are supplied.</p></div></div>''')
+      Cover arches carry illustrated curtain art; a lifestyle photo can replace any of them without changing the layout.</p></div></div>''')
     add(f'''<div class="k">Binder - back · spine · front</div><h1 style="font-size:22pt">Closed binder, opened flat</h1>
       <div style="margin-top:.2in">{svgbox(wrap, total, H, 15.3)}</div>''')
 
@@ -490,3 +490,56 @@ def book_proof(books, bds, spine_in):
             <div><div>{in_svg}</div><p style="margin:4px 0 .18in"><b>Opened</b> - inside, the mood-board</p>
                  <div>{out_svg}</div><p style="margin-top:4px"><b>Back</b> - outside of the leaf (cover + spec plate)</p></div></div>''')
     return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:{PW}in {PH}in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'
+
+
+# ==================================================================== FILL-IN FORM
+def missing_form(books, bds):
+    """Printable hand-fill form: every missing value, every blank swatch slot."""
+    pages, n = [], 0
+
+    def add(inner):
+        nonlocal n
+        n += 1
+        pages.append(page("Pt", inner, n, "MISSING DATA FORM - FILL BY HAND, PHOTOGRAPH, SEND BACK"))
+
+    line = '<span style="display:inline-block;border-bottom:1px solid #8C8273;min-width:{w}in;height:.2in"></span>'
+    blocks = []
+    for bd in bds:
+        names = " & ".join(b["name"] for b in bd["books"])
+        qs = [q for b in bd["books"] for q in b["issues"]]
+        blanks = []
+        if bd["ready"]:
+            for pn in bd["panels"]:
+                for k, s in enumerate(pn["shades"], 1):
+                    if not s:
+                        blanks.append(f'{pn["letter"]}{k:02d}')
+        conf = ""
+        if bd.get("draft") or not bd["ready"]:
+            conf = (f'<p><b>Confirm or correct:</b> Fold {line.format(w=.6)} &nbsp; Total shades {line.format(w=.6)} &nbsp; '
+                    f'Main shade(s) {line.format(w=1.8)}</p>')
+            if not bd["ready"]:
+                conf += f'<p>Shade numbers (in book order):</p><p style="line-height:2.1">' + " ".join(line.format(w=.62) for _ in range(30)) + "</p>"
+        if not (qs or blanks or conf):
+            continue
+        qhtml = "".join(f'<li>{esc(q)}<br>Answer: {line.format(w=5.6)}</li>' for q in qs)
+        bhtml = ""
+        if blanks:
+            bhtml = ('<p><b>Shade No. for each blank slot</b> (slot ID is printed next to the swatch frame):</p><div style="display:flex;flex-wrap:wrap;gap:.06in .18in">' +
+                     "".join(f'<span style="width:1.55in;font-size:8pt">{sid}&nbsp; No. {line.format(w=.85)}</span>' for sid in blanks) + "</div>")
+        st = "DRAFT" if bd.get("draft") else bd["books"][0]["status"]
+        blocks.append(f'''<div style="border-top:2px solid {ladder_color(bd["books"][0]["cat"])};padding-top:.06in;margin-bottom:.18in;break-inside:avoid">
+          <div style="display:flex;justify-content:space-between"><h2 style="margin:0">Leaf {bd["no"]:02d} · {esc(names)}</h2><span class="st {st.split()[0]}">{st}</span></div>
+          {conf}<ul>{qhtml}</ul>{bhtml}</div>''')
+    add(f'''<div class="k">Missing data form</div><h1>What we still need from you</h1>
+      <p class="lead">Fill this in by hand - like the notebook - photograph the pages and send them back. Every answer drops straight into the Excel and the print files are regenerated.</p>
+      <div class="note">Also decide: add <b>{EXTRA["name"]}</b> (803 main, 14 shades) as a 21st book? &nbsp; YES / NO</div>''')
+    # flow blocks into pages by a rough height budget
+    cur, h = [], 0
+    for b in blocks:
+        est = 1.0 + b.count("<li>") * .45 + b.count("No. ") * .045 + (2.4 if "in book order" in b else 0) + (.4 if "Confirm or correct" in b else 0)
+        if cur and h + est > 9.6:
+            add("".join(cur)); cur, h = [], 0
+        cur.append(b); h += est
+    if cur:
+        add("".join(cur))
+    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:8.27in 11.69in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'

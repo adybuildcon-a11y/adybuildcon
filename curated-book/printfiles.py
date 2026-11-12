@@ -96,7 +96,7 @@ def board_files(r, bd, outdir):
     names = " & ".join(b["name"] for b in bd["books"])
     ticks = [0, ow] + [panel_x(fold, i) - P["hinge"] for i in range(1, fold)] + [panel_x(fold, i) for i in range(1, fold)]
     art, xs, ws, real = outside_art(bd)
-    photo_note = "PHOTO: supplied" if real else "PHOTO: placeholder art - replace with lifestyle photo before print"
+    photo_note = "COVER: lifestyle photo" if real else "COVER: illustrated curtain art (final) - a photo saved as assets/photos/<book-id>.jpg replaces it"
     pages, boxes = [], []
     svg, pw, ph, bx = sheet(art, ow, oh, 0, LINEN, ticks,
                             f"BOARD {bd['no']:02d}  {names.upper()}  |  SIDE 1 OUTSIDE  |  leaf {ow:.3f} x {oh} in, {fold}-fold, 350 GSM card, "

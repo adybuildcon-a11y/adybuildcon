@@ -242,8 +242,8 @@ def build(path, books, bds, spine_in, stack_mm):
     header(ws, 3, ["#", "Step", "Detail", "Check / acceptance", "Owner", "Status"], [4, 26, 70, 50, 12, 12])
     steps = [
         ("Close open questions", "Answer every row in Open_Questions; update Book_List and Shade_Register.", "No red rows left in Book_List."),
-        ("Shoot / source photos", "One portrait lifestyle photo per book (see Design Guide, Photo spec). Save as assets/photos/<book-id>.jpg.", "Min 1200 x 2850 px; curtain is the hero; no logos or text."),
-        ("Regenerate files", "Run python3 make.py - covers pick up photos, liners pick up shade numbers.", "Slug line on every cover no longer says 'placeholder'."),
+        ("Approve cover art", "Covers carry illustrated curtain art (final). Optional: one lifestyle photo per book saved as assets/photos/<book-id>.jpg replaces it.", "If photos are used: min 1231 x 2895 px, no logos or text."),
+        ("Regenerate files", "Run python3 make.py - covers pick up photos, inside sides pick up shade numbers.", "No DRAFT in any slug line; no blank shade lines left."),
         ("Pre-press check", "Open each PDF: TrimBox/BleedBox present, CMYK, fonts embedded, nothing in the 0.5 in margin.", "Printer pre-flight report clean."),
         ("Hard proof", "Print one leaf both sides at 100% on 350 GSM card, score, fold, punch.", "Cover sits on top; panel C closes flat; sides back up exactly."),
         ("Cut fabric", "Cut per Fabric_Requirement; pinking shears for swatches; 1 mm larger than frames.", "Count per Shade_Register = swatches cut."),
@@ -268,7 +268,7 @@ def build(path, books, bds, spine_in, stack_mm):
             qs.append((b["name"], q))
     qs.append(("3 Pass Blackout", EXTRA["issue"]))
     qs.append(("All", f"19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder (as in the reference binder). Confirm card leaves rather than rigid greyboard (10 cm, too thick)."))
-    qs.append(("All", "Photos: one lifestyle photo per book is needed for the covers. Placeholder curtain art is printed until supplied."))
+    qs.append(("All", "Covers use illustrated curtain art (final). Optional: supply a lifestyle photo per book to replace it."))
     why = {"Shade": "Liner prints shade numbers", "Fold": "Changes board size and price", "Main": "Hero swatch & cover"}
     for i, (bk, q) in enumerate(qs, 1):
         reason = next((v for k, v in why.items() if k.lower() in q.lower()), "Accuracy of the printed book")

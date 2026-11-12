@@ -153,7 +153,7 @@ BOOKS = [
       status="Confirmed", notes="NEO CREST - 2FOLD - 8 SHADES - MAIN 103",
       xref="PL: Neo Crest (101-111) 54in, 200 GSM, 8 colours - matches. EC: 101,102,103,105,106,108,109,110.",
       issues=["Confirm the other 7 = 101, 102, 105, 106, 108, 109, 110 (e-catalogue)."]),
- dict(id="neo-luna", mode="mixed", mode_src="Owner: different designs - same-size swatches", name="Neo Luna", list_no=7, cat="blackout", line="100% Blackout", fold=3, fold_src="HW-p4",
+ dict(id="neo-luna", draft=dict(shades=6, mains=rng(101, 106), others=[], src="notes: 3-fold, 6 main designs 101-106; owner rule - different designs, same size"), mode="mixed", mode_src="Owner: different designs - same-size swatches", name="Neo Luna", list_no=7, cat="blackout", line="100% Blackout", fold=3, fold_src="HW-p4",
       shades=None, mains=rng(101, 106), others=[], gsm=None, width=None, comp=None, m_main=3, m_other=2,
       features=["Kids friendly", "Breathable", "Eco friendly", "Soft on skin", "Colour fast to light"],
       status="Pending", notes="NEO LUNA - 3 FOLD - MAIN 101-106 - 100 PCS 2 MTR EACH FABRIC - 6 PCS 3 MTR EACH FOR MAIN [101-106]",
