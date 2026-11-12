@@ -45,12 +45,26 @@ def swatch_groups(b):
     return [(None, others[i * size:(i + 1) * size]) for i in range(n)]
 
 
+def effective(b):
+    """Book values used for the inside layout: confirmed notes, or a clearly flagged draft."""
+    if b["status"] != "Confirmed" and b.get("draft"):
+        e = dict(b)
+        e.update(shades=b["draft"]["shades"], mains=b["draft"]["mains"], others=b["draft"]["others"], is_draft=True)
+        return e
+    return b
+
+
 def derive(bd):
-    books = bd["books"]
+    books = [effective(b) for b in bd["books"]]
+    bd["eff"], bd["draft"] = books[0], any(b.get("is_draft") for b in books)
     if len(books) > 1:                                   # shared board: one panel per book
-        bd["fold"], bd["fold_src"] = len(books), books[0]["fold_src"]
-        bd["panels"] = [dict(kind="book", book=b, ready=False) for b in books]
-        bd["ready"] = False
+        bd["fold"], bd["fold_src"] = len(books), bd["books"][0]["fold_src"]
+        if all(b["shades"] for b in books):
+            bd["panels"] = [dict(kind="swatch", title=b["name"], book=b, letter="ABC"[i],
+                                 shades=list(b["mains"]) + list(b["others"])) for i, b in enumerate(books)]
+            bd["ready"] = True
+        else:
+            bd["panels"], bd["ready"] = [], False
         return
     b = books[0]
     groups = swatch_groups(b)
@@ -65,7 +79,7 @@ def derive(bd):
         bd["fold"], bd["fold_src"] = fold, b["fold_src"] if b["fold"] else "derived"
         size = math.ceil(len(allsw) / fold)
         bd["panels"] = [dict(kind="swatch", title=None, shades=allsw[i * size:(i + 1) * size]) for i in range(fold)]
-        bd["ready"] = b["status"] == "Confirmed"
+        bd["ready"] = b["status"] == "Confirmed" or b.get("is_draft", False)
         for pi, pn in enumerate(bd["panels"]):
             pn["letter"] = "ABC"[pi]
         return
@@ -81,7 +95,7 @@ def derive(bd):
     sw = [dict(kind="swatch", title=t, shades=g) for t, g in groups]
     hero = [dict(kind="hero", shades=list(b["mains"]))] if b["mains"] else []
     bd["panels"] = (hero + sw) if fold == 2 else (sw + hero)       # 2-fold [hero|swatch]; 3-fold [sw|sw|hero]
-    bd["ready"] = b["status"] in ("Confirmed",)
+    bd["ready"] = b["status"] == "Confirmed" or b.get("is_draft", False)
     # running swatch numbering for labels / Excel register
     letters = "ABC"
     for pi, pn in enumerate(bd["panels"]):

@@ -85,6 +85,10 @@ def to_cmyk(src, dst, boxes_list):
     os.replace(dst + ".tmp", dst)
 
 
+def draft_src(bd):
+    return "; ".join(b["draft"]["src"] for b in bd["books"] if b.get("draft") and b["status"] != "Confirmed")
+
+
 def board_files(r, bd, outdir):
     """Board PDF: page 1 outside wrap (with cover), page 2 inside liner (when layout is confirmed)."""
     fold = bd["fold"] or 2
@@ -105,7 +109,9 @@ def board_files(r, bd, outdir):
         lt = [t for t in ticks if 0 < t < ow]
         svg, pw, ph, bx = sheet(inside_art(bd), ow, oh, 0, PAPER, lt,
                                 f"BOARD {bd['no']:02d}  {names.upper()}  |  SIDE 2 INSIDE (back-up, turn on long edge)  |  leaf {ow:.3f} x {oh} in  |  "
-                                f"grey frames = swatch glue guides, cut swatches 1 mm larger  |  {VERSION}")
+                                f"grey frames = swatch glue guides, cut swatches 1 mm larger  |  "
+                                + (f"DRAFT LAYOUT - provisional count ({draft_src(bd)}) - confirm before print  |  " if bd.get("draft") else "")
+                                + VERSION)
         p2 = os.path.join(outdir, f".b{bd['no']}-in.pdf")
         r.pdf(html_page(svg, pw, ph), p2, pw, ph)
         tmp.append(p2); boxes.append(bx)

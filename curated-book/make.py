@@ -3,6 +3,7 @@
   output/02_Instructions_Curated_Fabrics_Book.pdf
   output/03_Design_Guide_Curated_Fabrics_Book.pdf
   output/04_Print_Ready/  (CMYK print files)
+  output/05_Book_Proof_Preview.pdf  (whole book for approval)
   output/Curated_Fabrics_Book_Pack.zip
 """
 
@@ -12,7 +13,7 @@ import shutil
 import zipfile
 
 import excel
-from docs import design_guide, instructions
+from docs import book_proof, design_guide, instructions
 from layout import boards, layout_board, ordered_books
 from printfiles import Renderer, board_files, master_files, spine_width
 
@@ -36,6 +37,7 @@ def main():
     with Renderer() as r:
         r.pdf(instructions(books, bds, spine_in, stack, hw), os.path.join(OUT, "02_Instructions_Curated_Fabrics_Book.pdf"), 8.27, 11.69)
         r.pdf(design_guide(books, bds, spine_in, stack), os.path.join(OUT, "03_Design_Guide_Curated_Fabrics_Book.pdf"), 11.69, 8.27)
+        r.pdf(book_proof(books, bds, spine_in), os.path.join(OUT, "05_Book_Proof_Preview.pdf"), 16.54, 11.69)
         master, front_tmp, _, _ = master_files(r, bds, books, PR)
         os.replace(front_tmp, os.path.join(OUT, "Final_Book_Front_Proof_11x13.pdf"))
         for bd in bds:

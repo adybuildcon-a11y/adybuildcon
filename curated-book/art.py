@@ -286,9 +286,9 @@ def outside_art(bd):
 # ---------------------------------------------------------------- inside liner
 def inside_art(bd):
     fold, books = bd["fold"], bd["books"]
-    b = books[0]
     out, run = [], 0
     for i, pn in enumerate(bd["panels"]):
+        b = pn.get("book") or bd["eff"]
         x0 = panel_x(fold, i)
         pw = panel_widths(fold)[i]
         bx0, by0, bx1, by1 = content_box(fold, i)
@@ -296,8 +296,10 @@ def inside_art(bd):
         out.append(T(bx0, hy, b["name"].upper(), "CG", 600, 15, INK, track=.03))
         if pn["kind"] == "hero":
             tag = "MAIN FABRIC" if len(pn["shades"]) == 1 else "MAIN FABRICS"
-        elif pn.get("title"):
+        elif pn.get("title") and not pn.get("book"):
             tag = pn["title"].upper()
+        elif pn.get("book"):
+            tag = f"{len(pn['shades'])} SHADES"
         else:
             tag = f"SHADES {run + 1:02d} – {run + len(pn['shades']):02d}"
         if pn["kind"] == "swatch":

@@ -2,10 +2,11 @@
 
 import os
 
-from art import (FONT_CSS, LINEN, INK, MUTED, BRASS, PAPER, CREAM, cover_panel, inside_art, master_front,
+from art import (outside_art, FONT_CSS, LINEN, INK, MUTED, BRASS, PAPER, CREAM, cover_panel, inside_art, master_front,
                  master_back, spine_art, T, esc)
 from data import LADDER, P, TRANSCRIPT, EXTRA
 from layout import panel_widths, panel_x, content_box, open_size, ladder_color
+from printfiles import draft_src
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CATNAME = {k: n for k, n, *_ in LADDER}
@@ -90,8 +91,9 @@ def design_guide(books, bds, spine_in, stack_mm):
       <div class="cols" style="margin:.3in 0">
         <div class="tile"><b>20</b><span>collections from the book list</span></div>
         <div class="tile"><b>19</b><span>boards (Eeco Dimout + Double Shade share one)</span></div>
-        <div class="tile"><b>{len(ready)}</b><span>inside layouts ready to print</span></div>
-        <div class="tile"><b>{len(pend)}</b><span>boards waiting on shade lists (covers ready)</span></div>
+        <div class="tile"><b>{len([b for b in ready if not b.get("draft")])}</b><span>inside layouts confirmed from the notes</span></div>
+        <div class="tile"><b>{len([b for b in ready if b.get("draft")])}</b><span>draft layouts (count from price list / catalogue)</span></div>
+        <div class="tile"><b>{len(pend)}</b><span>leaves waiting on shade lists (covers ready)</span></div>
         <div class="tile"><b>{stack_mm / 10:.1f}<small style="font-size:14pt"> cm</small></b><span>leaf stack (350 GSM card + fabric)</span></div></div>
       <h2>Design principles</h2>
       <div class="cols"><ul style="flex:1">
@@ -343,7 +345,7 @@ def fabric_rows(bds):
             area = (g["w"] + 2 * a) * (g["h"] + 2 * a)
             per = area * P["copies"] * (1 + P["wastage"]) / (P["fabric_width_in"] * 39.37)
             possible = int(noted * P["fabric_width_in"] * 39.37 / (area * (1 + P["wastage"]))) if noted else None
-            rows.append((bd["no"], b["name"], label, n, g["w"], g["h"], per, per * n, noted, possible))
+            rows.append((bd["no"], " & ".join(x["name"] for x in bd["books"]), label, n, g["w"], g["h"], per, per * n, noted, possible))
     return rows
 
 
@@ -365,7 +367,7 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
       <tr><td>Front covering</td><td>Photo + book name on every board; final book front "Trending - Curated Fabrics Collection"</td><td>Brief</td></tr>
       <tr><td>Branding</td><td>None - no logo, company name or contact anywhere</td><td>Brief</td></tr>
       <tr><td>Order</td><td>By light control (sheer → lining), then fabric weight</td><td>Design Guide p.3</td></tr>
-      <tr><td>Status</td><td>{len(ready)} boards fully ready · {len(bds) - len(ready)} covers ready, inside waits for shade lists</td><td>-</td></tr></table>
+      <tr><td>Status</td><td>{len([b for b in ready if not b.get("draft")])} leaves confirmed · {len([b for b in ready if b.get("draft")])} draft layouts to confirm · {len(bds) - len(ready)} covers only, inside waits for shade lists</td><td>-</td></tr></table>
       <h2>Files in this pack</h2><table><tr><th>File</th><th>Use</th></tr>
       <tr><td>01_Instructions_Curated_Fabrics_Book.xlsx</td><td>Working sheet - parameters, book list, board plan, shade register, fabric metres (live formulas), steps, questions</td></tr>
       <tr><td>02_Instructions_Curated_Fabrics_Book.pdf</td><td>This document, with the handwritten notes as an appendix</td></tr>
@@ -396,7 +398,8 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
             ow = open_size(fold)[0]
             pan = "".join(f'<tr><td>{pn["letter"]}</td><td>{"Hero - main " + ", ".join(s or "TBC" for s in pn["shades"]) if pn["kind"] == "hero" else (pn.get("title") or "Shades") + " - " + str(len(pn["shades"])) + " swatches"}</td>'
                           f'<td>{pn["grid"]["cols"]} × {pn["grid"]["rows"]}</td><td>{pn["grid"]["w"]:.2f} × {pn["grid"]["h"]:.2f} in</td></tr>' for pn in bd["panels"])
-            body = f'<p>Open size {ow:.3f} × {P["board_h"]} in · {fold}-fold ({bd["fold_src"]}) · cover = outside of panel B</p><table><tr><th>Panel</th><th>Content</th><th>Grid</th><th>Cut each swatch</th></tr>{pan}</table>'
+            dnote = f'<div class="note"><b>DRAFT layout</b> - provisional count from {esc(draft_src(bd))}. Confirm before print.</div>' if bd.get("draft") else ""
+            body = f'{dnote}<p>Open size {ow:.3f} × {P["board_h"]} in · {fold}-fold ({bd["fold_src"]}) · cover = outside of panel B</p><table><tr><th>Panel</th><th>Content</th><th>Grid</th><th>Cut each swatch</th></tr>{pan}</table>'
         else:
             body = f'<p>Fold: {fold or "not written"} · Cover printed now. Inside layout is generated as soon as the shade list is confirmed in the Excel.</p>'
         issues = "".join(f"<li>{esc(q)}</li>" for bk in bd["books"] for q in bk["issues"])
@@ -436,3 +439,54 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
             f'<div style="text-align:center;margin-top:.15in"><img src="file://{p}" style="width:6.9in;height:9.6in;object-fit:contain"></div>')
 
     return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:8.27in 11.69in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'
+
+
+# ==================================================================== BOOK PROOF
+def book_proof(books, bds, spine_in):
+    """A3 landscape preview of the finished book: binder, then every leaf closed, inside and outside."""
+    pages, n = [], 0
+    PW, PH = 16.54, 11.69
+
+    def add(inner):
+        nonlocal n
+        n += 1
+        pages.append(f'<section class="pg" style="width:{PW}in;height:{PH}in;padding:.5in .6in">{inner}'
+                     f'<div class="foot"><span>CURATED FABRICS COLLECTION  ·  BOOK PROOF - FOR APPROVAL, NOT FOR PRINT</span><span>{n:02d}</span></div></section>')
+
+    W, H, j = P["cover_w"], P["cover_h"], P["joint"]
+    front, _ = master_front(0, W, H, books)
+    total = W + j + spine_in + j + W
+    wrap = (f'<rect width="{total}" height="{H}" fill="{LINEN}"/>' + master_back(0, W, H, books) + spine_art(W + j, spine_in, H)
+            + master_front(W + j + spine_in + j, W, H, books)[0])
+    add(f'''<div style="display:flex;gap:.6in;align-items:center;height:100%">
+      <div>{svgbox(f'<rect width="{W}" height="{H}" fill="{LINEN}"/>' + front, W, H, 8.4)}</div>
+      <div style="flex:1"><div class="k">Book proof</div><h1 style="font-size:40pt">Curated Fabrics<br>Collection</h1>
+      <p class="lead">The finished book as a customer sees it: the binder front, then every collection leaf - closed (photo + name), opened (the mood-board) and its back.</p>
+      <p style="margin-top:.25in">4-D-ring binder {W} × {H} in · {len(bds)} fold-out leaves 9 × 12 in · ordered sheer → lining.<br>
+      Curtain artwork in the arches is a placeholder until the lifestyle photos are supplied.</p></div></div>''')
+    add(f'''<div class="k">Binder - back · spine · front</div><h1 style="font-size:22pt">Closed binder, opened flat</h1>
+      <div style="margin-top:.2in">{svgbox(wrap, total, H, 15.3)}</div>''')
+
+    for bd in bds:
+        names = " & ".join(b["name"] for b in bd["books"])
+        fold = bd["fold"] or 2
+        ow = open_size(fold)[0]
+        cov, _ = cover_panel(0, P["board_w"], bd["books"])
+        cov_svg = svgbox(f'<rect width="{P["board_w"]}" height="{P["board_h"]}" fill="{LINEN}"/>' + cov, P["board_w"], P["board_h"], 4.6)
+        out_art, *_r = outside_art(bd)
+        out_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{LINEN}"/>' + out_art, ow, P["board_h"], 10.2 * ow / open_size(3)[0])
+        if bd["ready"]:
+            in_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{PAPER}"/>' + inside_art(bd), ow, P["board_h"], 10.2 * ow / open_size(3)[0])
+        else:
+            in_svg = (f'<div style="width:{10.2 * ow / open_size(3)[0]:.2f}in;height:{10.2 * P["board_h"] / open_size(3)[0]:.2f}in;border:1px dashed #B4A894;'
+                      f'display:flex;align-items:center;justify-content:center;background:{PAPER}"><p class="lead" style="text-align:center">Inside layout waits for the shade list<br>'
+                      f'<span style="font-size:10pt">{esc("; ".join(q for b in bd["books"] for q in b["issues"][:1]))}</span></p></div>')
+        st = bd["books"][0]["status"]
+        badge = '<span class="st Pending">DRAFT layout - provisional count</span>' if bd.get("draft") else f'<span class="st {st.split()[0]}">{st}</span>'
+        add(f'''<div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div><div class="k">Leaf {bd["no"]:02d} of {len(bds)} · {fold}-fold · {CATNAME[bd["books"][0]["cat"]]}</div><h1 style="font-size:24pt;margin-bottom:.1in">{esc(names)}</h1></div>{badge}</div>
+          <div style="display:flex;gap:.4in">
+            <div>{cov_svg}<p style="margin-top:4px"><b>Closed</b> - front covering (photo + name)</p></div>
+            <div><div>{in_svg}</div><p style="margin:4px 0 .18in"><b>Opened</b> - inside, the mood-board</p>
+                 <div>{out_svg}</div><p style="margin-top:4px"><b>Back</b> - outside of the leaf (cover + spec plate)</p></div></div>''')
+    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:{PW}in {PH}in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'

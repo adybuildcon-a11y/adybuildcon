@@ -8,6 +8,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 
 from data import EXTRA, LADDER, P, TRANSCRIPT
+from printfiles import draft_src
 
 INK, HEAD, BAND, LINE = "2B2723", "2B2723", "F3EEE5", "D9D0C0"
 F_H = Font(name="Calibri", bold=True, color="FFFFFF", size=10)
@@ -171,7 +172,8 @@ def build(path, books, bds, spine_in, stack_mm):
                 else (pn.get("title") or "Shades") + f" ({len(pn['shades'])})"
             vals = [bd["no"] if i == 0 else "", names if i == 0 else "", fold if i == 0 else "",
                     f"{open_w:.3f} x {P['board_h']}" if i == 0 else "", pn["letter"], widths[i], what, len(pn["shades"]),
-                    f"{g['cols']} x {g['rows']}", round(g["w"], 3), round(g["h"], 3), "Ready - printed on liner" if i == 0 else "",
+                    f"{g['cols']} x {g['rows']}", round(g["w"], 3), round(g["h"], 3),
+                    ("DRAFT - provisional count: " + draft_src(bd) if bd.get("draft") else "Ready - printed on side 2") if i == 0 else "",
                     f"=C{r}*(board_mm+fabric_mm)" if i == 0 else ""]
             for c, v in enumerate(vals, 1):
                 body(ws, r, c, v, bold=c == 2)
@@ -191,14 +193,16 @@ def build(path, books, bds, spine_in, stack_mm):
     for bd in bds:
         if not bd["ready"]:
             continue
-        b = bd["books"][0]
         for pn in bd["panels"]:
+            b = pn.get("book") or bd["eff"]
             for k, s in enumerate(pn["shades"], 1):
                 src = "Handwritten notes" if s else "TBC - fill in"
+                if b.get("is_draft"):
+                    src = ("Provisional - " if s else "TBC (draft) - ") + b["draft"]["src"]
                 if b["id"] == "glorious-dimout" and s is None:
                     src = "Duplicate '634' in notes - correct"
                 vals = [bd["no"], b["name"], pn["letter"], f"{pn['letter']}{k:02d}", "Main" if pn["kind"] == "hero" else "Shade",
-                        pn.get("title") or "", s or "", src, "Yes" if s else "No"]
+                        (pn.get("title") if not pn.get("book") else "") or "", s or "", src, "Yes" if s else "No"]
                 for c, v in enumerate(vals, 1):
                     cell = body(ws, r, c, v)
                 if not s:
@@ -219,7 +223,7 @@ def build(path, books, bds, spine_in, stack_mm):
             continue
         b = bd["books"][0]
         for label, n, g, noted in fabric_entries(bd):
-            vals = [bd["no"], b["name"], label, n, round(g["w"], 3), round(g["h"], 3),
+            vals = [bd["no"], " & ".join(x["name"] for x in bd["books"]), label, n, round(g["w"], 3), round(g["h"], 3),
                     f"=(E{r}+2*cut_allow)*(F{r}+2*cut_allow)",
                     f"=ROUND(G{r}*copies*(1+wastage)/(fabric_width*39.37),2)",
                     f"=ROUND(H{r}*D{r},2)",
