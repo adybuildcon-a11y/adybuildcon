@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Osho Decor - Hiring Carousel</title>
+<style>
+@font-face{font-family:CG;src:url(../festival-posts/assets/fonts/CormorantGaramond-600.ttf);font-weight:600}
+@font-face{font-family:CG;src:url(../festival-posts/assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:CZ;src:url(../festival-posts/assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:PP;src:url(../festival-posts/assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:PP;src:url(../festival-posts/assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:PP;src:url(../festival-posts/assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+:root{--plum:#22122E;--plum2:#3A1F4A;--pink:#E20886;--pinkL:#FCE4F1;--ivory:#FBF6EE;--ink:#241B2B;--muted:#6B6170;--line:#E9DFD3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:center;font-family:PP;color:var(--ink)}
+.s{position:relative;width:1080px;height:1350px;overflow:hidden;background:var(--ivory)}
+.logo{position:absolute;left:72px;top:64px;height:58px}
+.pill{display:inline-flex;align-items:center;gap:12px;background:var(--pink);color:#fff;font-weight:600;font-size:22px;letter-spacing:.22em;padding:12px 26px;border-radius:40px}
+.pill i{width:10px;height:10px;border-radius:50%;background:#fff;display:block}
+.k{font-family:CZ;font-weight:600;font-size:18px;letter-spacing:.32em;color:var(--pink);text-transform:uppercase}
+h1{font-family:CG;font-weight:600;font-size:86px;line-height:.98;color:var(--plum);letter-spacing:-.005em}
+h2{font-family:CG;font-weight:600;font-size:64px;line-height:1;color:var(--plum)}
+.row{display:flex;align-items:center;gap:16px;font-size:25px;font-weight:500;color:var(--ink)}
+.row svg{width:30px;height:30px;flex:none}
+.foot{position:absolute;left:0;right:0;bottom:0;height:150px;background:var(--plum);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 72px}
+.foot .cta small{display:block;font-size:17px;letter-spacing:.2em;color:#F7B9D9;font-weight:500}
+.foot .cta b{font-size:40px;font-weight:600;letter-spacing:.02em}
+.foot .pg{font-size:18px;letter-spacing:.25em;color:#CDBBD8}
+.foot .pg b{color:#fff}
+.band{position:absolute;left:0;right:0;top:0;height:200px;background:url(assets/fabric-layers.jpg) center 30%/cover}
+.band:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(34,18,46,.25),rgba(34,18,46,.55))}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px 34px;box-shadow:0 12px 30px rgba(34,18,46,.06)}
+.item{display:flex;gap:24px;padding:22px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.ic{width:62px;height:62px;border-radius:16px;background:var(--pinkL);display:flex;align-items:center;justify-content:center;flex:none}
+.ic svg{width:32px;height:32px}
+.item b{display:block;font-size:26px;font-weight:600;color:var(--plum);margin-bottom:4px}
+.item p{font-size:20.5px;line-height:1.42;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:14px}
+.chip{background:#fff;border:1.5px solid var(--line);border-radius:40px;padding:12px 22px;font-size:20px;font-weight:500;color:var(--plum)}
+.tick{display:flex;gap:16px;font-size:21.5px;line-height:1.4;color:var(--ink);padding:9px 0}
+.tick svg{width:26px;height:26px;flex:none;margin-top:3px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-brief" viewBox="0 0 24 24"><path d="M3 7h18v13H3zM8 7V4.5h8V7M3 12h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3.2 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-7M21 20H3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 15l2-6h14l2 6v4H3zM6.5 19v1.5M17.5 19v1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="7.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="16.5" cy="15.5" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM9 20v-6h6v6M4 9c0 1.7 1.3 2.5 2.7 2.5S9.3 10.7 9.3 9c0 1.7 1.3 2.5 2.7 2.5s2.7-.8 2.7-2.5c0 1.7 1.3 2.5 2.7 2.5S20 10.7 20 9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-swatch" viewBox="0 0 24 24"><path d="M4 4h10v16H4zM14 7l6 2-4 12-2-.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 9h10M4 14h10" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M3 12l4-4 4 2 3-2 4 1 3 3-6 6-4-1-3 2-5-5zM11 10l-3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-report" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-tick" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#E20886"/><path d="M7.5 12.3l3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<!-- 1 ---------------------------------------------------------------- -->
+<section class="s" id="hiring-1">
+  <div style="position:absolute;right:0;top:0;width:400px;height:1200px;background:url(assets/fabric-layers.jpg) center/cover"></div>
+  <div style="position:absolute;right:340px;top:0;width:60px;height:1200px;background:linear-gradient(90deg,var(--ivory),rgba(251,246,238,0))"></div>
+  <img class="logo" src="../border-price-list/assets/osho-decor-logo.png" alt="Osho Decor">
+  <div style="position:absolute;left:72px;top:205px;width:600px">
+    <span class="pill"><i></i>WE'RE HIRING</span>
+    <h1 style="margin-top:40px">B2B Field Sales<br>&amp; Marketing<br>Executive</h1>
+    <p class="k" style="margin-top:26px">Home Furnishing &amp; Textile Fabrics</p>
+    <div style="display:flex;flex-direction:column;gap:20px;margin-top:44px;color:var(--pink)">
+      <div class="row"><svg><use href="#i-brief"/></svg>Full-time · Field job</div>
+      <div class="row"><svg><use href="#i-clock"/></svg>Day shift</div>
+      <div class="row"><svg><use href="#i-chart"/></svg>Experience: 1–3 years preferred</div>
+      <div class="row"><svg><use href="#i-pin"/></svg>Kirti Nagar, New Delhi</div>
+    </div>
+    <div class="card" style="margin-top:44px;border:2px solid var(--pink);width:560px">
+      <div style="font-size:18px;letter-spacing:.2em;color:var(--pink);font-weight:600">SALARY</div>
+      <div style="font-family:CG;font-weight:600;font-size:56px;color:var(--plum);line-height:1.1;margin-top:4px">₹20,000 – ₹25,000</div>
+      <div style="font-size:21px;color:var(--muted);margin-top:4px">per month · fixed + performance incentives</div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="cta"><small>WHATSAPP YOUR CV</small><b>+91 94537 68732</b></div>
+    <div class="pg">SWIPE&nbsp; → &nbsp;<b>1</b> / 4</div>
+  </div>
+</section>
+
+<!-- 2 ---------------------------------------------------------------- -->
+<section class="s" id="hiring-2">
+  <div class="band"></div>
+  <img src="../festival-posts/assets/osho-decor-logo-white.png" style="position:absolute;left:72px;top:70px;height:58px" alt="Osho Decor">
+  <div style="position:absolute;left:72px;right:72px;top:248px">
+    <p class="k">The role</p>
+    <h2 style="margin:10px 0 26px">What you'll do</h2>
+    <div class="card" style="padding:6px 34px">
+      <div class="item"><div class="ic" style="color:var(--pink)"><svg><use href="#i-store"/></svg></div><div><b>Visit &amp; develop B2B clients</b><p>Meet curtain &amp; furnishing retailers, wholesalers, dealers and distributors - open new accounts in your territory.</p></div></div>
+      <div class="item"><div class="ic" style="color:var(--pink)"><svg><use href="#i-swatch"/></svg></div><div><b>Present our fabric collections</b><p>Show curtain, upholstery and bedsheet fabrics with samples and catalogues - designs, colours, textures and specs.</p></div></div>
+      <div class="item"><div class="ic" style="color:var(--pink)"><svg><use href="#i-target"/></svg></div><div><b>Book orders, hit targets</b><p>Convert enquiries into orders, follow up on quotations and samples, negotiate within approved limits.</p></div></div>
+      <div class="item"><div class="ic" style="color:var(--pink)"><svg><use href="#i-hand"/></svg></div><div><b>Build lasting relationships</b><p>Interior designers, architects, furniture makers and contractors - keep customers coming back.</p></div></div>
+      <div class="item"><div class="ic" style="color:var(--pink)"><svg><use href="#i-report"/></svg></div><div><b>Report &amp; grow the market</b><p>Daily visit reports, lead tracking and market feedback on designs, competitors and pricing.</p></div></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="cta"><small>WHATSAPP YOUR CV</small><b>+91 94537 68732</b></div>
+    <div class="pg">SWIPE&nbsp; → &nbsp;<b>2</b> / 4</div>
+  </div>
+</section>
+
+<!-- 3 ---------------------------------------------------------------- -->
+<section class="s" id="hiring-3">
+  <div class="band"></div>
+  <img src="../festival-posts/assets/osho-decor-logo-white.png" style="position:absolute;left:72px;top:70px;height:58px" alt="Osho Decor">
+  <div style="position:absolute;left:72px;right:72px;top:248px">
+    <p class="k">Who we're looking for</p>
+    <h2 style="margin:10px 0 22px">You bring</h2>
+    <div class="card" style="padding:18px 34px">
+      <div class="tick"><svg><use href="#i-tick"/></svg>Graduate preferred - relevant sales experience also welcome</div>
+      <div class="tick"><svg><use href="#i-tick"/></svg>Experience in textile, home furnishing, fabric or B2B field sales</div>
+      <div class="tick"><svg><use href="#i-tick"/></svg>Strong communication, negotiation and relationship skills</div>
+      <div class="tick"><svg><use href="#i-tick"/></svg>An eye for fabric designs, textures and colours</div>
+      <div class="tick"><svg><use href="#i-tick"/></svg>Comfortable with daily field visits; WhatsApp Business &amp; basic Excel</div>
+      <div class="tick"><svg><use href="#i-tick"/></svg>Two/four-wheeler with valid licence preferred</div>
+    </div>
+    <h2 style="margin:40px 0 20px;font-size:50px">Who you'll meet</h2>
+    <div class="chips">
+      <span class="chip">Curtain &amp; furnishing dealers</span><span class="chip">Textile wholesalers</span>
+      <span class="chip">Interior designers</span><span class="chip">Architects</span><span class="chip">Furnishing showrooms</span>
+      <span class="chip">Sofa &amp; furniture makers</span><span class="chip">Curtain contractors</span>
+      <span class="chip">Hotels &amp; institutions</span><span class="chip">Bedsheet buyers</span>
+    </div>
+    <p style="font-size:20px;color:var(--muted);margin-top:24px">Existing contacts among dealers, designers and furniture manufacturers are an added advantage.</p>
+  </div>
+  <div class="foot">
+    <div class="cta"><small>WHATSAPP YOUR CV</small><b>+91 94537 68732</b></div>
+    <div class="pg">SWIPE&nbsp; → &nbsp;<b>3</b> / 4</div>
+  </div>
+</section>
+
+<!-- 4 ---------------------------------------------------------------- -->
+<section class="s" id="hiring-4" style="background:var(--plum);color:#fff">
+  <div style="position:absolute;left:0;right:0;top:0;height:470px;background:url(assets/fabric-layers.jpg) center 65%/cover"></div>
+  <div style="position:absolute;left:0;right:0;top:0;height:470px;background:linear-gradient(180deg,rgba(34,18,46,.2) 0%,rgba(34,18,46,.6) 60%,#22122E 100%)"></div>
+  <img src="../festival-posts/assets/osho-decor-logo-white.png" style="position:absolute;left:72px;top:70px;height:58px" alt="Osho Decor">
+  <div style="position:absolute;left:72px;right:72px;top:330px">
+    <p class="k" style="color:#F7B9D9">What you get</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px">
+      <div class="card" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);box-shadow:none;padding:24px 28px"><b style="font-size:25px">Fixed monthly salary</b><p style="font-size:19px;color:#D9CCE2;margin-top:4px">₹20,000 – ₹25,000, based on experience</p></div>
+      <div class="card" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);box-shadow:none;padding:24px 28px"><b style="font-size:25px">Sales incentives</b><p style="font-size:19px;color:#D9CCE2;margin-top:4px">Performance-based, on top of salary</p></div>
+      <div class="card" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);box-shadow:none;padding:24px 28px"><b style="font-size:25px">Travel allowance</b><p style="font-size:19px;color:#D9CCE2;margin-top:4px">Or reimbursement as per company policy</p></div>
+      <div class="card" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);box-shadow:none;padding:24px 28px"><b style="font-size:25px">Career growth</b><p style="font-size:19px;color:#D9CCE2;margin-top:4px">In sales &amp; business development</p></div>
+    </div>
+    <h2 style="color:#fff;margin:54px 0 10px;font-size:72px">How to apply</h2>
+    <p style="font-size:24px;color:#E9DFF0">Send your CV by WhatsApp or DM us.</p>
+    <div style="display:flex;align-items:center;gap:22px;margin-top:30px;background:var(--pink);border-radius:22px;padding:26px 34px;width:fit-content">
+      <svg style="width:46px;height:46px;color:#fff"><use href="#i-phone"/></svg>
+      <div><div style="font-size:17px;letter-spacing:.22em;font-weight:500;color:#FFE0F0">HR · WHATSAPP</div><div style="font-size:50px;font-weight:600;line-height:1.1">+91 94537 68732</div></div>
+    </div>
+    <div style="display:flex;gap:18px;margin-top:40px;align-items:flex-start">
+      <svg style="width:34px;height:34px;color:#F7B9D9;flex:none;margin-top:4px"><use href="#i-pin"/></svg>
+      <p style="font-size:21.5px;line-height:1.5;color:#E9DFF0"><b style="color:#fff">Osho International</b><br>1/29, 2nd Floor, WHS Timber Market, Opp. Richi Rich Banquet,<br>Near Mayapuri Metro Station, Delhi 110015</p>
+    </div>
+  </div>
+  <div style="position:absolute;left:72px;right:72px;bottom:60px;display:flex;justify-content:space-between;font-size:18px;letter-spacing:.25em;color:#CDBBD8"><span>ALWAYS VIBRANT.</span><span><b style="color:#fff">4</b> / 4</span></div>
+</section>
+<script>
+const imgs=[...document.images].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r}));
+Promise.all([document.fonts.ready,...imgs]).then(()=>setTimeout(()=>document.body.setAttribute('data-ready','1'),200));
+</script>
+</body>
+</html>
