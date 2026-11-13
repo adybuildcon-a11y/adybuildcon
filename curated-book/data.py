@@ -7,6 +7,8 @@ Every value is traced to a source:
   COVER  = photographed sample covers (Neo Luna, Virinchi)
 Values not in any source are None and are listed as open questions - nothing is guessed.
 
+Main fabrics (owner, 13 Nov): always shown as a WATERFALL - full-width pieces stepped down so every main shows a band.
+Categories (owner, 13 Nov): Neo Crest, Neo Soft, Premium Dimouts, Ritz Satin = Lining; Neo Luna, Texture Coated = 100% Blackout Curtain.
 Swatch mode (owner's rule, 12 Nov):
   range = one design / texture in colour variations -> main fabric BIG, other shades small cuttings
   mixed = different designs and textures -> every swatch the SAME size (e.g. Neo Luna)
@@ -86,12 +88,12 @@ BOOKS = [
       status="Confirmed", notes="GLORY COTTON - 3110 MAIN - 19 SHADES",
       xref="PL: Glory Cotton 54in, 280 GSM, 30 colours.", issues=["Fold not written - derived as 2-fold (1 hero + 18 swatches fit one panel).",
               "Shade numbers for the 18 other swatches."]),
- dict(id="neo-soft", mode="range", mode_src="One quality, 8001-8029", name="Neo Soft", list_no=4, cat="curtain", line="Curtain Fabric", fold=2, fold_src="HW-p4",
+ dict(id="neo-soft", mode="range", mode_src="One quality, 8001-8029", name="Neo Soft", list_no=4, cat="lining", line="Lining", fold=2, fold_src="HW-p4",
       shades=7, mains=["8028"], others=[None]*6, gsm=180, width=54, comp=None, m_main=None, m_other=None,
       status="Confirmed", notes="NEO SOFT - 2FOLD - 7? SHADES (second digit struck) - MAIN 8028",
       xref="PL: Neo Soft (8001-8029) 54in, 180 GSM, 7 colours - supports 7.",
       issues=["Shade count written '7' with a struck second digit; price list shows 7. Confirm.",
-              "Light-control type of Neo Soft (curtain / dimout / blackout)?"]),
+              "Category confirmed by owner (13 Nov): Lining."]),
  dict(id="noble-texture", mode="range", mode_src="Assumed single texture - confirm", name="Noble Texture", list_no=8, cat="texture", line="Texture Dimout", fold=None, fold_src=None,
       shades=None, mains=[], others=[], gsm=None, width=54, comp=None, m_main=None, m_other=None,
       status="Details needed", notes="On book list only - no notes written.",
@@ -111,9 +113,9 @@ BOOKS = [
       supplier=["PRODIGAR-44","GLEAM-04","GLEAM-02","GLEAM-01","VIENNA +","HORTEN-70A","HORTEN-77A","DONALD-70","DONALD-60","DONALD-68",
                 "DONALD-66","DONALD-62","ORION-04","ORION-26","ORION-22","HORTEN-352","HORTEN-739","UNISON-12","UNISON-15","UNISON-13"],
       xref="Counts check: 4 main + (4+4+4+4+3+4) = 27 - matches.",
-      issues=["Different qualities, so all 27 swatches are the same size (owner's rule); the 4 mains are placed first and marked MAIN - the 3 m per main is still useful for hangers.",
+      issues=["4 mains (6031-6034) as a waterfall; the 23 other qualities all the same size (owner's rules, 12-13 Nov).",
               "HW-p5 lists 20 supplier qualities (Prodigar, Gleam, Vienna, Horten, Donald, Orion, Unison) - map each to an Osho shade no. (23 selected)."]),
- dict(id="texture-coated", draft=dict(shades=52, mains=[], others=[None]*52, src="notes: 52 shades, under reconsideration"), mode="range", mode_src="Assumed single texture - confirm", name="Texture Coated", list_no=3, cat="texture", line="Coated Texture", fold=None, fold_src="derived",
+ dict(id="texture-coated", draft=dict(shades=52, mains=[], others=[None]*52, src="notes: 52 shades, under reconsideration"), mode="range", mode_src="Assumed single texture - confirm", name="Texture Coated", list_no=3, cat="blackout", line="100% Blackout Curtain", fold=None, fold_src="derived",
       shades=52, mains=[], others=[None]*52, gsm=None, width=None, comp=None, m_main=None, m_other=None,
       status="Reconsider", notes="TEXTURE COATED - 52 SHADES [RE CONSIDERATION]",
       xref="Not in price list.", issues=["Marked 'reconsideration' - keep, cut down, or drop? 52 shades need a full 3-fold board at minimum swatch size."]),
@@ -142,18 +144,18 @@ BOOKS = [
       status="Confirmed", notes="PARIS DIMOUT - 1109 MAIN - 3FOLD - 27 SHADES",
       xref="PL: Paris Dimout 54in, 305 GSM, 19 colours. EC card: 18 shades (1101-1118).",
       issues=["27 shades written, but the price list shows 19 and the shade card 18 - confirm the count and numbers."]),
- dict(id="premium-dimouts", mode="range", mode_src="8 main fabrics + 25 others - confirm whether the 8 are different qualities", name="Premium Dimouts", list_no=20, cat="dimout", line="Dimout", fold=None, fold_src="derived",
+ dict(id="premium-dimouts", mode="range", mode_src="8 main fabrics + 25 others - confirm whether the 8 are different qualities", name="Premium Dimouts", list_no=20, cat="lining", line="Lining", fold=None, fold_src="derived",
       shades=33, mains=[None]*8, others=[None]*25, gsm=None, width=None, comp=None, m_main=None, m_other=None,
       status="Confirmed", notes="PREMIUM DIMOUTS - 33 SHADES - MAIN FABRICS 08 SHADES",
       xref="Not named in price list.", issues=["Which 8 shades are the main fabrics, and which 25 others?",
-              "Are the 8 mains different qualities? If yes, switch to same-size swatches (mode 'mixed').",
+              "The 8 mains are shown as a waterfall (owner, 13 Nov); the 25 others as small cuttings.",
               "Fold not written - derived as 3-fold."]),
- dict(id="neo-crest", mode="range", mode_src="One quality, 101-111", name="Neo Crest", list_no=5, cat="blackout", line="100% Blackout", fold=2, fold_src="HW-p4",
+ dict(id="neo-crest", mode="range", mode_src="One quality, 101-111", name="Neo Crest", list_no=5, cat="lining", line="Lining", fold=2, fold_src="HW-p4",
       shades=8, mains=["103"], others=[None]*7, gsm=200, width=54, comp=None, m_main=None, m_other=None,
       status="Confirmed", notes="NEO CREST - 2FOLD - 8 SHADES - MAIN 103",
       xref="PL: Neo Crest (101-111) 54in, 200 GSM, 8 colours - matches. EC: 101,102,103,105,106,108,109,110.",
       issues=["Confirm the other 7 = 101, 102, 105, 106, 108, 109, 110 (e-catalogue)."]),
- dict(id="neo-luna", draft=dict(shades=6, mains=rng(101, 106), others=[], src="notes: 3-fold, 6 main designs 101-106; owner rule - different designs, same size"), mode="mixed", mode_src="Owner: different designs - same-size swatches", name="Neo Luna", list_no=7, cat="blackout", line="100% Blackout", fold=3, fold_src="HW-p4",
+ dict(id="neo-luna", mode="mixed", mode_src="Owner: different designs - same-size swatches", name="Neo Luna", list_no=7, cat="blackout", line="100% Blackout Curtain", fold=3, fold_src="HW-p4",
       shades=None, mains=rng(101, 106), others=[], gsm=None, width=None, comp=None, m_main=3, m_other=2,
       features=["Kids friendly", "Breathable", "Eco friendly", "Soft on skin", "Colour fast to light"],
       status="Pending", notes="NEO LUNA - 3 FOLD - MAIN 101-106 - 100 PCS 2 MTR EACH FABRIC - 6 PCS 3 MTR EACH FOR MAIN [101-106]",

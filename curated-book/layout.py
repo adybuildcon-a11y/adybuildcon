@@ -73,12 +73,16 @@ def derive(bd):
         bd["fold_src"] = b["fold_src"] if b["fold"] else "pending"
         bd["panels"], bd["ready"] = [], False
         return
-    if b.get("mode") == "mixed":                         # different designs -> equal swatches, mains first
-        allsw = list(b["mains"]) + [s for _, g in groups for s in g]
-        fold = b["fold"] or max(2, math.ceil(len(allsw) / P["cap_per_panel"]))
+    if b.get("mode") == "mixed":                         # different designs -> equal swatches; mains -> waterfall
+        others = [s for _, g in groups for s in g]
+        hero = 1 if b["mains"] else 0
+        fold = b["fold"] or max(2, hero + math.ceil(len(others) / P["cap_per_panel"]))
         bd["fold"], bd["fold_src"] = fold, b["fold_src"] if b["fold"] else "derived"
-        size = math.ceil(len(allsw) / fold)
-        bd["panels"] = [dict(kind="swatch", title=None, shades=allsw[i * size:(i + 1) * size]) for i in range(fold)]
+        free = fold - hero
+        size = math.ceil(len(others) / free) if others else 0
+        sw = [dict(kind="swatch", title=None, shades=others[i * size:(i + 1) * size]) for i in range(free)]
+        hp = [dict(kind="hero", shades=list(b["mains"]))] if hero else []
+        bd["panels"] = (hp + sw) if fold == 2 else (sw + hp)
         bd["ready"] = b["status"] == "Confirmed" or b.get("is_draft", False)
         for pi, pn in enumerate(bd["panels"]):
             pn["letter"] = "ABC"[pi]
@@ -173,6 +177,19 @@ def place(n, box, grid=None, **kw):
 
 
 HERO_SPEC_H = 2.75
+WF_LABEL = 0.62             # label column left of the waterfall
+WF_MAX_BAND = 1.6           # visible band of each stacked main (in)
+
+
+def waterfall(n, box):
+    """Main fabrics as a waterfall: full-width pieces, each stepped down by one band, all ending at
+    the same bottom edge. Band = min(1.6 in, H / (n + 1)) so the last piece shows the largest area."""
+    x0, y0, x1, y1 = box
+    H, W = y1 - y0, x1 - x0 - WF_LABEL
+    band = min(WF_MAX_BAND, H / (n + 1)) if n > 1 else 0
+    cells = [(x0 + WF_LABEL, y0 + i * band, W, H - i * band) for i in range(n)]
+    avg_h = sum(c[3] for c in cells) / n
+    return dict(cols=1, rows=n, w=W, h=avg_h, band=band, waterfall=True), cells
 SMALL_CUT = (2.5, 1.6)      # range books: other shades are small cuttings, max 2.5 x 1.6 in
 
 
@@ -193,7 +210,7 @@ def layout_board(bd):
             pn["grid"], pn["cells"] = place(len(pn["shades"]), box, grid=shared)
         elif pn["kind"] == "hero":
             hb = (box[0], box[1], box[2], box[3] - HERO_SPEC_H)
-            pn["grid"], pn["cells"] = place(len(pn["shades"]), hb, min_w=2.0, min_h=1.4, aspect=1.25, label=0.32)
+            pn["grid"], pn["cells"] = waterfall(len(pn["shades"]), hb)
             pn["spec_box"] = (box[0], box[3] - HERO_SPEC_H + 0.2, box[2], box[3])
     return bd
 

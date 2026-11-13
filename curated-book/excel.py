@@ -73,6 +73,7 @@ def build(path, books, bds, spine_in, stack_mm):
           "Source: handwritten notes (7 pages), Sep 2026 price list, fabric e-catalogue, sample covers. Nothing is guessed - unknowns are blank and listed in Open_Questions.")
     rows = [
         ("What this book is", "One 4-ring master binder (11 x 13 in) holding one fold-out mood-board leaf per collection: 20 collections on 19 boards (Eeco Dimout and Double Shade share a board). Each board is 9 x 12 in per panel, 2-fold or 3-fold, with a photo + name front cover. No company branding anywhere."),
+        ("Main fabrics", "Always a WATERFALL: full-width pieces stepped down by one band (max 1.6 in) so every main shows; the last piece shows the most. Cut each piece to its full printed frame (Board_Plan gives width; heights step down by the band)."),
         ("Swatch rule", "Same design / texture in colour variations = main fabric BIG, other shades small cuttings (max 2.5 x 1.6 in). Different designs and textures (e.g. Neo Luna, Texture Dimout, Breeze) = all swatches the SAME size."),
         ("Order of books", "By light control - Sheer > Curtain > Texture Dimout > Dimout > Blackout > Lining - then by fabric weight (GSM, light to heavy). A customer moves through the book from airy to room-darkening."),
         ("Sheets", "Parameters - every size and allowance (change here, formulas update).\nBook_List - the 20 books, folds, shades, mains, status.\nBoard_Plan - what goes on every panel of every board.\nShade_Register - one row per swatch slot (slot IDs are printed on the boards).\nFabric_Requirement - metres to buy and copies you can make, live formulas.\nProduction_Steps - the build sequence with checks.\nOpen_Questions - decisions needed before print.\nTranscription - the handwritten notes, word for word."),
@@ -172,7 +173,7 @@ def build(path, books, bds, spine_in, stack_mm):
                 else (pn.get("title") or "Shades") + f" ({len(pn['shades'])})"
             vals = [bd["no"] if i == 0 else "", names if i == 0 else "", fold if i == 0 else "",
                     f"{open_w:.3f} x {P['board_h']}" if i == 0 else "", pn["letter"], widths[i], what, len(pn["shades"]),
-                    f"{g['cols']} x {g['rows']}", round(g["w"], 3), round(g["h"], 3),
+                    (f"waterfall of {g['rows']} (band {g['band']:.2f} in)" if g.get("waterfall") else f"{g['cols']} x {g['rows']}"), round(g["w"], 3), round(g["h"], 3),
                     ("DRAFT - provisional count: " + draft_src(bd) if bd.get("draft") else "Ready - printed on side 2") if i == 0 else "",
                     f"=C{r}*(board_mm+fabric_mm)" if i == 0 else ""]
             for c, v in enumerate(vals, 1):

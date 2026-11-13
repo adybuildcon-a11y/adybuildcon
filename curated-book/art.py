@@ -6,7 +6,7 @@ from functools import lru_cache
 from PIL import ImageFont
 
 from data import LADDER, LEVEL, P
-from layout import panel_widths, panel_x, content_box, ladder_color
+from layout import panel_widths, panel_x, content_box, ladder_color, WF_LABEL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FONTS = os.path.join(HERE, "assets", "fonts")
@@ -295,7 +295,7 @@ def inside_art(bd):
         hy = P["margin"] + .5
         out.append(T(bx0, hy, b["name"].upper(), "CG", 600, 15, INK, track=.03))
         if pn["kind"] == "hero":
-            tag = "MAIN FABRIC" if len(pn["shades"]) == 1 else "MAIN FABRICS"
+            tag = "MAIN FABRIC" if len(pn["shades"]) == 1 else f"MAIN FABRICS · WATERFALL OF {len(pn['shades'])}"
         elif pn.get("title") and not pn.get("book"):
             tag = pn["title"].upper()
         elif pn.get("book"):
@@ -306,6 +306,18 @@ def inside_art(bd):
             run += len(pn["shades"])
         out.append(Ttr(bx1, hy, tag, "CZ", 600, 7, BRASS, "end", .25))
         out.append(f'<path d="M{bx0},{hy + .16} H{bx1}" stroke="{INK}" stroke-width=".006"/>')
+        if pn["kind"] == "hero":                      # waterfall of main fabrics
+            for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
+                out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{CELL}" stroke="{GUIDE}" stroke-width=".007"/>')
+                out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height=".06" fill="{GUIDE}" opacity=".45"/>')
+                lx = cx - WF_LABEL
+                out.append(T(lx, cy + .2, "MAIN", "CZ", 600, 6, BRASS, track=.15))
+                out.append(T(lx, cy + .42, shade or "No. ____", "PP", 500, 8.5 if shade else 7, INK if shade else MUTED))
+                out.append(T(lx, cy + .6, f'{pn["letter"]}{k:02d}', "PP", 400, 5.5, GUIDE))
+            out.append(hero_spec(pn["spec_box"], b))
+            fy = P["board_h"] - P["margin"] - .05
+            out.append(T(bx0, fy, f'NO. {b["seq"]:02d}  ·  {b["name"].upper()}  ·  PANEL {pn["letter"]}', "PP", 400, 5.5, MUTED, track=.1))
+            continue
         for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
             out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{CELL}" stroke="{GUIDE}" stroke-width=".007"/>')
             ly = cy + ch + (.19 if pn["kind"] == "swatch" else .23)

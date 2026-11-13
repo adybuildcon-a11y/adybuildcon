@@ -203,7 +203,7 @@ def design_guide(books, bds, spine_in, stack_mm):
         b = bd["books"][0]
         for pn in bd["panels"]:
             gr = pn["grid"]
-            rows.append(f'<tr><td>{bd["no"]:02d}</td><td>{esc(b["name"])}</td><td>{pn["letter"]}</td><td>{"Hero" if pn["kind"] == "hero" else (pn.get("title") or "Shades")}</td><td>{len(pn["shades"])}</td><td>{gr["cols"]} × {gr["rows"]}</td><td>{gr["w"]:.2f} × {gr["h"]:.2f}</td></tr>')
+            rows.append(f'<tr><td>{bd["no"]:02d}</td><td>{esc(b["name"])}</td><td>{pn["letter"]}</td><td>{"Hero" if pn["kind"] == "hero" else (pn.get("title") or "Shades")}</td><td>{len(pn["shades"])}</td><td>{("waterfall " + str(gr["rows"])) if gr.get("waterfall") else (str(gr["cols"]) + " × " + str(gr["rows"]))}</td><td>{gr["w"]:.2f} × {gr["h"]:.2f}{" avg" if gr.get("waterfall") else ""}</td></tr>')
     th = '<tr><th>Bd</th><th>Book</th><th>Pnl</th><th>Content</th><th>Qty</th><th>Grid</th><th>Swatch in</th></tr>'
     mid = (len(rows) + 1) // 2
     halves = "".join(f'<table style="flex:1;font-size:6.6pt">{th}{"".join(part)}</table>' for part in (rows[:mid], rows[mid:]))
@@ -220,7 +220,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <div style="flex:1"><h2 style="margin-top:0">Different designs → all the same size</h2>
       <p>When every fabric is a different design or texture, no swatch is "main": all are cut to one larger, near-square size so each texture reads equally. Mains, if named, go first and are marked MAIN.</p>
       <div style="margin-top:.1in">{svgbox(mix_r, ow3, P["board_h"], 5.1)}</div><p><b>Example: Texture Dimout</b> - 27 qualities, all equal.</p></div></div>
-      <div class="note">Same-size books: {mixed_names}. All others: colour range. Mode is a column in the Excel Book_List - change it and re-run to switch a book.</div>''')
+      <div class="note"><b>Main fabrics are always a waterfall:</b> full-width pieces, each stepped down by one band (max 1.6 in), all ending at the same bottom edge - every main shows a band and the last one shows the most, like the layered cards in the e-catalogue. Same-size books: {mixed_names}. All others: colour range. Mode is a column in the Excel Book_List - change it and re-run to switch a book.</div>''')
 
     add(f'''<div class="k">07 · Swatch sizes</div><h1>Swatch sizes are solved, not guessed</h1>
       <div class="cols"><div style="flex:1"><p>For every panel the layout engine tries 1-6 columns and keeps the grid with the largest swatch area, biased to a 1.6 : 1 landscape swatch for colour cuttings (1.15 : 1 for mixed designs), never below the minimum size. All swatch panels on one board share the same grid so the board looks even.</p>
@@ -228,7 +228,8 @@ def design_guide(books, bds, spine_in, stack_mm):
       <li>Cut each swatch <b>1 mm larger</b> than its printed frame, pinked edge (zig-zag) as in the reference cards.</li>
       <li>Glue inside the frame; the shade No. prints under the swatch, slot ID at right in grey.</li>
       <li>Within a panel, order light → dark, grouped by hue family (neutrals first). Where the notes give an order, keep it.</li>
-      <li>Colour-range books: hero = main fabric (big); other shades small cuttings ≤ 2.5 × 1.6 in.</li>
+      <li>Main fabric(s): waterfall on the hero panel - band = min(1.6 in, height ÷ (mains + 1)); one main = one full piece.</li>
+      <li>Colour-range books: other shades small cuttings ≤ 2.5 × 1.6 in.</li>
       <li>Mixed-design books: one equal size for every swatch, biased near-square (1.15 : 1).</li></ul></div>
       <div style="flex:1.6;display:flex;gap:.15in">{halves}</div></div>''')
 
@@ -397,7 +398,7 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
         if bd["ready"]:
             ow = open_size(fold)[0]
             pan = "".join(f'<tr><td>{pn["letter"]}</td><td>{"Hero - main " + ", ".join(s or "TBC" for s in pn["shades"]) if pn["kind"] == "hero" else (pn.get("title") or "Shades") + " - " + str(len(pn["shades"])) + " swatches"}</td>'
-                          f'<td>{pn["grid"]["cols"]} × {pn["grid"]["rows"]}</td><td>{pn["grid"]["w"]:.2f} × {pn["grid"]["h"]:.2f} in</td></tr>' for pn in bd["panels"])
+                          f'<td>{("waterfall of " + str(pn["grid"]["rows"])) if pn["grid"].get("waterfall") else (str(pn["grid"]["cols"]) + " × " + str(pn["grid"]["rows"]))}</td><td>{pn["grid"]["w"]:.2f} × {pn["grid"]["h"]:.2f} in</td></tr>' for pn in bd["panels"])
             dnote = f'<div class="note"><b>DRAFT layout</b> - provisional count from {esc(draft_src(bd))}. Confirm before print.</div>' if bd.get("draft") else ""
             body = f'{dnote}<p>Open size {ow:.3f} × {P["board_h"]} in · {fold}-fold ({bd["fold_src"]}) · cover = outside of panel B</p><table><tr><th>Panel</th><th>Content</th><th>Grid</th><th>Cut each swatch</th></tr>{pan}</table>'
         else:
