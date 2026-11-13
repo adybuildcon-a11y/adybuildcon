@@ -20,6 +20,9 @@ def main():
             out = os.path.join(HERE, "output", f"osho-decor-hiring-{i}.png")
             page.locator(f"#hiring-{i}").screenshot(path=out)
             print("wrote", out)
+        out = os.path.join(HERE, "output", "osho-decor-hiring-single.png")
+        page.locator("#hiring-single").screenshot(path=out)
+        print("wrote", out)
         b.close()
 
 
