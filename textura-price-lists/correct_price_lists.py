@@ -8,6 +8,9 @@ Corrections
     Edition after Drift Sheer, S.No 43-58; the Elite Edition becomes 59-86.
     Rate = dealer cut rate + 15 (above 200) / + 10 (below 200), rounded up to
     the next multiple of 5; RRP = rate x 2.5 rounded up to the next 10.
+  * Textura Homes list: Cloud Sheer added as Millennium Edition book 9 after
+    Drift Sheer; Your Price = the dealer cut rate on the Cloud Sheer card, Cut and
+    Roll by the list's own rule.
   * Premiere Texture-1 and Premiere Texture-2 each list
         Cera  - Rate Rs. 365 / RRP 920
         Clare - Rate Rs. 285 / RRP 720
@@ -233,7 +236,8 @@ def correct_textura():
 
     work = pymupdf.open(SRC_TEX)
     work.fullcopy_page(1)                     # page 2 copy for Premiere Texture-2 rows
-    p1, p2, p2b = work[0], work[1], work[2]
+    work.fullcopy_page(1)                     # page 2 copy for the Cloud Sheer rows
+    p1, p2, p2b, p2c = work[0], work[1], work[2], work[3]
 
     replace(p1, [(find(p1, "Crom"), "Croma", "left")], font)
 
@@ -259,13 +263,33 @@ def correct_textura():
                   (find(p2b, "9", row(20) + 1.9), "10", "center"),
                   (find(p2b, "9", row(21) + 1.9), "10", "center")] + prices(p2b), font)
 
+    # Cloud Sheer = Millennium Edition book 9, after Drift Sheer (Brill, row 0).
+    # Your Price = the dealer cut rate on the Cloud Sheer card; Cut and Roll follow
+    # the list's rule above.  Rows 1-16 of the page-2 copy are the templates, so the
+    # white / grey row stripes stay in step (16 rows = even shift).
+    def cells(page, k):
+        found = sorted((s for s in spans(page) if abs(s["bbox"][1] - (row(k) + 1.9)) < 3),
+                       key=lambda s: s["bbox"][0])
+        assert len(found) == 7, (k, [x["text"] for x in found])
+        return found
+    edits = []
+    for i, (name, your) in enumerate(CLOUD_SHEER):
+        new = ["9", "Millennium Edition", "Cloud Sheer", name, f"Rs.{your}",
+               f"Rs.{int(your * 0.8075 + 0.5)}", f"Rs.{int(your * 0.7125 + 0.5)}"]
+        align = ["center", "left", "left", "left", "right", "right", "right"]
+        edits += list(zip(cells(p2c, 1 + i), new, align))
+    replace(p2c, edits, font)
+    n = len(CLOUD_SHEER)
+
     out = pymupdf.open()
     out.insert_pdf(work, from_page=0, to_page=0)
     W, H = p2.rect.width, p2.rect.height
     pg = out.new_page(width=W, height=H)
-    place(pg, work, 1, 0, row(22), 0)                       # ... Premiere Texture-1 Cera, Clare
-    place(pg, work, 2, row(20), row(22), row(22))           # Premiere Texture-2 Cera, Clare
-    place(pg, work, 1, row(22), row(27) + 1, row(24))       # Natural Theory ... Thread Touch
+    place(pg, work, 1, 0, row(1), 0)                        # header, 8 Drift Sheer Brill
+    place(pg, work, 3, row(1), row(1 + n), row(1))          # 9 Cloud Sheer (16 rows)
+    place(pg, work, 1, row(1), row(22), row(1 + n))         # Elite ... Premiere Texture-1
+    place(pg, work, 2, row(20), row(22), row(22 + n))       # Premiere Texture-2 Cera, Clare
+    place(pg, work, 1, row(22), row(27) + 1, row(24 + n))   # Natural Theory ... Thread Touch
 
     out.set_metadata(src.metadata)
     out.save(OUT_TEX, garbage=4, deflate=True)
