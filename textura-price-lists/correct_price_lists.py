@@ -4,6 +4,10 @@ The original pages are reused as-is (same fonts, colours, lines and spacing);
 only the affected rows are moved, duplicated or have their text replaced.
 
 Corrections
+  * Osho Signature list: Cloud Sheer book (16 designs) added to the Millennium
+    Edition after Drift Sheer, S.No 43-58; the Elite Edition becomes 59-86.
+    Rate = dealer cut rate + 15 (above 200) / + 10 (below 200), rounded up to
+    the next multiple of 5; RRP = rate x 2.5 rounded up to the next 10.
   * Premiere Texture-1 and Premiere Texture-2 each list
         Cera  - Rate Rs. 365 / RRP 920
         Clare - Rate Rs. 285 / RRP 720
@@ -44,7 +48,7 @@ def find(page, text, near_y=None):
     return hits[0]
 
 
-def replace(page, edits, font, fontbuffer=None):
+def replace(page, edits, font, fontbuffer=None, fontbuffers=None):
     """edits: list of (span, new_text, align). Removes old glyphs, writes new text
     with the same font, size, colour and baseline."""
     edits = [e if len(e) == 4 else (*e, {}) for e in edits]
@@ -56,6 +60,8 @@ def replace(page, edits, font, fontbuffer=None):
                           text=pymupdf.PDF_REDACT_TEXT_REMOVE)
     if fontbuffer:
         page.insert_font(fontname="ArialMT", fontbuffer=fontbuffer)
+    for name, buf in (fontbuffers or {}).items():
+        page.insert_font(fontname=name, fontbuffer=buf)
     for s, new, align, opt in edits:
         fname, fobj, size = font(s)
         x0, x1 = s["bbox"][0], s["bbox"][2]
@@ -74,65 +80,146 @@ def place(dst_page, src_doc, pno, y0, y1, dst_y):
 
 
 # ---------------------------------------------------------------------------
+# Cloud Sheer (Millennium Edition, after Drift Sheer).  Dealer cut rates from the
+# Cloud Sheer card; list rate = dealer + 15 (above 200) or + 10 (below 200), then
+# rounded UP to the next multiple of 5.  RRP follows the list's own rule
+# (rate x 2.5, rounded up to the next 10 - matches the list's rows).
+CLOUD_SHEER = [("Aston", 270), ("Aston Stripe", 270), ("Candid", 175), ("Intel", 175),
+               ("Vistara", 175), ("Pulse", 299), ("Crown", 149), ("Velora", 199),
+               ("Mist", 199), ("4216", 199), ("4218", 199), ("4202", 249), ("4205", 249),
+               ("4210", 249), ("4213", 249), ("4221", 249)]
+
+
+def list_rate(dealer):
+    up = dealer + (15 if dealer > 200 else 10)
+    return -(-up // 5) * 5
+
+
+def rrp(rate):
+    return -(-rate * 25 // 100) * 10
+
+
 def correct_signature():
+    """Rebuilds the Osho Signature list from the original by moving whole table rows
+    (same fonts, colours, lines and spacing) and replacing only the text that changes.
+
+      * Cloud Sheer (16 designs) added to the Millennium Edition after Drift Sheer,
+        S.No 43-58; the Elite Edition is renumbered 59-86.
+      * Premiere Texture-1 and -2 each list Cera Rs.365 / 920 and Clare Rs.285 / 720.
+      * Jute Craft RRP "990" set in Arial like every other cell (was Calibri).
+    """
     src = pymupdf.open(SRC_SIG)
-    arial_xref = next(f[0] for f in src.get_page_fonts(1) if f[3].endswith("+ArialMT"))
-    arial_buf = src.extract_font(arial_xref)[3]
-    arial = pymupdf.Font(fontbuffer=arial_buf)
+    bufs = {}
+    for f in src.get_page_fonts(1):
+        for name in ("ArialMT", "Arial-BoldMT"):
+            if f[3].endswith("+" + name):
+                bufs[name] = src.extract_font(f[0])[3]
+    fonts = {n: pymupdf.Font(fontbuffer=b) for n, b in bufs.items()}
 
-    def font_for(page):
-        return lambda s: ("ArialMT", arial, 10.35 if s["font"].endswith("Calibri") else s["size"])
+    def font(s):
+        bold = "Bold" in s["font"]
+        name = "Arial-BoldMT" if bold else "ArialMT"
+        return name, fonts[name], 10.35 if s["font"].endswith("Calibri") else s["size"]
 
-    work = pymupdf.open(SRC_SIG)
-    work.fullcopy_page(1)                     # page 3: second copy of page 2 (for Premiere Texture-2 rows)
-    p2, p3, p2b = work[1], work[2], work[3]
+    def edit(page, edits):
+        replace(page, edits, font, fontbuffers=bufs)
 
     pitch = 14.1166
-    row = lambda k: 71.28 + k * pitch        # top of row k on pages 2/3
-    # page 2 rows: 41 PT-1 group, 42 "62", 43 PT-2 group, 44 "63", 45 Natural group, 46 "64",
-    #              47 Foldscape group, 48 "65", end 49
-    calibri = next(s for s in spans(p2) if s["font"].endswith("Calibri"))
-    jute = find(p2, "Rs. 395", calibri["bbox"][1])            # Jute Craft row
-    replace(p2, [
-        (find(p2, "1", row(42) + 1.9), "Cera", "left"),
-        (find(p2, "2", row(44) + 1.9), "Clare", "left"),
-        (find(p2, "64"), "66", "center"),
-        (find(p2, "65"), "67", "center"),
-        # Jute Craft RRP: Calibri/black on its own baseline -> Arial/#333333 on the row baseline
-        (calibri, "990", "left",
-         {"y": jute["origin"][1], "color": (0.2, 0.2, 0.2)}),
-    ], font_for(p2), arial_buf)
-    replace(p2b, [
-        (find(p2b, "62"), "64", "center"),
-        (find(p2b, "1", row(42) + 1.9), "Cera", "left"),
-        (find(p2b, "63"), "65", "center"),
-        (find(p2b, "2", row(44) + 1.9), "Clare", "left"),
-    ], font_for(p2b), arial_buf)
-    replace(p3, [(find(p3, "66"), "68", "center"),
-                 (find(p3, "67"), "69", "center"),
-                 (find(p3, "68"), "70", "center")], font_for(p3), arial_buf)
+    row = lambda k: 71.28 + k * pitch        # top of table row k on pages 2/3
+    y_text = lambda k: row(k) + 1.9          # top of the text in row k
+
+    def cell(page, k, x0):
+        """Span in row k whose left edge is at x0 (column)."""
+        hits = [s for s in spans(page) if abs(s["bbox"][1] - y_text(k)) < 4
+                and abs(s["bbox"][0] - x0) < 3.5]
+        if len(hits) != 1:
+            raise ValueError(f"row {k} x {x0}: {len(hits)} spans on page {page.number}")
+        return hits[0]
+
+    SNO, COLL, DESIGN, RATE = 101.5, 145.39, 230.09, 353.94
+
+    def rrp_cell(page, k):
+        hits = [s for s in spans(page) if abs(s["bbox"][1] - y_text(k)) < 4 and s["bbox"][0] > 470]
+        assert len(hits) == 1, (page.number, k, hits)
+        return hits[0]
+
+    work = pymupdf.open(SRC_SIG)
+    P1, P2 = 1, 2
+    work.fullcopy_page(P1)                         # pages 4, 5: copies of page 2 for
+    work.fullcopy_page(P1)                         # Cloud Sheer rows and header
+    A, D = work[P1], work[P2]                      # original pages 2 and 3, renumbered
+    B, C = work[3], work[4]
+
+    # original page 2 rows: 0-11 Drift Sheer 31-42, 12 blank, 13 ELITE, 14 Tweed hdr,
+    # 15-18 (43-46) ... 41 PT-1 hdr, 42 "62 .. 1", 43 PT-2 hdr, 44 "63 .. 2",
+    # 45 Natural hdr, 46 "64", 47 Foldscape hdr, 48 "65 Kenya"; table ends at row 49.
+    # original page 3 rows: 0 "66 Foldscape Cera", 1 Thread hdr, 2 "67", 3 "68", 4 blank,
+    # 5 TERMS, ...
+    shift = len(CLOUD_SHEER)
+    data_rows = [15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 33, 34, 36, 38, 40, 46, 48]
+    calibri = next(s for s in spans(A) if s["font"].endswith("Calibri"))
+    jute = find(A, "Rs. 395", calibri["bbox"][1])
+    no = 43 + shift
+    edits = []
+    for k in data_rows:
+        if k == 46:
+            no += 4                                # 4 Premiere Texture rows come before
+        edits.append((cell(A, k, SNO), str(no), "center"))
+        no += 1
+    edits += [(cell(A, 42, SNO), str(62 + shift), "center"),
+              (cell(A, 42, DESIGN), "Cera", "left"),
+              (cell(A, 44, SNO), str(63 + shift), "center"),
+              (cell(A, 44, DESIGN), "Clare", "left"),
+              (calibri, "990", "left", {"y": jute["origin"][1], "color": (0.2, 0.2, 0.2)})]
+    edit(A, edits)
+
+    def cloud_row(page, k, i):
+        name, dealer = CLOUD_SHEER[i]
+        rate = list_rate(dealer)
+        return [(cell(page, k, SNO), str(43 + i), "center"),
+                (cell(page, k, COLL), "Cloud Sheer", "left"),
+                (cell(page, k, DESIGN), name, "left"),
+                (cell(page, k, RATE), f"Rs. {rate}", "right"),
+                (rrp_cell(page, k), str(rrp(rate)), "center")]
+
+    edits = [e for k in range(12) for e in cloud_row(B, k, k)]
+    edits += [(cell(B, 14, 74.11), "Cloud Sheer", "left"),
+              (cell(B, 42, SNO), str(64 + shift), "center"),
+              (cell(B, 42, DESIGN), "Cera", "left"),
+              (cell(B, 44, SNO), str(65 + shift), "center"),
+              (cell(B, 44, DESIGN), "Clare", "left")]
+    edit(B, edits)
+    edit(C, [e for k in range(shift - 12) for e in cloud_row(C, k, 12 + k)])
+    edit(D, [(cell(D, 0, SNO), str(66 + shift + 2), "center"),     # + 2 Premiere Texture
+             (cell(D, 2, SNO), str(67 + shift + 2), "center"),     #   rows added before
+             (cell(D, 3, SNO), str(68 + shift + 2), "center")])
+
+    pa, pb, pc, pd = (p.number for p in (A, B, C, D))
+    seq = ([(pa, k) for k in range(12)]                       # Drift Sheer 31-42
+           + [(pb, 14)]                                       # Cloud Sheer header
+           + [(pb, k) for k in range(12)] + [(pc, k) for k in range(shift - 12)]
+           + [(pa, k) for k in range(12, 42)]                 # blank, ELITE ... PT-1 hdr
+           + [(pa, 42), (pa, 44), (pa, 43), (pb, 42), (pb, 44)]   # PT-1 Cera/Clare, PT-2 ...
+           + [(pa, k) for k in range(45, 49)]                 # Natural Theory, Foldscape 83
+           + [(pd, k) for k in range(4)])                     # 84 Cera, Thread Touch 85-86
+    per_page = 49
 
     out = pymupdf.open()
     out.insert_pdf(work, from_page=0, to_page=0)
-    W, H = work[1].rect.width, work[1].rect.height
+    W, H = A.rect.width, A.rect.height
+    first, rest = seq[:per_page], seq[per_page:]
 
-    # page 2: unchanged down to "62 Cera", then the new order, same table bottom
     pg = out.new_page(width=W, height=H)
-    place(pg, work, 1, 0, row(43), 0)                       # ... PT-1 group, 62 Cera
-    place(pg, work, 1, row(44), row(45), row(43))           # 63 Clare
-    place(pg, work, 1, row(43), row(44), row(44))           # PT-2 group
-    place(pg, work, 3, row(42), row(43), row(45))           # 64 Cera
-    place(pg, work, 3, row(44), row(45), row(46))           # 65 Clare
-    place(pg, work, 1, row(45), row(46), row(47))           # Natural Theory group
-    place(pg, work, 1, row(46), row(47), row(48))           # 66 Natural Base
-    place(pg, work, 1, row(49), H, row(49))                 # bottom border
+    place(pg, work, pa, 0, row(0), 0)                         # page top, table top border
+    for i, (pn, k) in enumerate(first):
+        place(pg, work, pn, row(k), row(k + 1), row(i))
+    place(pg, work, pa, row(49), H, row(len(first)))          # table bottom border
 
-    # page 3: Foldscape group + 67 Kenya moved over, rest pushed down two rows
     pg = out.new_page(width=W, height=H)
-    edge = 0.75                                             # top border line thickness
-    place(pg, work, 2, 0, row(0) + edge, 0)                 # page-3 top border, as original
-    place(pg, work, 1, row(47) + edge, row(49), row(0) + edge)  # Foldscape group, 67 Kenya
-    place(pg, work, 2, row(0), H - 2 * pitch, row(2))       # 68 Cera ... terms & notes
+    place(pg, work, pd, 0, row(0), 0)
+    for i, (pn, k) in enumerate(rest):
+        place(pg, work, pn, row(k), row(k + 1), row(i))
+    place(pg, work, pd, row(4), H, row(len(rest)))            # blank row, terms & notes
 
     out.set_metadata(src.metadata)
     out.save(OUT_SIG, garbage=4, deflate=True)
