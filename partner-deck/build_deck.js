@@ -61,15 +61,29 @@ const PARTNERS_MARCH = { 2027: 100, 2028: 500, 2029: 1000,
   2030: Math.round(1000 * g), 2031: Math.round(1000 * g * g), 2032: 5000 };
 // Financial years FY 2027-28 ... FY 2031-32 (April - March): partners active on average
 // = mean of the opening and closing count.
-const FORECAST = [2028, 2029, 2030, 2031, 2032].reduce((rows, y) => {
+// Compound growth (assumed, base-case rates): the customer base keeps working for the
+// network - every year 10% of past customers bring in one new customer (referral) and
+// 10% order again (repeat) - and the average order rises 5% a year with prices.
+const REFERRAL_RATE = 0.10;
+const REPEAT_RATE = 0.10;
+const PRICE_GROWTH = 0.05;
+const FORECAST = [2028, 2029, 2030, 2031, 2032].reduce((rows, y, t) => {
   const avg = (PARTNERS_MARCH[y - 1] + PARTNERS_MARCH[y]) / 2;
-  const customers = avg * CUSTOMERS_PER_PARTNER_YEAR;
-  const turnover = avg * TURNOVER_PER_PARTNER_MONTH * 12;
-  const prevCum = rows.length ? rows[rows.length - 1].cumCustomers : 0;
+  const customers = avg * CUSTOMERS_PER_PARTNER_YEAR;            // from partners' own selling
+  const turnover = avg * TURNOVER_PER_PARTNER_MONTH * 12;        // without compounding
+  const prev = rows.length ? rows[rows.length - 1] : { cumCustomers: 0, cumCustomersC: 0 };
+  // with compounding
+  const aov = AVG_ORDER * Math.pow(1 + PRICE_GROWTH, t);
+  const referrals = REFERRAL_RATE * prev.cumCustomersC;
+  const newC = customers + referrals;
+  const repeatOrders = REPEAT_RATE * prev.cumCustomersC;
   rows.push({ fy: `FY ${String(y - 1).slice(2)}-${String(y).slice(2)}`, endPartners: PARTNERS_MARCH[y],
-              avg, customers, cumCustomers: prevCum + customers, turnover });
+              avg, customers, cumCustomers: prev.cumCustomers + customers, turnover,
+              aov, referrals, repeatOrders, cumCustomersC: prev.cumCustomersC + newC,
+              turnoverC: (newC + repeatOrders) * aov });
   return rows;
 }, []);
+const cagr = (a, b, years) => Math.pow(b / a, 1 / years) - 1;
 const crore = (r) => r / 1e7;
 const lakh = (r) => r / 1e5;
 
@@ -333,62 +347,77 @@ async function main() {
   // 8 - network database
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
   s.addText("07  ·  FACTS & FIGURES: THE NETWORK", { placeholder: "kicker" });
-  s.addText("A Community of 5 Lakh+ Customers by 2032", { placeholder: "title" });
-  const chartLook = (title) => ({
-    barDir: "col", barGapWidthPct: 55, chartColors: [H.accent1], showValue: true, dataLabelPosition: "outEnd",
-    dataLabelColor: H.dk2, dataLabelFontSize: 12, dataLabelFontBold: true, dataLabelFontFace: "+mn-lt",
-    showTitle: true, title, titleFontSize: 12, titleColor: H.accent4, titleFontFace: "+mn-lt",
-    catAxisLabelColor: H.dk1, catAxisLabelFontSize: 12, catAxisLabelFontFace: "+mn-lt",
-    catAxisLineShow: true, catAxisLineColor: "D9DCE1",
-    valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" }, showLegend: false,
-  });
-  s.addChart(pres.charts.BAR, [{ name: "Customer database (lakh, cumulative)",
-    labels: FORECAST.map((r) => "Mar 20" + r.fy.slice(-2)), values: FORECAST.map((r) => +lakh(r.cumCustomers).toFixed(2)) }],
-    { x: 0.4, y: 1.4, w: 5.0, h: 3.5, ...chartLook("Customer database, cumulative (lakh customers)"),
-      dataLabelFormatCode: "0.00", valAxisMaxVal: 6, objectName: name("chart") });
   const last = FORECAST[FORECAST.length - 1];
+  s.addText(`A Community of ${Math.floor(lakh(last.cumCustomersC) * 10) / 10} Lakh+ Customers by 2032`, { placeholder: "title" });
+  const chartLook = (title) => ({
+    barDir: "col", barGrouping: "clustered", barGapWidthPct: 45, chartColors: ["B9BEC7", H.accent1],
+    showValue: true, dataLabelPosition: "outEnd",
+    dataLabelColor: H.dk2, dataLabelFontSize: 10, dataLabelFontBold: true, dataLabelFontFace: "+mn-lt",
+    showTitle: true, title, titleFontSize: 12, titleColor: H.accent4, titleFontFace: "+mn-lt",
+    catAxisLabelColor: H.dk1, catAxisLabelFontSize: 11, catAxisLabelFontFace: "+mn-lt",
+    catAxisLineShow: true, catAxisLineColor: "D9DCE1",
+    valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
+    showLegend: true, legendPos: "b", legendFontSize: 11, legendColor: H.dk1, legendFontFace: "+mn-lt",
+  });
+  const fyLabels = FORECAST.map((r) => "Mar 20" + r.fy.slice(-2));
+  s.addChart(pres.charts.BAR, [
+    { name: "Partners' own customers", labels: fyLabels, values: FORECAST.map((r) => +lakh(r.cumCustomers).toFixed(2)) },
+    { name: "With compound growth", labels: fyLabels, values: FORECAST.map((r) => +lakh(r.cumCustomersC).toFixed(2)) },
+  ], { x: 0.4, y: 1.4, w: 5.1, h: 3.6, ...chartLook("Customer database, cumulative (lakh customers)"),
+       dataLabelFormatCode: "0.0", valAxisMaxVal: 6.6, objectName: name("chart") });
   const netStats = [
-    [String(CUSTOMERS_PER_PARTNER_YEAR), "customers per partner a year — 5 a month"],
-    [`${+lakh(PARTNERS_MARCH[2032] * CUSTOMERS_PER_PARTNER_YEAR).toFixed(1)} Lakh`, "new customers a year once 5,000 partners are active"],
-    [`${lakh(last.cumCustomers).toFixed(1)} Lakh`, "customers in the network database by March 2032"],
+    [String(CUSTOMERS_PER_PARTNER_YEAR), "new customers every partner adds, every year"],
+    [`${REFERRAL_RATE * 100}%`, "of past customers refer a new customer each year"],
+    [`${lakh(last.cumCustomersC).toFixed(2)} L`, `customers by March 2032 (${lakh(last.cumCustomers).toFixed(2)} L without referrals)`],
   ];
   netStats.forEach(([big, small], i) => {
     const y = 1.45 + i * 1.0;
     card(s, 5.75, y, 3.75, 0.88, C.background2);
-    T(s, big, { x: 5.9, y: y + 0.1, w: 1.45, h: 0.68, fontSize: 24, bold: true, color: C.accent5, fontFace: "+mj-lt", valign: "middle" });
-    T(s, small, { x: 7.4, y: y + 0.1, w: 1.95, h: 0.68, fontSize: 12, color: C.text1, valign: "middle" });
+    T(s, big, { x: 5.9, y: y + 0.1, w: 1.35, h: 0.68, fontSize: 24, bold: true, color: C.accent5, fontFace: "+mj-lt", valign: "middle" });
+    T(s, small, { x: 7.3, y: y + 0.1, w: 2.05, h: 0.68, fontSize: 12, color: C.text1, valign: "middle" });
   });
-  T(s, "Base case: partners grow 100 → 500 → 1,000 → 5,000 (Mar 2030 and 2031 at a steady ×1.71 a year); each year counts the average partners active.",
+  T(s, "Partners grow 100 → 500 → 1,000 → 5,000 (Mar 2030 and 2031 at a steady ×1.71 a year); each year counts the average partners active.",
     { x: 5.75, y: 4.45, w: 3.75, h: 0.5, fontSize: 10, italic: true, color: C.accent4, valign: "top" });
-  s.addNotes("Network database model (base case). Every partner adds 60 customers a year (5 a month). Partners at each March: 100 (2027), 500 (2028), 1,000 (2029), " + inr(PARTNERS_MARCH[2030]) + " (2030), " + inr(PARTNERS_MARCH[2031]) + " (2031), 5,000 (2032); 2030 and 2031 are filled in at a constant growth rate of x1.71 a year between the 2029 and 2032 milestones. Customers in a year = average partners in that year (opening + closing / 2) x 60. Cumulative customer database: " + FORECAST.map((r) => r.fy + ": " + inr(Math.round(r.cumCustomers))).join("; ") + ". The launch period up to March 2027 is not counted, so these figures are conservative.");
+  s.addNotes("Network database model. Every partner adds 60 new customers every year they are active (5 a month), so a partner who joined in 2027 has built about 300 customers by 2032. Partners at each March: 100 (2027), 500 (2028), 1,000 (2029), " + inr(PARTNERS_MARCH[2030]) + " (2030), " + inr(PARTNERS_MARCH[2031]) + " (2031), 5,000 (2032); 2030 and 2031 are filled in at a constant growth rate of x1.71 a year. Customers from partners in a year = average partners (opening + closing / 2) x 60. Compound growth: each year 10% of all past customers refer one new customer, so the database grows on itself. Cumulative customers, partners only: " + FORECAST.map((r) => r.fy + " " + inr(Math.round(r.cumCustomers))).join("; ") + ". With compound growth: " + FORECAST.map((r) => r.fy + " " + inr(Math.round(r.cumCustomersC))).join("; ") + ". The launch period up to March 2027 is not counted.");
 
   // 9 - turnover forecast
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
   s.addText("08  ·  FACTS & FIGURES: TURNOVER FORECAST", { placeholder: "kicker" });
-  s.addText("From ₹1 Crore a Month to ₹50 Crore a Month", { placeholder: "title" });
-  const eq = [["5", "customers per partner a month"], ["₹" + inr(AVG_ORDER), "average order value"],
-              ["₹1 Lakh", "turnover per partner a month"]];
+  s.addText(`₹1 Cr a Month Compounds to ₹${inr(Math.round(crore(last.turnoverC)))} Cr a Year`, { placeholder: "title" });
+  const eq = [["5", "customers / partner / month"], ["₹" + inr(AVG_ORDER), "average order"],
+              [String(FOUNDING_PARTNERS), "founding partners"], ["₹1 Crore", "first-month turnover"]];
   eq.forEach(([big, small], i) => {
-    const x = 0.5 + i * 3.1;
-    card(s, x, 1.42, 2.6, 0.85, i === 2 ? C.accent1 : C.background2);
-    T(s, big, { x: x + 0.1, y: 1.47, w: 2.4, h: 0.45, fontSize: 22, bold: true, color: i === 2 ? C.background1 : C.text2, align: "center", fontFace: "+mj-lt" });
-    T(s, small, { x: x + 0.1, y: 1.92, w: 2.4, h: 0.28, fontSize: 11, color: i === 2 ? C.background1 : C.accent4, align: "center" });
-    if (i < 2) T(s, i === 0 ? "×" : "=", { x: x + 2.6, y: 1.42, w: 0.5, h: 0.85, fontSize: 26, bold: true, color: C.accent5, align: "center", valign: "middle" });
+    const x = 0.5 + i * 2.35, hi = i === 3;
+    card(s, x, 1.42, 1.95, 0.85, hi ? C.accent1 : C.background2);
+    T(s, big, { x: x + 0.05, y: 1.47, w: 1.85, h: 0.45, fontSize: 22, bold: true, color: hi ? C.background1 : C.text2, align: "center", fontFace: "+mj-lt" });
+    T(s, small, { x: x + 0.05, y: 1.92, w: 1.85, h: 0.28, fontSize: 11, color: hi ? C.background1 : C.accent4, align: "center" });
+    if (i < 3) T(s, i < 2 ? "×" : "=", { x: x + 1.95, y: 1.42, w: 0.4, h: 0.85, fontSize: 24, bold: true, color: C.accent5, align: "center", valign: "middle" });
   });
-  s.addChart(pres.charts.BAR, [{ name: "Annual turnover (₹ crore)",
-    labels: FORECAST.map((r) => r.fy), values: FORECAST.map((r) => +crore(r.turnover).toFixed(1)) }],
-    { x: 0.4, y: 2.45, w: 5.0, h: 2.55, ...chartLook("Annual turnover (₹ crore)"),
-      dataLabelFormatCode: "#,##0", valAxisMaxVal: 540, objectName: name("chart") });
-  T(s, "MONTHLY TURNOVER AT EACH MILESTONE", { x: 5.75, y: 2.5, w: 3.75, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
-  MILESTONES.forEach((m, i) => {
-    const y = 2.85 + i * 0.53;
-    card(s, 5.75, y, 3.75, 0.45, C.background2, false);
-    T(s, `${inr(m.partners)} partners${i === 0 ? " (first month)" : ""}`, { x: 5.9, y, w: 2.2, h: 0.45, fontSize: 12, color: C.text1, valign: "middle" });
-    const monthly = crore(m.partners * TURNOVER_PER_PARTNER_MONTH);
-    T(s, `₹${+monthly.toFixed(1)} Cr / month`, { x: 7.6, y, w: 1.75, h: 0.45, fontSize: 13, bold: true, color: C.text2, align: "right", valign: "middle" });
+  const fys = FORECAST.map((r) => r.fy);
+  s.addChart(pres.charts.BAR, [
+    { name: "Partners' own customers", labels: fys, values: FORECAST.map((r) => +crore(r.turnover).toFixed(1)) },
+    { name: "With compound growth", labels: fys, values: FORECAST.map((r) => +crore(r.turnoverC).toFixed(1)) },
+  ], { x: 0.4, y: 2.42, w: 5.1, h: 2.65, ...chartLook("Annual turnover (₹ crore)"),
+       dataLabelFormatCode: "#,##0", valAxisMaxVal: 840, objectName: name("chart") });
+  T(s, "COMPOUND GROWTH DRIVERS", { x: 5.75, y: 2.47, w: 3.75, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
+  [[`${REFERRAL_RATE * 100}%`, "of past customers refer a new one each year"],
+   [`${REPEAT_RATE * 100}%`, "of past customers order again each year"],
+   [`${PRICE_GROWTH * 100}%`, "yearly rise in the average order"]].forEach(([big, small], i) => {
+    const y = 2.8 + i * 0.42;
+    T(s, big, { x: 5.75, y, w: 0.7, h: 0.38, fontSize: 15, bold: true, color: C.text2, fontFace: "+mj-lt", valign: "middle" });
+    T(s, small, { x: 6.45, y, w: 3.05, h: 0.38, fontSize: 12, color: C.text1, valign: "middle" });
   });
+  const first = FORECAST[0];
+  const totalC = FORECAST.reduce((a, r) => a + r.turnoverC, 0);
   const total = FORECAST.reduce((a, r) => a + r.turnover, 0);
-  s.addNotes("Turnover model (base case). Target: ₹1 crore turnover from the first month with the 100 founding partners = ₹1 lakh per partner a month. With 5 customers per partner a month (60 a year) this means an average order of ₹20,000. Monthly turnover = active partners x ₹1 lakh: ₹1 crore at 100 partners, ₹5 crore at 500, ₹10 crore at 1,000 and ₹50 crore at 5,000. Annual turnover uses the average partners active in each financial year: " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnover).toFixed(1) + " crore").join("; ") + ". Five-year total FY 27-28 to FY 31-32: about ₹" + inr(Math.round(crore(total))) + " crore. Assumes every partner reaches steady productivity; new partners usually take a few months to ramp up, so treat this as the base case.");
+  [[`${Math.round(cagr(first.turnoverC, last.turnoverC, FORECAST.length - 1) * 100)}%`, "turnover CAGR, FY 27-28 → 31-32"],
+   [`₹${inr(Math.round(crore(totalC)))} Cr`, `5-year turnover (₹${inr(Math.round(crore(total)))} Cr without)`]].forEach(([big, small], i) => {
+    const x = 5.75 + i * 1.93;
+    card(s, x, 4.12, 1.82, 0.88, i === 0 ? C.accent1 : C.background2);
+    T(s, big, { x: x + 0.05, y: 4.17, w: 1.72, h: 0.4, fontSize: 18, bold: true, color: i === 0 ? C.background1 : C.text2, align: "center", fontFace: "+mj-lt" });
+    T(s, small, { x: x + 0.08, y: 4.56, w: 1.66, h: 0.4, fontSize: 10, color: i === 0 ? C.background1 : C.accent4, align: "center", valign: "top" });
+  });
+  s.addNotes("Turnover model. First month: 100 founding partners x 5 customers x ₹20,000 average order = ₹1 crore (₹1 lakh per partner a month). Without compounding, turnover = average partners x ₹1 lakh x 12: " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnover).toFixed(1) + " Cr").join("; ") + " (5-year total ₹" + inr(Math.round(crore(total))) + " Cr). With compound growth - 10% of past customers refer a new customer each year, 10% of past customers order again each year, and the average order rises 5% a year (₹20,000 in FY 27-28 to ₹" + inr(Math.round(last.aov)) + " in FY 31-32): " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnoverC).toFixed(1) + " Cr").join("; ") + " (5-year total ₹" + inr(Math.round(crore(totalC))) + " Cr, CAGR " + Math.round(cagr(first.turnoverC, last.turnoverC, FORECAST.length - 1) * 100) + "%). The three compounding rates are planning assumptions; new partners also take a few months to reach full pace, so treat this as the base case.");
 
   // 10 - how we get there
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
