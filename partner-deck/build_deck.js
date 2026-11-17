@@ -74,14 +74,14 @@ async function main() {
 
   pres.defineSlideMaster({
     title: "COVER",
-    background: { color: H.dk2 },
+    background: { color: H.lt1 },
     objects: [
       { placeholder: { options: { name: "kicker", type: "body", x: 0.8, y: 1.05, w: 6, h: 0.3,
-          fontSize: 11, bold: true, color: C.accent1, charSpacing: 4, margin: 0 }, text: "" } },
+          fontSize: 11, bold: true, color: C.accent5, charSpacing: 4, margin: 0 }, text: "" } },
       { placeholder: { options: { name: "title", type: "title", x: 0.8, y: 1.4, w: 7.5, h: 0.95,
-          fontSize: 44, bold: true, color: C.background1, margin: 0, valign: "top", align: "left" }, text: "" } },
+          fontSize: 44, bold: true, color: C.text2, margin: 0, valign: "top", align: "left" }, text: "" } },
       { placeholder: { options: { name: "subtitle", type: "body", x: 0.8, y: 2.35, w: 7, h: 0.45,
-          fontSize: 20, color: C.accent2, charSpacing: 2, margin: 0, valign: "top" }, text: "" } },
+          fontSize: 20, color: C.accent5, charSpacing: 2, margin: 0, valign: "top" }, text: "" } },
     ],
   });
   pres.defineSlideMaster({
@@ -89,12 +89,6 @@ async function main() {
     background: { color: H.lt1 },
     objects: [kicker(C.accent5), title(C.text2), footer(C.accent4)],
     slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 10, color: H.accent4, align: "right" },
-  });
-  pres.defineSlideMaster({
-    title: "DARK",
-    background: { color: H.dk2 },
-    objects: [kicker(C.accent1), title(C.background1), footer(C.accent2)],
-    slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 10, color: H.accent2, align: "right" },
   });
 
   // ---- helpers ----
@@ -124,21 +118,21 @@ async function main() {
 
   // 1 - cover
   let s = pres.addSlide({ masterName: "COVER", sectionTitle: "The Project" });
-  s.addShape(pres.shapes.OVAL, { x: 6.9, y: -1.7, w: 4.6, h: 4.6, fill: { color: C.accent3 }, line: { type: "none" }, objectName: "cover-circle-1" });
+  s.addShape(pres.shapes.OVAL, { x: 6.9, y: -1.7, w: 4.6, h: 4.6, fill: { color: C.accent6 }, line: { type: "none" }, objectName: "cover-circle-1" });
   s.addShape(pres.shapes.OVAL, { x: 8.2, y: 3.6, w: 2.6, h: 2.6, line: { color: H.accent1, width: 1.5 }, fill: { type: "none" }, objectName: "cover-ring" });
   s.addText("A VENTURE BY ADY BUILDCON PVT. LTD.", { placeholder: "kicker" });
   s.addText("The Furnish Atellier", { placeholder: "title" });
   s.addText("BUSINESS PARTNER PROGRAM", { placeholder: "subtitle" });
   T(s, "Premium fabrics for curtains & upholstery — and a ready-made business for every partner.",
-    { x: 0.8, y: 2.95, w: 5.6, h: 0.65, fontSize: 16, italic: true, color: C.background1, valign: "top" });
+    { x: 0.8, y: 2.95, w: 5.6, h: 0.65, fontSize: 16, italic: true, color: C.text1, valign: "top" });
   const facts = [["Since 1994", "a fabric legacy"], ["1,200", "fabrics in every kit"], ["5,000", "global partners by 2032"]];
   facts.forEach(([big, small], i) => {
     const x = 0.8 + i * 2.05;
-    T(s, big, { x, y: 3.85, w: 1.9, h: 0.45, fontSize: 22, bold: true, color: C.accent1, fontFace: "+mj-lt" });
-    T(s, small, { x, y: 4.3, w: 1.9, h: 0.3, fontSize: 12, color: C.accent2 });
+    T(s, big, { x, y: 3.85, w: 1.9, h: 0.45, fontSize: 22, bold: true, color: C.accent5, fontFace: "+mj-lt" });
+    T(s, small, { x, y: 4.3, w: 1.9, h: 0.3, fontSize: 12, color: C.accent4 });
   });
   T(s, "Kamlesh Agrawal, Director   ·   +91 98105 27231   ·   adybuildcon@gmail.com",
-    { x: 0.8, y: 5.0, w: 7, h: 0.3, fontSize: 11, color: C.accent2 });
+    { x: 0.8, y: 5.0, w: 7, h: 0.3, fontSize: 11, color: C.accent4 });
   s.addNotes("The Furnish Atellier Business Partner Program: a premium fabric brand for curtains and upholstery from Ady Buildcon Pvt. Ltd., offered to partners as a complete business kit against a security amount (₹69,000 for the first 100 founding partners, ₹1,35,000 after that). Goal: a network of 5,000 business partners across the globe by March 2032.");
 
   // 2 - the project
@@ -186,14 +180,14 @@ async function main() {
     await badge(s, x + 0.33, 3.75, 0.55, tools[i][0]);
     T(s, tools[i][1], { x, y: 4.36, w: 1.2, h: 0.5, fontSize: 12, bold: true, color: C.text2, align: "center", valign: "top" });
   }
-  card(s, 6.05, 1.45, 3.45, 3.45, C.text2);
-  T(s, "SECURITY AMOUNT AGAINST THE KIT", { x: 6.3, y: 1.62, w: 3.1, h: 0.28, fontSize: 11, bold: true, color: C.accent1, charSpacing: 1 });
-  T(s, "₹" + inr(FOUNDING_SECURITY), { x: 6.3, y: 1.9, w: 3, h: 0.7, fontSize: 40, bold: true, color: C.background1, fontFace: "+mj-lt" });
-  T(s, `First 100 founding partners · then ₹${inr(STANDARD_SECURITY)}`, { x: 6.3, y: 2.6, w: 3.1, h: 0.3, fontSize: 12, color: C.accent2 });
-  T(s, "ALSO INCLUDED", { x: 6.3, y: 3.05, w: 3, h: 0.28, fontSize: 11, bold: true, color: C.accent1, charSpacing: 2 });
+  card(s, 6.05, 1.45, 3.45, 3.45, C.background2);
+  T(s, "SECURITY AMOUNT AGAINST THE KIT", { x: 6.3, y: 1.62, w: 3.1, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
+  T(s, "₹" + inr(FOUNDING_SECURITY), { x: 6.3, y: 1.9, w: 3, h: 0.7, fontSize: 40, bold: true, color: C.text2, fontFace: "+mj-lt" });
+  T(s, `First 100 founding partners · then ₹${inr(STANDARD_SECURITY)}`, { x: 6.3, y: 2.6, w: 3.1, h: 0.3, fontSize: 12, color: C.accent4 });
+  T(s, "ALSO INCLUDED", { x: 6.3, y: 3.05, w: 3, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 2 });
   T(s, ["Rights to the brand name", "Welcome training programme", "Support, always on call", "Weekly webinars", "Ready digital marketing content"]
     .map((t, i, a) => ({ text: t, options: { bullet: true, breakLine: i < a.length - 1 } })),
-    { x: 6.3, y: 3.35, w: 3.1, h: 1.45, fontSize: 14, color: C.background1, paraSpaceAfter: 2, valign: "top" });
+    { x: 6.3, y: 3.35, w: 3.1, h: 1.45, fontSize: 14, color: C.text1, paraSpaceAfter: 2, valign: "top" });
   s.addNotes("Each partner receives 4 swatch books with 300 samples each - 1,200 fabrics in 600+ curated mood boards - plus an AI styling tablet, standee, visiting cards and a trolley bag. The kit is given against a security amount: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that.");
 
   // 4 - markets & earnings
@@ -256,26 +250,26 @@ async function main() {
   pres.addSection({ title: "Our Goal" });
 
   // 6 - the goal
-  s = pres.addSlide({ masterName: "DARK", sectionTitle: "Our Goal" });
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
   s.addText("05  ·  OUR GOAL", { placeholder: "kicker" });
   s.addText("5,000 Business Partners Across the Globe", { placeholder: "title" });
   T(s, "5,000", { x: 0.5, y: 1.3, w: 4.2, h: 1.15, fontSize: 80, bold: true, color: C.accent1, fontFace: "+mj-lt" });
   T(s, "Business partners by March 2032, each running their own fabric business with our support.",
-    { x: 0.5, y: 2.62, w: 4.4, h: 0.65, fontSize: 15, color: C.background1, valign: "top" });
+    { x: 0.5, y: 2.62, w: 4.4, h: 0.65, fontSize: 15, color: C.text1, valign: "top" });
   [["30 Years", "of fabric legacy behind every partner"], ["Worldwide", "a partner network across the globe"]].forEach(([big, small], i) => {
     const x = 5.4 + i * 2.1;
-    card(s, x, 1.5, 1.95, 1.45, C.accent3, false);
-    T(s, big, { x: x + 0.1, y: 1.68, w: 1.75, h: 0.55, fontSize: 22, bold: true, color: C.background1, align: "center", fontFace: "+mj-lt" });
-    T(s, small, { x: x + 0.1, y: 2.25, w: 1.75, h: 0.5, fontSize: 12, color: C.accent2, align: "center", valign: "top" });
+    card(s, x, 1.5, 1.95, 1.45, C.background2);
+    T(s, big, { x: x + 0.1, y: 1.68, w: 1.75, h: 0.55, fontSize: 22, bold: true, color: C.text2, align: "center", fontFace: "+mj-lt" });
+    T(s, small, { x: x + 0.1, y: 2.25, w: 1.75, h: 0.5, fontSize: 12, color: C.accent4, align: "center", valign: "top" });
   });
-  s.addShape(pres.shapes.LINE, { x: 1.2, y: 3.85, w: 7.6, h: 0, line: { color: H.accent3, width: 2 }, objectName: name("timeline") });
+  s.addShape(pres.shapes.LINE, { x: 1.2, y: 3.85, w: 7.6, h: 0, line: { color: "D9DCE1", width: 2 }, objectName: name("timeline") });
   const sizes = [0.3, 0.4, 0.5, 0.66];
   MILESTONES.forEach((m, i) => {
     const cx = 1.2 + i * (7.6 / 3), d = sizes[i];
     s.addShape(pres.shapes.OVAL, { x: cx - d / 2, y: 3.85 - d / 2, w: d, h: d, fill: { color: C.accent1 },
-      line: { color: H.dk2, width: 2 }, objectName: name("milestone") });
-    T(s, inr(m.partners), { x: cx - 1.0, y: 4.25, w: 2.0, h: 0.42, fontSize: 22, bold: true, color: C.background1, align: "center", fontFace: "+mj-lt" });
-    T(s, m.by.toUpperCase(), { x: cx - 1.0, y: 4.67, w: 2.0, h: 0.28, fontSize: 11, bold: true, color: C.accent2, align: "center", charSpacing: 2 });
+      line: { color: H.lt1, width: 2 }, objectName: name("milestone") });
+    T(s, inr(m.partners), { x: cx - 1.0, y: 4.25, w: 2.0, h: 0.42, fontSize: 22, bold: true, color: C.text2, align: "center", fontFace: "+mj-lt" });
+    T(s, m.by.toUpperCase(), { x: cx - 1.0, y: 4.67, w: 2.0, h: 0.28, fontSize: 11, bold: true, color: C.accent5, align: "center", charSpacing: 2 });
   });
   s.addNotes("Our goal is a network of 5,000 business partners across the globe by March 2032, each running their own fabric business with The Furnish Atellier's brand, collection and support. Milestones: 100 partners by March 2027, 500 by March 2028, 1,000 by March 2029 and 5,000 by March 2032.");
 
@@ -308,7 +302,7 @@ async function main() {
   s.addNotes("Phase 1 Launch: 100 partners by March 2027. Phase 2 Build: 500 by March 2028 (400 new partners). Phase 3 Scale: 1,000 by March 2029 (500 new partners). Phase 4 Global: 5,000 partners across the globe by March 2032 (4,000 new partners) - about 1,333 new partners a year over the last three years.");
 
   // 8 - how we get there
-  s = pres.addSlide({ masterName: "DARK", sectionTitle: "Our Goal" });
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
   s.addText("07  ·  HOW WE GET THERE", { placeholder: "kicker" });
   s.addText("Six Engines That Take Us to 5,000", { placeholder: "title" });
   const engines = [[fa.FaShareNodes, "Partner referrals", "₹5,000 per new partner turns every partner into a recruiter."],
@@ -319,16 +313,16 @@ async function main() {
                    [fa.FaAward, "30 years of trust", "Customers buy from a name they know."]];
   for (let i = 0; i < 6; i++) {
     const x = 0.5 + (i % 3) * 3.05, y = 1.45 + Math.floor(i / 3) * 1.38;
-    card(s, x, y, 2.9, 1.25, C.accent3, false);
+    card(s, x, y, 2.9, 1.25, C.background2);
     await badge(s, x + 0.18, y + 0.2, 0.48, engines[i][0]);
-    T(s, engines[i][1], { x: x + 0.8, y: y + 0.2, w: 1.95, h: 0.48, fontSize: 14, bold: true, color: C.background1, valign: "middle" });
-    T(s, engines[i][2], { x: x + 0.18, y: y + 0.75, w: 2.6, h: 0.45, fontSize: 11, color: C.accent2, valign: "top" });
+    T(s, engines[i][1], { x: x + 0.8, y: y + 0.2, w: 1.95, h: 0.48, fontSize: 14, bold: true, color: C.text2, valign: "middle" });
+    T(s, engines[i][2], { x: x + 0.18, y: y + 0.75, w: 2.6, h: 0.45, fontSize: 11, color: C.accent4, valign: "top" });
   }
   const contact = [[fa.FaUserTie, "Kamlesh Agrawal, Director"], [fa.FaPhone, "+91 98105 27231"], [fa.FaEnvelope, "adybuildcon@gmail.com"]];
   for (let i = 0; i < 3; i++) {
     const x = 0.5 + i * 3.05;
     await badge(s, x, 4.38, 0.4, contact[i][0]);
-    T(s, contact[i][1], { x: x + 0.52, y: 4.38, w: 2.45, h: 0.4, fontSize: 14, bold: true, color: C.background1, valign: "middle" });
+    T(s, contact[i][1], { x: x + 0.52, y: 4.38, w: 2.45, h: 0.4, fontSize: 14, bold: true, color: C.text2, valign: "middle" });
   }
   s.addNotes("Growth comes from six engines: referral bonuses, the women-entrepreneur discount, training and weekly webinars that scale, ready digital content, extra income from the upcoming e-store, and 30 years of brand trust. Contact: Kamlesh Agrawal, Director, +91 98105 27231.");
 
