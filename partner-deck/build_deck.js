@@ -35,7 +35,8 @@ const THEME = {
 const H = THEME.colors;
 
 // ---- facts used on the slides ----
-const KIT_PRICE = 69000;
+const FOUNDING_SECURITY = 69000;   // first 100 founding partners
+const STANDARD_SECURITY = 135000;  // every partner after the first 100
 const MILESTONES = [
   { phase: "Launch", by: "March 2027", partners: 100 },
   { phase: "Build", by: "March 2028", partners: 500 },
@@ -138,7 +139,7 @@ async function main() {
   });
   T(s, "Kamlesh Agrawal, Director   ·   +91 98105 27231   ·   adybuildcon@gmail.com",
     { x: 0.8, y: 5.0, w: 7, h: 0.3, fontSize: 11, color: C.accent2 });
-  s.addNotes("The Furnish Atellier Business Partner Program: a premium fabric brand for curtains and upholstery from Ady Buildcon Pvt. Ltd., offered to partners as a complete ₹69,000 business kit. Goal: a network of 5,000 business partners across the globe by March 2032.");
+  s.addNotes("The Furnish Atellier Business Partner Program: a premium fabric brand for curtains and upholstery from Ady Buildcon Pvt. Ltd., offered to partners as a complete business kit against a security amount (₹69,000 for the first 100 founding partners, ₹1,35,000 after that). Goal: a network of 5,000 business partners across the globe by March 2032.");
 
   // 2 - the project
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "The Project" });
@@ -186,14 +187,14 @@ async function main() {
     T(s, tools[i][1], { x, y: 4.36, w: 1.2, h: 0.5, fontSize: 12, bold: true, color: C.text2, align: "center", valign: "top" });
   }
   card(s, 6.05, 1.45, 3.45, 3.45, C.text2);
-  T(s, "PARTNER KIT PRICE", { x: 6.3, y: 1.62, w: 3, h: 0.28, fontSize: 11, bold: true, color: C.accent1, charSpacing: 2 });
-  T(s, "₹" + inr(KIT_PRICE), { x: 6.3, y: 1.9, w: 3, h: 0.7, fontSize: 40, bold: true, color: C.background1, fontFace: "+mj-lt" });
-  T(s, "Business Kit value ₹90,000", { x: 6.3, y: 2.6, w: 3, h: 0.3, fontSize: 13, color: C.accent2 });
+  T(s, "SECURITY AMOUNT AGAINST THE KIT", { x: 6.3, y: 1.62, w: 3.1, h: 0.28, fontSize: 11, bold: true, color: C.accent1, charSpacing: 1 });
+  T(s, "₹" + inr(FOUNDING_SECURITY), { x: 6.3, y: 1.9, w: 3, h: 0.7, fontSize: 40, bold: true, color: C.background1, fontFace: "+mj-lt" });
+  T(s, `First 100 founding partners · then ₹${inr(STANDARD_SECURITY)}`, { x: 6.3, y: 2.6, w: 3.1, h: 0.3, fontSize: 12, color: C.accent2 });
   T(s, "ALSO INCLUDED", { x: 6.3, y: 3.05, w: 3, h: 0.28, fontSize: 11, bold: true, color: C.accent1, charSpacing: 2 });
   T(s, ["Rights to the brand name", "Welcome training programme", "Support, always on call", "Weekly webinars", "Ready digital marketing content"]
     .map((t, i, a) => ({ text: t, options: { bullet: true, breakLine: i < a.length - 1 } })),
     { x: 6.3, y: 3.35, w: 3.1, h: 1.45, fontSize: 14, color: C.background1, paraSpaceAfter: 2, valign: "top" });
-  s.addNotes("Each partner receives 4 swatch books with 300 samples each - 1,200 fabrics in 600+ curated mood boards - plus an AI styling tablet, standee, visiting cards and a trolley bag. Kit value ₹90,000; partner price ₹69,000.");
+  s.addNotes("Each partner receives 4 swatch books with 300 samples each - 1,200 fabrics in 600+ curated mood boards - plus an AI styling tablet, standee, visiting cards and a trolley bag. The kit is given against a security amount: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that.");
 
   // 4 - markets & earnings
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "The Project" });
@@ -226,9 +227,11 @@ async function main() {
   // 5 - investment
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "The Project" });
   s.addText("04  ·  THE INVESTMENT", { placeholder: "kicker" });
-  s.addText("Why ₹69,000 Beats Building It Alone", { placeholder: "title" });
-  const tiles = [["₹90,000", "Business Kit value", false], ["₹69,000", "Partner kit price", true],
-                 ["₹64,000", "For women entrepreneurs (₹5,000 off)", false], ["₹5 Lakh", "Sales at which your kit amount is adjusted in full", false]];
+  s.addText("A Security Amount, Not a Cost", { placeholder: "title" });
+  const tiles = [["₹" + inr(FOUNDING_SECURITY), "First 100 founding partners", true],
+                 ["₹" + inr(STANDARD_SECURITY), "Every partner after the first 100", false],
+                 ["₹5,000 off", "For women entrepreneurs", false],
+                 ["₹5 Lakh", "Sales at which your security amount is adjusted in full", false]];
   tiles.forEach(([big, small, hi], i) => {
     const x = 0.5 + i * 2.3;
     card(s, x, 1.45, 2.1, 1.15, hi ? C.accent1 : C.background2);
@@ -236,7 +239,7 @@ async function main() {
     T(s, small, { x: x + 0.12, y: 2.05, w: 1.86, h: 0.48, fontSize: 11, color: hi ? C.background1 : C.accent4, align: "center", valign: "top" });
   });
   const hdr = (t, fill, color) => ({ text: t, options: { bold: true, fill: { color: fill }, color, fontSize: 13 } });
-  const rows = [["Investment", "₹10 lakh+ for catalogues of many brands", "One curated kit: ₹69,000"],
+  const rows = [["Investment", "₹10 lakh+ for catalogues of many brands", "One kit against a security amount"],
                 ["Space", "300–400 sq. ft. of storage", "Fits in one trolley bag"],
                 ["Access", "Most brands won't supply individuals", "Branded collection from day one"],
                 ["Trust", "Years to build a name", "A 30-year legacy from day one"]];
@@ -247,7 +250,7 @@ async function main() {
       fill: { color: i % 2 ? H.lt1 : H.lt2 } } }))),
   ], { x: 0.5, y: 2.85, w: 9.0, colW: [1.3, 3.85, 3.85], rowH: 0.4, margin: [0, 0.12, 0, 0.12], valign: "middle",
        border: { type: "solid", pt: 0.5, color: "D9DCE1" }, objectName: name("table") });
-  s.addNotes("Building a comparable range independently costs ₹10 lakh+ in catalogues and 300-400 sq. ft. of storage. The partner kit is ₹69,000 (₹64,000 for women entrepreneurs), and the kit amount is adjusted in full once the partner's sales cross ₹5 lakh.");
+  s.addNotes("The Business Kit is given against a security amount, not sold: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that. Women entrepreneurs get ₹5,000 off, and the security amount is adjusted in full once the partner's sales cross ₹5 lakh. Building a comparable range alone costs ₹10 lakh+ in catalogues and 300-400 sq. ft. of storage.");
 
   // ================= OUR GOAL (3 slides) =================
   pres.addSection({ title: "Our Goal" });
@@ -298,7 +301,7 @@ async function main() {
     numBadge(s, 5.55, y + 0.16, 0.45, i + 1);
     T(s, `${m.phase}`, { x: 6.15, y: y + 0.08, w: 1.6, h: 0.32, fontSize: 14, bold: true, color: C.text2 });
     T(s, `by ${m.by}`, { x: 7.6, y: y + 0.08, w: 1.75, h: 0.32, fontSize: 12, bold: true, color: C.accent5, align: "right" });
-    T(s, `${inr(m.partners)} partners  ·  +${inr(m.partners - prev)} new partners`,
+    T(s, i === 0 ? "100 founding partners" : `${inr(m.partners)} partners  ·  +${inr(m.partners - prev)} new partners`,
       { x: 6.15, y: y + 0.4, w: 3.2, h: 0.3, fontSize: 12, color: C.accent4 });
     prev = m.partners;
   });
@@ -309,7 +312,7 @@ async function main() {
   s.addText("07  ·  HOW WE GET THERE", { placeholder: "kicker" });
   s.addText("Six Engines That Take Us to 5,000", { placeholder: "title" });
   const engines = [[fa.FaShareNodes, "Partner referrals", "₹5,000 per new partner turns every partner into a recruiter."],
-                   [fa.FaPersonDress, "Women entrepreneurs", "₹5,000 off the kit widens who can start."],
+                   [fa.FaPersonDress, "Women entrepreneurs", "₹5,000 off the security amount widens who can start."],
                    [fa.FaChalkboardUser, "Training at scale", "Welcome training and weekly webinars for every partner."],
                    [fa.FaPhotoFilm, "Ready digital content", "Images, videos and posts that market every partner."],
                    [fa.FaCartShopping, "More ways to earn", "The décor e-store adds affiliate income."],
