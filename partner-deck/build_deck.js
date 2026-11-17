@@ -1,4 +1,4 @@
-// The Furnish Atellier - Business Partner Program: 8-slide deck (5 project + 3 goal).
+// The Furnish Atellier - Business Partner Program: 10-slide deck (5 project + 5 goal & forecast).
 // Run:  NODE_PATH=<dir with pptxgenjs, react-icons, react, react-dom, sharp> node build_deck.js
 // Writes The_Furnish_Atellier_Partner_Program.pptx next to this script.
 
@@ -46,41 +46,51 @@ const MILESTONES = [
 const inr = (n) => n.toLocaleString("en-IN");
 
 // ---- forecast model (base case) ----
-// Drivers: each partner serves 60 customers a year (5 a month); the ₹1 crore a month
-// first-month target with the 100 founding partners sets the turnover per partner at
-// ₹1 lakh a month, i.e. an average order of ₹1,00,000 / 5 = ₹20,000.
+// Network: every partner meets and serves 60 customers a year (5 a month) - they all
+// enter the customer database.  Sales: a performing partner closes 3 sales a month at an
+// average of ₹40,000; 30% of partners are assumed to be low performers closing 1 a month.
 const CUSTOMERS_PER_PARTNER_YEAR = 60;
-const FIRST_MONTH_TURNOVER = 1e7;                       // ₹1 crore
+const SALES_PER_MONTH = 3;
+const AVG_SALE = 40000;
+const LOW_SHARE = 0.30;
+const LOW_SALES_PER_MONTH = 1;
+const EFFECTIVE_SALES = +((1 - LOW_SHARE) * SALES_PER_MONTH + LOW_SHARE * LOW_SALES_PER_MONTH).toFixed(2);  // 2.4
 const FOUNDING_PARTNERS = 100;
-const TURNOVER_PER_PARTNER_MONTH = FIRST_MONTH_TURNOVER / FOUNDING_PARTNERS;     // ₹1,00,000
-const AVG_ORDER = TURNOVER_PER_PARTNER_MONTH / (CUSTOMERS_PER_PARTNER_YEAR / 12);  // ₹20,000
+const FIRST_MONTH_TURNOVER = FOUNDING_PARTNERS * EFFECTIVE_SALES * AVG_SALE;                // ₹96 lakh
 // Partners at each March: the four milestones, with March 2030 and 2031 filled in at a
 // constant growth rate between 1,000 (2029) and 5,000 (2032): x 5^(1/3) = x 1.71 a year.
 const g = Math.pow(5000 / 1000, 1 / 3);
 const PARTNERS_MARCH = { 2027: 100, 2028: 500, 2029: 1000,
   2030: Math.round(1000 * g), 2031: Math.round(1000 * g * g), 2032: 5000 };
-// Financial years FY 2027-28 ... FY 2031-32 (April - March): partners active on average
-// = mean of the opening and closing count.
-// Compound growth (assumed, base-case rates): the customer base keeps working for the
-// network - every year 10% of past customers bring in one new customer (referral) and
-// 10% order again (repeat) - and the average order rises 5% a year with prices.
+// Compound growth (assumed, base-case rates):
+//  * network referrals - every year 10% of the customer database brings in one new customer;
+//  * past buyers - every year 10% refer a new buyer and 10% buy again;
+//  * trusted-customer network - every year 10% of the database is channelled into another
+//    business segment, average ₹10,000 a purchase;
+//  * prices - the average sale (and cross-segment purchase) rises 5% a year.
 const REFERRAL_RATE = 0.10;
+const BUYER_REFERRAL_RATE = 0.10;
 const REPEAT_RATE = 0.10;
+const CROSS_SELL_RATE = 0.10;
+const CROSS_SELL_VALUE = 10000;
 const PRICE_GROWTH = 0.05;
+// Financial years FY 2027-28 ... FY 2031-32 (April - March); partners active in a year =
+// mean of the opening and closing count.
 const FORECAST = [2028, 2029, 2030, 2031, 2032].reduce((rows, y, t) => {
+  const prev = rows.length ? rows[rows.length - 1] : { db: 0, dbC: 0, buyers: 0 };
   const avg = (PARTNERS_MARCH[y - 1] + PARTNERS_MARCH[y]) / 2;
-  const customers = avg * CUSTOMERS_PER_PARTNER_YEAR;            // from partners' own selling
-  const turnover = avg * TURNOVER_PER_PARTNER_MONTH * 12;        // without compounding
-  const prev = rows.length ? rows[rows.length - 1] : { cumCustomers: 0, cumCustomersC: 0 };
-  // with compounding
-  const aov = AVG_ORDER * Math.pow(1 + PRICE_GROWTH, t);
-  const referrals = REFERRAL_RATE * prev.cumCustomersC;
-  const newC = customers + referrals;
-  const repeatOrders = REPEAT_RATE * prev.cumCustomersC;
-  rows.push({ fy: `FY ${String(y - 1).slice(2)}-${String(y).slice(2)}`, endPartners: PARTNERS_MARCH[y],
-              avg, customers, cumCustomers: prev.cumCustomers + customers, turnover,
-              aov, referrals, repeatOrders, cumCustomersC: prev.cumCustomersC + newC,
-              turnoverC: (newC + repeatOrders) * aov });
+  const met = avg * CUSTOMERS_PER_PARTNER_YEAR;                 // network, partners only
+  const dbC = prev.dbC + met + REFERRAL_RATE * prev.dbC;        // network with referrals
+  const sales = avg * EFFECTIVE_SALES * 12;                     // partners' own sales
+  const turnover = sales * AVG_SALE;                            // without compounding
+  const price = Math.pow(1 + PRICE_GROWTH, t);
+  const referredSales = BUYER_REFERRAL_RATE * prev.buyers;
+  const repeatSales = REPEAT_RATE * prev.buyers;
+  const crossSell = CROSS_SELL_RATE * prev.dbC * CROSS_SELL_VALUE * price;
+  const turnoverC = (sales + referredSales + repeatSales) * AVG_SALE * price + crossSell;
+  rows.push({ fy: `FY ${String(y - 1).slice(2)}-${String(y).slice(2)}`, avg,
+              db: prev.db + met, dbC, sales, turnover, buyers: prev.buyers + sales + referredSales,
+              crossSell, turnoverC, aov: AVG_SALE * price });
   return rows;
 }, []);
 const cagr = (a, b, years) => Math.pow(b / a, 1 / years) - 1;
@@ -348,7 +358,7 @@ async function main() {
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
   s.addText("07  ·  FACTS & FIGURES: THE NETWORK", { placeholder: "kicker" });
   const last = FORECAST[FORECAST.length - 1];
-  s.addText(`A Community of ${Math.floor(lakh(last.cumCustomersC) * 10) / 10} Lakh+ Customers by 2032`, { placeholder: "title" });
+  s.addText(`A Trusted Network of ${Math.floor(lakh(last.dbC) * 10) / 10} Lakh+ Customers by 2032`, { placeholder: "title" });
   const chartLook = (title) => ({
     barDir: "col", barGrouping: "clustered", barGapWidthPct: 45, chartColors: ["B9BEC7", H.accent1],
     showValue: true, dataLabelPosition: "outEnd",
@@ -359,33 +369,33 @@ async function main() {
     valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
     showLegend: true, legendPos: "b", legendFontSize: 11, legendColor: H.dk1, legendFontFace: "+mn-lt",
   });
-  const fyLabels = FORECAST.map((r) => "Mar 20" + r.fy.slice(-2));
+  const marchLabels = FORECAST.map((r) => "Mar 20" + r.fy.slice(-2));
   s.addChart(pres.charts.BAR, [
-    { name: "Partners' own customers", labels: fyLabels, values: FORECAST.map((r) => +lakh(r.cumCustomers).toFixed(2)) },
-    { name: "With compound growth", labels: fyLabels, values: FORECAST.map((r) => +lakh(r.cumCustomersC).toFixed(2)) },
+    { name: "Partners' own customers", labels: marchLabels, values: FORECAST.map((r) => +lakh(r.db).toFixed(2)) },
+    { name: "With referrals (compound growth)", labels: marchLabels, values: FORECAST.map((r) => +lakh(r.dbC).toFixed(2)) },
   ], { x: 0.4, y: 1.4, w: 5.1, h: 3.6, ...chartLook("Customer database, cumulative (lakh customers)"),
        dataLabelFormatCode: "0.0", valAxisMaxVal: 6.6, objectName: name("chart") });
   const netStats = [
-    [String(CUSTOMERS_PER_PARTNER_YEAR), "new customers every partner adds, every year"],
-    [`${REFERRAL_RATE * 100}%`, "of past customers refer a new customer each year"],
-    [`${lakh(last.cumCustomersC).toFixed(2)} L`, `customers by March 2032 (${lakh(last.cumCustomers).toFixed(2)} L without referrals)`],
+    [String(CUSTOMERS_PER_PARTNER_YEAR), "customers every partner meets and serves, every year"],
+    [`${lakh(last.dbC).toFixed(2)} L`, `customers by March 2032 (${lakh(last.db).toFixed(2)} L without referrals)`],
+    [`₹${Math.round(crore(last.crossSell))} Cr`, "in FY 31-32 from trusted customers moving into our other businesses"],
   ];
   netStats.forEach(([big, small], i) => {
     const y = 1.45 + i * 1.0;
-    card(s, 5.75, y, 3.75, 0.88, C.background2);
+    card(s, 5.75, y, 3.75, 0.88, i === 2 ? C.accent6 : C.background2);
     T(s, big, { x: 5.9, y: y + 0.1, w: 1.35, h: 0.68, fontSize: 24, bold: true, color: C.accent5, fontFace: "+mj-lt", valign: "middle" });
     T(s, small, { x: 7.3, y: y + 0.1, w: 2.05, h: 0.68, fontSize: 12, color: C.text1, valign: "middle" });
   });
-  T(s, "Partners grow 100 → 500 → 1,000 → 5,000 (Mar 2030 and 2031 at a steady ×1.71 a year); each year counts the average partners active.",
+  T(s, `Referrals: ${REFERRAL_RATE * 100}% of the database brings one new customer a year. Trusted network: ${CROSS_SELL_RATE * 100}% buy from another of our segments each year, ₹${inr(CROSS_SELL_VALUE)} average.`,
     { x: 5.75, y: 4.45, w: 3.75, h: 0.5, fontSize: 10, italic: true, color: C.accent4, valign: "top" });
-  s.addNotes("Network database model. Every partner adds 60 new customers every year they are active (5 a month), so a partner who joined in 2027 has built about 300 customers by 2032. Partners at each March: 100 (2027), 500 (2028), 1,000 (2029), " + inr(PARTNERS_MARCH[2030]) + " (2030), " + inr(PARTNERS_MARCH[2031]) + " (2031), 5,000 (2032); 2030 and 2031 are filled in at a constant growth rate of x1.71 a year. Customers from partners in a year = average partners (opening + closing / 2) x 60. Compound growth: each year 10% of all past customers refer one new customer, so the database grows on itself. Cumulative customers, partners only: " + FORECAST.map((r) => r.fy + " " + inr(Math.round(r.cumCustomers))).join("; ") + ". With compound growth: " + FORECAST.map((r) => r.fy + " " + inr(Math.round(r.cumCustomersC))).join("; ") + ". The launch period up to March 2027 is not counted.");
+  s.addNotes("Network model. Every partner meets and serves 60 customers every year they are active (5 a month), so a partner who joined in 2027 has built about 300 customers by 2032. Partners at each March: 100 (2027), 500 (2028), 1,000 (2029), " + inr(PARTNERS_MARCH[2030]) + " (2030), " + inr(PARTNERS_MARCH[2031]) + " (2031), 5,000 (2032); 2030 and 2031 at a steady x1.71 a year. Compound growth: each year 10% of the database refers one new customer. Customer database, partners only: " + FORECAST.map((r) => r.fy + " " + inr(Math.round(r.db))).join("; ") + ". With referrals: " + FORECAST.map((r) => r.fy + " " + inr(Math.round(r.dbC))).join("; ") + ". Trusted Customer Network: these customers have already experienced our service, so we invite them as trusted customers into our other business segments; assumed 10% buy each year at ₹10,000 average (rising 5% a year): " + FORECAST.map((r) => r.fy + " ₹" + crore(r.crossSell).toFixed(1) + " Cr").join("; ") + ". The launch period up to March 2027 is not counted.");
 
   // 9 - turnover forecast
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
   s.addText("08  ·  FACTS & FIGURES: TURNOVER FORECAST", { placeholder: "kicker" });
-  s.addText(`₹1 Cr a Month Compounds to ₹${inr(Math.round(crore(last.turnoverC)))} Cr a Year`, { placeholder: "title" });
-  const eq = [["5", "customers / partner / month"], ["₹" + inr(AVG_ORDER), "average order"],
-              [String(FOUNDING_PARTNERS), "founding partners"], ["₹1 Crore", "first-month turnover"]];
+  s.addText(`₹${Math.round(lakh(FIRST_MONTH_TURNOVER))} Lakh in Month 1 to ₹${inr(Math.round(crore(last.turnoverC)))} Cr a Year`, { placeholder: "title" });
+  const eq = [[String(EFFECTIVE_SALES), "avg sales / partner / month"], ["₹" + inr(AVG_SALE), "average sale"],
+              [String(FOUNDING_PARTNERS), "founding partners"], [`₹${Math.round(lakh(FIRST_MONTH_TURNOVER))} Lakh`, "first-month turnover"]];
   eq.forEach(([big, small], i) => {
     const x = 0.5 + i * 2.35, hi = i === 3;
     card(s, x, 1.42, 1.95, 0.85, hi ? C.accent1 : C.background2);
@@ -395,29 +405,32 @@ async function main() {
   });
   const fys = FORECAST.map((r) => r.fy);
   s.addChart(pres.charts.BAR, [
-    { name: "Partners' own customers", labels: fys, values: FORECAST.map((r) => +crore(r.turnover).toFixed(1)) },
-    { name: "With compound growth", labels: fys, values: FORECAST.map((r) => +crore(r.turnoverC).toFixed(1)) },
+    { name: "Own sales", labels: fys, values: FORECAST.map((r) => +crore(r.turnover).toFixed(1)) },
+    { name: "With compounding", labels: fys, values: FORECAST.map((r) => +crore(r.turnoverC).toFixed(1)) },
   ], { x: 0.4, y: 2.42, w: 5.1, h: 2.65, ...chartLook("Annual turnover (₹ crore)"),
-       dataLabelFormatCode: "#,##0", valAxisMaxVal: 840, objectName: name("chart") });
-  T(s, "COMPOUND GROWTH DRIVERS", { x: 5.75, y: 2.47, w: 3.75, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
-  [[`${REFERRAL_RATE * 100}%`, "of past customers refer a new one each year"],
-   [`${REPEAT_RATE * 100}%`, "of past customers order again each year"],
-   [`${PRICE_GROWTH * 100}%`, "yearly rise in the average order"]].forEach(([big, small], i) => {
-    const y = 2.8 + i * 0.42;
-    T(s, big, { x: 5.75, y, w: 0.7, h: 0.38, fontSize: 15, bold: true, color: C.text2, fontFace: "+mj-lt", valign: "middle" });
-    T(s, small, { x: 6.45, y, w: 3.05, h: 0.38, fontSize: 12, color: C.text1, valign: "middle" });
+       dataLabelFormatCode: "#,##0", valAxisMaxVal: Math.ceil(crore(last.turnoverC) * 1.15), objectName: name("chart") });
+  T(s, "FORECAST DRIVERS", { x: 5.75, y: 2.45, w: 3.75, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
+  [[`${LOW_SHARE * 100}%`, `low performers at ${LOW_SALES_PER_MONTH} sale a month (rest at ${SALES_PER_MONTH})`],
+   [`${BUYER_REFERRAL_RATE * 100}%`, "of past buyers refer a new buyer each year"],
+   [`${REPEAT_RATE * 100}%`, "of past buyers buy again each year"],
+   [`${PRICE_GROWTH * 100}%`, "yearly rise in the average sale"],
+   [`${CROSS_SELL_RATE * 100}%`, "of trusted customers buy other segments"]].forEach(([big, small], i) => {
+    const y = 2.74 + i * 0.29;
+    T(s, big, { x: 5.75, y, w: 0.65, h: 0.28, fontSize: 14, bold: true, color: C.text2, fontFace: "+mj-lt", valign: "middle" });
+    T(s, small, { x: 6.4, y, w: 3.1, h: 0.28, fontSize: 12, color: C.text1, valign: "middle" });
   });
   const first = FORECAST[0];
   const totalC = FORECAST.reduce((a, r) => a + r.turnoverC, 0);
   const total = FORECAST.reduce((a, r) => a + r.turnover, 0);
-  [[`${Math.round(cagr(first.turnoverC, last.turnoverC, FORECAST.length - 1) * 100)}%`, "turnover CAGR, FY 27-28 → 31-32"],
-   [`₹${inr(Math.round(crore(totalC)))} Cr`, `5-year turnover (₹${inr(Math.round(crore(total)))} Cr without)`]].forEach(([big, small], i) => {
+  const growth = Math.round(cagr(first.turnoverC, last.turnoverC, FORECAST.length - 1) * 100);
+  [[`${growth}%`, "turnover CAGR, FY 27-28 → 31-32"],
+   [`₹${inr(Math.round(crore(totalC)))} Cr`, `5-year turnover (₹${inr(Math.round(crore(total)))} Cr own sales)`]].forEach(([big, small], i) => {
     const x = 5.75 + i * 1.93;
-    card(s, x, 4.12, 1.82, 0.88, i === 0 ? C.accent1 : C.background2);
-    T(s, big, { x: x + 0.05, y: 4.17, w: 1.72, h: 0.4, fontSize: 18, bold: true, color: i === 0 ? C.background1 : C.text2, align: "center", fontFace: "+mj-lt" });
-    T(s, small, { x: x + 0.08, y: 4.56, w: 1.66, h: 0.4, fontSize: 10, color: i === 0 ? C.background1 : C.accent4, align: "center", valign: "top" });
+    card(s, x, 4.25, 1.82, 0.8, i === 0 ? C.accent1 : C.background2);
+    T(s, big, { x: x + 0.05, y: 4.27, w: 1.72, h: 0.38, fontSize: 18, bold: true, color: i === 0 ? C.background1 : C.text2, align: "center", fontFace: "+mj-lt" });
+    T(s, small, { x: x + 0.08, y: 4.63, w: 1.66, h: 0.4, fontSize: 10, color: i === 0 ? C.background1 : C.accent4, align: "center", valign: "top" });
   });
-  s.addNotes("Turnover model. First month: 100 founding partners x 5 customers x ₹20,000 average order = ₹1 crore (₹1 lakh per partner a month). Without compounding, turnover = average partners x ₹1 lakh x 12: " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnover).toFixed(1) + " Cr").join("; ") + " (5-year total ₹" + inr(Math.round(crore(total))) + " Cr). With compound growth - 10% of past customers refer a new customer each year, 10% of past customers order again each year, and the average order rises 5% a year (₹20,000 in FY 27-28 to ₹" + inr(Math.round(last.aov)) + " in FY 31-32): " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnoverC).toFixed(1) + " Cr").join("; ") + " (5-year total ₹" + inr(Math.round(crore(totalC))) + " Cr, CAGR " + Math.round(cagr(first.turnoverC, last.turnoverC, FORECAST.length - 1) * 100) + "%). The three compounding rates are planning assumptions; new partners also take a few months to reach full pace, so treat this as the base case.");
+  s.addNotes("Turnover model. Sales: a performing partner closes 3 sales a month at an average of ₹40,000; 30% of partners are taken as low performers closing 1 a month, so the average partner closes 2.4 sales a month (₹96,000). First month with the 100 founding partners: 100 x 2.4 x ₹40,000 = ₹96 lakh - close to the ₹1 crore target (₹1.2 crore if every partner performs). Partners' own sales only: " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnover).toFixed(1) + " Cr").join("; ") + " (5-year total ₹" + inr(Math.round(crore(total))) + " Cr). With compounding - 10% of past buyers refer a new buyer and 10% buy again each year, the average sale rises 5% a year, plus the trusted-customer network buying from our other segments: " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnoverC).toFixed(1) + " Cr").join("; ") + " (5-year total ₹" + inr(Math.round(crore(totalC))) + " Cr, CAGR " + growth + "%). The compounding rates are planning assumptions; new partners also take a few months to reach full pace.");
 
   // 10 - how we get there
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
