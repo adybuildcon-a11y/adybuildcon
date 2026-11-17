@@ -5,6 +5,7 @@
   output/04_Print_Ready/  (CMYK print files)
   output/05_Book_Proof_Preview.pdf  (whole book for approval)
   output/06_Missing_Data_Form.pdf  (hand-fill form for everything still open)
+  output/07_Mockups/  (PNG: back cover, front cover, catalogue set, all collections in one)
   output/Curated_Fabrics_Book_Pack.zip
 """
 
@@ -14,6 +15,7 @@ import shutil
 import zipfile
 
 import excel
+import mockups
 from docs import book_proof, design_guide, instructions, missing_form
 from layout import boards, layout_board, ordered_books
 from printfiles import Renderer, board_files, master_files, spine_width
@@ -45,6 +47,8 @@ def main():
         for bd in bds:
             f, real = board_files(r, bd, PR)
             print("board", bd["no"], os.path.basename(f), "inside" if bd["ready"] else "cover only")
+    for f in mockups.build(os.path.join(OUT, "07_Mockups")):
+        print("mockup", os.path.basename(f))
     with zipfile.ZipFile(os.path.join(OUT, "Curated_Fabrics_Book_Pack.zip"), "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(glob.glob(os.path.join(OUT, "**", "*"), recursive=True)):
             if os.path.isfile(f) and not f.endswith(".zip"):

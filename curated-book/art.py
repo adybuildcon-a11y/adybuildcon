@@ -387,24 +387,88 @@ def master_front(x0, w, h, sample_books):
 
 
 def master_back(x0, w, h, books):
+    """Back of the master binder: light-control scale, the collections in two columns,
+    and how to read a board.  No brand anywhere."""
     cx = x0 + w / 2
-    out = [Ttr(cx, 1.5, "THE COLLECTIONS", "CZ", 600, 10, BRASS, "middle", .45),
-           T(cx, 2.15, "Sheer to Blackout", "CG", 600, 30, INK, "middle"),
-           T(cx, 2.5, "Arranged by light control, then by fabric weight", "CG", 500, 13, MUTED, "middle", italic=True)]
-    y, lx = 3.2, x0 + 1.6
-    last = None
+    out = [Ttr(cx, 1.3, "THE COLLECTIONS", "CZ", 600, 10, BRASS, "middle", .45),
+           T(cx, 1.95, "Sheer to Blackout", "CG", 600, 32, INK, "middle"),
+           T(cx, 2.3, "Twenty collections, arranged by light control, then by fabric weight", "CG", 500, 13, MUTED, "middle", italic=True)]
+    # light-control scale
+    n, sx0, sx1, sy = len(LADDER), x0 + 1.0, x0 + w - 1.0, 2.95
+    cw = (sx1 - sx0) / n
+    out.append(Ttr(sx0, sy - .14, "MORE LIGHT", "CZ", 600, 6, MUTED, "start", .3))
+    out.append(Ttr(sx1, sy - .14, "MORE PRIVACY & DARKNESS", "CZ", 600, 6, MUTED, "end", .3))
+    for i, (k, name, desc, col) in enumerate(LADDER):
+        bx = sx0 + i * cw
+        out.append(f'<rect x="{bx + .03:.3f}" y="{sy:.3f}" width="{cw - .06:.3f}" height=".16" fill="{col}"/>')
+        out.append(Ttr(bx + cw / 2, sy + .38, name.upper(), "CZ", 600, 6.5, INK, "middle", .2))
+        words, lines, cur = desc.split(), [], ""
+        for wd in words:                                   # wrap the one-line description
+            if text_w((cur + " " + wd).strip(), "PP", 400, 6 * PT) > cw - .15:
+                lines.append(cur); cur = wd
+            else:
+                cur = (cur + " " + wd).strip()
+        lines.append(cur)
+        for j, l in enumerate(lines[:2]):
+            out.append(T(bx + cw / 2, sy + .56 + j * .12, l, "PP", 400, 6, MUTED, "middle"))
+    # collections in two columns (category groups kept together)
+    groups, last = [], None
     for b in books:
         if b["cat"] != last:
-            name = [n for k, n, *_ in LADDER if k == b["cat"]][0]
-            y += .16
-            out.append(f'<rect x="{lx}" y="{y - .11}" width=".18" height=".12" fill="{ladder_color(b["cat"])}"/>')
-            out.append(Ttr(lx + .3, y, name.upper(), "CZ", 600, 7, MUTED, "start", .3))
-            y += .3
+            groups.append((b["cat"], []))
             last = b["cat"]
-        out.append(T(lx + .3, y, f'{b["seq"]:02d}', "CZ", 600, 9, BRASS))
-        out.append(T(lx + .75, y, b["name"], "CG", 600, 15, INK))
-        out.append(T(x0 + w - 1.6, y, b["line"], "PP", 400, 7.5, MUTED, "end"))
-        y += .33
+        groups[-1][1].append(b)
+    rows = lambda g: 1 + len(g[1])
+    total = sum(rows(g) for g in groups)
+    split, acc = 0, 0
+    for i, g in enumerate(groups):                         # balance the two columns
+        if acc + rows(g) > total / 2 + 1:
+            break
+        acc += rows(g); split = i + 1
+    cols = [groups[:split], groups[split:]]
+    top, colw = 4.05, (w - 2.0 - .6) / 2
+    for ci, col in enumerate(cols):
+        lx = x0 + 1.0 + ci * (colw + .6)
+        y = top
+        for cat, bs in col:
+            name = [nm for k, nm, *_ in LADDER if k == cat][0]
+            out.append(f'<rect x="{lx}" y="{y - .1}" width=".2" height=".11" fill="{ladder_color(cat)}"/>')
+            out.append(Ttr(lx + .32, y, name.upper(), "CZ", 600, 7, MUTED, "start", .3))
+            out.append(f'<path d="M{lx + .32 + text_w(name.upper(), "CZ", 600, 7 * PT, .3) + .12},{y - .04} H{lx + colw}" stroke="{GUIDE}" stroke-width=".006"/>')
+            y += .36
+            for b in bs:
+                out.append(T(lx, y, f'{b["seq"]:02d}', "CZ", 600, 9, BRASS))
+                out.append(T(lx + .4, y, b["name"], "CG", 600, 15, INK))
+                out.append(T(lx + colw, y, b["line"], "PP", 400, 6.5, MUTED, "end"))
+                y += .31
+            y += .22
+    # how to read a board
+    hy = 10.15
+    out.append(f'<path d="M{x0 + 1.0},{hy - .45} H{x0 + w - 1.0}" stroke="{GUIDE}" stroke-width=".006"/>')
+    out.append(Ttr(cx, hy - .15, "HOW TO READ A BOARD", "CZ", 600, 7.5, BRASS, "middle", .4))
+    iw = (w - 2.0) / 3
+    items = [("Main fabric", "The hero shades hang as", "a waterfall on the first panel"),
+             ("Shade range", "Every colour as a numbered", "cutting, light to dark"),
+             ("Specifications", "Width, weight and composition", "on the back of every board")]
+    for i, (title, l1, l2) in enumerate(items):
+        ix = x0 + 1.0 + i * iw + iw / 2
+        iy = hy + .2
+        if i == 0:                                         # waterfall icon
+            for k in range(4):
+                out.append(f'<rect x="{ix - .3 + k * .05:.3f}" y="{iy + k * .1:.3f}" width=".6" height=".42" fill="{mix(BRASS, LINEN, .15 + k * .18)}" stroke="{LINEN}" stroke-width=".01"/>')
+        elif i == 1:                                       # cuttings grid icon
+            for r_ in range(3):
+                for c_ in range(4):
+                    out.append(f'<rect x="{ix - .34 + c_ * .17:.3f}" y="{iy + .03 + r_ * .16:.3f}" width=".14" height=".12" fill="{mix("#B79C7A", "#414955", (r_ * 4 + c_) / 11)}"/>')
+        else:                                              # spec plate icon
+            out.append(f'<rect x="{ix - .3:.3f}" y="{iy:.3f}" width=".6" height=".72" fill="none" stroke="{INK}" stroke-width=".01"/>')
+            for r_ in range(4):
+                out.append(f'<path d="M{ix - .2:.3f},{iy + .17 + r_ * .14:.3f} h{.4 if r_ % 2 == 0 else .28}" stroke="{MUTED}" stroke-width=".02"/>')
+        out.append(T(ix, iy + 1.0, title, "CG", 600, 14, INK, "middle"))
+        out.append(T(ix, iy + 1.2, l1, "PP", 400, 6.5, MUTED, "middle"))
+        out.append(T(ix, iy + 1.33, l2, "PP", 400, 6.5, MUTED, "middle"))
+    nb = len(books)
+    out.append(Ttr(cx, 12.45, f"{nb} COLLECTIONS  ·  ONE BOOK", "CZ", 600, 8, INK, "middle", .35))
     return "".join(out)
 
 
