@@ -40,13 +40,9 @@ const MILESTONES = [
   { phase: "Launch", by: "March 2027", partners: 100 },
   { phase: "Build", by: "March 2028", partners: 500 },
   { phase: "Scale", by: "March 2029", partners: 1000 },
-  { phase: "Nationwide", by: "March 2032", partners: 5000 },
+  { phase: "Global", by: "March 2032", partners: 5000 },
 ];
 const inr = (n) => n.toLocaleString("en-IN");
-function crLakh(rupees) {          // 6900000 -> "₹69 Lakh", 34500000 -> "₹3.45 Crore"
-  if (rupees >= 1e7) return "₹" + +(rupees / 1e7).toFixed(2) + " Crore";
-  return "₹" + +(rupees / 1e5).toFixed(2) + " Lakh";
-}
 
 // ---- icons: react-icons -> white PNG ----
 async function icon(Comp, color = "#FFFFFF") {
@@ -59,7 +55,7 @@ async function main() {
   const pres = new pptxgen();
   pres.layout = "LAYOUT_16x9"; // 10 x 5.625 in
   pres.title = "The Furnish Atellier - Business Partner Program";
-  pres.subject = "Project overview and the goal of 5,000 business partners by March 2032";
+  pres.subject = "Project overview and the goal of 5,000 business partners across the globe by March 2032";
   pres.author = "Ady Buildcon Pvt. Ltd.";
   pres.company = "Ady Buildcon Pvt. Ltd.";
   pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
@@ -134,7 +130,7 @@ async function main() {
   s.addText("BUSINESS PARTNER PROGRAM", { placeholder: "subtitle" });
   T(s, "Premium fabrics for curtains & upholstery — and a ready-made business for every partner.",
     { x: 0.8, y: 2.95, w: 5.6, h: 0.65, fontSize: 16, italic: true, color: C.background1, valign: "top" });
-  const facts = [["Since 1994", "a fabric legacy"], ["₹69,000", "partner business kit"], ["5,000", "partners by March 2032"]];
+  const facts = [["Since 1994", "a fabric legacy"], ["1,200", "fabrics in every kit"], ["5,000", "global partners by 2032"]];
   facts.forEach(([big, small], i) => {
     const x = 0.8 + i * 2.05;
     T(s, big, { x, y: 3.85, w: 1.9, h: 0.45, fontSize: 22, bold: true, color: C.accent1, fontFace: "+mj-lt" });
@@ -142,7 +138,7 @@ async function main() {
   });
   T(s, "Kamlesh Agrawal, Director   ·   +91 98105 27231   ·   adybuildcon@gmail.com",
     { x: 0.8, y: 5.0, w: 7, h: 0.3, fontSize: 11, color: C.accent2 });
-  s.addNotes("The Furnish Atellier Business Partner Program: a premium fabric brand for curtains and upholstery from Ady Buildcon Pvt. Ltd., offered to partners as a complete ₹69,000 business kit. Goal: 5,000 partners across India by March 2032.");
+  s.addNotes("The Furnish Atellier Business Partner Program: a premium fabric brand for curtains and upholstery from Ady Buildcon Pvt. Ltd., offered to partners as a complete ₹69,000 business kit. Goal: a network of 5,000 business partners across the globe by March 2032.");
 
   // 2 - the project
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "The Project" });
@@ -259,11 +255,11 @@ async function main() {
   // 6 - the goal
   s = pres.addSlide({ masterName: "DARK", sectionTitle: "Our Goal" });
   s.addText("05  ·  OUR GOAL", { placeholder: "kicker" });
-  s.addText("5,000 Business Partners Across India", { placeholder: "title" });
+  s.addText("5,000 Business Partners Across the Globe", { placeholder: "title" });
   T(s, "5,000", { x: 0.5, y: 1.3, w: 4.2, h: 1.15, fontSize: 80, bold: true, color: C.accent1, fontFace: "+mj-lt" });
-  T(s, "Business Kits with partners by March 2032 — one kit, one partner, one local fabric business.",
+  T(s, "Business partners by March 2032, each running their own fabric business with our support.",
     { x: 0.5, y: 2.62, w: 4.4, h: 0.65, fontSize: 15, color: C.background1, valign: "top" });
-  [["₹69,000", "price per Business Kit"], [crLakh(5000 * KIT_PRICE), "kit sales at the full target"]].forEach(([big, small], i) => {
+  [["30 Years", "of fabric legacy behind every partner"], ["Worldwide", "a partner network across the globe"]].forEach(([big, small], i) => {
     const x = 5.4 + i * 2.1;
     card(s, x, 1.5, 1.95, 1.45, C.accent3, false);
     T(s, big, { x: x + 0.1, y: 1.68, w: 1.75, h: 0.55, fontSize: 22, bold: true, color: C.background1, align: "center", fontFace: "+mj-lt" });
@@ -278,7 +274,7 @@ async function main() {
     T(s, inr(m.partners), { x: cx - 1.0, y: 4.25, w: 2.0, h: 0.42, fontSize: 22, bold: true, color: C.background1, align: "center", fontFace: "+mj-lt" });
     T(s, m.by.toUpperCase(), { x: cx - 1.0, y: 4.67, w: 2.0, h: 0.28, fontSize: 11, bold: true, color: C.accent2, align: "center", charSpacing: 2 });
   });
-  s.addNotes("Our goal is 5,000 business partners - 5,000 Business Kits distributed across India - by March 2032. Milestones: 100 by March 2027, 500 by March 2028, 1,000 by March 2029 and 5,000 by March 2032. At ₹69,000 per kit, the full target is ₹34.5 crore in kit sales.");
+  s.addNotes("Our goal is a network of 5,000 business partners across the globe by March 2032, each running their own fabric business with The Furnish Atellier's brand, collection and support. Milestones: 100 partners by March 2027, 500 by March 2028, 1,000 by March 2029 and 5,000 by March 2032.");
 
   // 7 - roadmap
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
@@ -302,11 +298,11 @@ async function main() {
     numBadge(s, 5.55, y + 0.16, 0.45, i + 1);
     T(s, `${m.phase}`, { x: 6.15, y: y + 0.08, w: 1.6, h: 0.32, fontSize: 14, bold: true, color: C.text2 });
     T(s, `by ${m.by}`, { x: 7.6, y: y + 0.08, w: 1.75, h: 0.32, fontSize: 12, bold: true, color: C.accent5, align: "right" });
-    T(s, `${inr(m.partners)} partners  ·  +${inr(m.partners - prev)} new kits`,
+    T(s, `${inr(m.partners)} partners  ·  +${inr(m.partners - prev)} new partners`,
       { x: 6.15, y: y + 0.4, w: 3.2, h: 0.3, fontSize: 12, color: C.accent4 });
     prev = m.partners;
   });
-  s.addNotes("Phase 1 Launch: 100 partners by March 2027. Phase 2 Build: 500 by March 2028 (400 new kits). Phase 3 Scale: 1,000 by March 2029 (500 new kits). Phase 4 Nationwide: 5,000 by March 2032 (4,000 new kits) - about 1,333 new partners a year over the last three years.");
+  s.addNotes("Phase 1 Launch: 100 partners by March 2027. Phase 2 Build: 500 by March 2028 (400 new partners). Phase 3 Scale: 1,000 by March 2029 (500 new partners). Phase 4 Global: 5,000 partners across the globe by March 2032 (4,000 new partners) - about 1,333 new partners a year over the last three years.");
 
   // 8 - how we get there
   s = pres.addSlide({ masterName: "DARK", sectionTitle: "Our Goal" });
