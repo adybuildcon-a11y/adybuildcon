@@ -398,3 +398,53 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ---------------------------------------------------------------- transparent strips for print
+def strip_html(rows, w, h, s):
+    """rows = [(floor_y, [(book, x), ...]), ...] on a transparent page, all books tilted RY."""
+    Hp = H * s
+    parts = []
+    for floor, items in rows:
+        parts.append('<div class="scene" style="perspective-origin:50% 5%">')
+        for b, x in items:
+            parts.append(f'<div class="shadow" style="left:{x + W * s * .04}px;top:{floor - s * .45}px;width:{W * s * .92}px;'
+                         f'height:{s * .9}px;filter:blur({s * .35}px);background:rgba(35,28,20,.32)"></div>')
+            parts.append(book3d(b, x, floor - Hp, s, RY))
+        parts.append("</div>")
+    return (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}{SCENE_CSS}'
+            f'html,body{{background:transparent}} body{{width:{w}px;height:{h}px;overflow:hidden;position:relative}}</style></head>'
+            f'<body>{"".join(parts)}</body></html>')
+
+
+def four_books_html(books4):
+    """4 catalogue books in one row, tilted one way: 2400 x 860 px (2.79 : 1)."""
+    s, floor = 48, 812
+    xs = [70, 620, 1170, 1720]
+    return strip_html([(floor, list(zip(books4, xs)))], 2400, 860, s), 2400, 860
+
+
+def twenty_books_html(books20):
+    """Two rows of 10 books, tilted one way: 3000 x 950 px (3.16 : 1)."""
+    s = 24
+    xs = [70 + i * 284 for i in range(10)]
+    rows = [(430, list(zip(books20[:10], xs))), (915, list(zip(books20[10:20], xs)))]
+    return strip_html(rows, 3000, 950, s), 3000, 950
+
+
+def render_pngs(jobs):
+    """jobs = [(path, html, w, h)] -> transparent PNGs."""
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as pw:
+        br = pw.chromium.launch(executable_path=chromium())
+        for path, markup, w, h in jobs:
+            pg = br.new_page(viewport={"width": w, "height": h})
+            tmp = path + ".html"
+            open(tmp, "w").write(markup)
+            pg.goto("file://" + tmp)
+            pg.evaluate("document.fonts.ready")
+            pg.wait_for_timeout(300)
+            pg.screenshot(path=path, omit_background=True)
+            os.remove(tmp)
+            pg.close()
+        br.close()

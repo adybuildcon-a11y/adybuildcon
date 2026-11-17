@@ -2,7 +2,7 @@
 
 import os
 
-from art import (outside_art, FONT_CSS, LINEN, INK, MUTED, BRASS, PAPER, CREAM, cover_panel, inside_art, master_front,
+from art import (board_img, all_img, outside_art, FONT_CSS, LINEN, INK, MUTED, BRASS, PAPER, CREAM, cover_panel, inside_art, master_front,
                  master_back, spine_art, T, esc)
 from data import LADDER, P, TRANSCRIPT, EXTRA
 from layout import board_name, panel_widths, panel_x, content_box, open_size, ladder_color
@@ -280,7 +280,7 @@ def design_guide(books, bds, spine_in, stack_mm):
     # 11 master case
     W, H, j = P["cover_w"], P["cover_h"], P["joint"]
     total = W + j + spine_in + j + W
-    case = (f'<rect width="{total}" height="{H}" fill="{LINEN}"/>' + master_back(0, W, H, books) + spine_art(W + j, spine_in, H)
+    case = (f'<rect width="{total}" height="{H}" fill="{LINEN}"/>' + master_back(0, W, H, books, image=all_img()) + spine_art(W + j, spine_in, H)
             + master_front(W + j + spine_in + j, W, H, books)[0]
             + f'<path d="M{W},0 V{H} M{W + j},0 V{H} M{W + j + spine_in},0 V{H} M{W + 2 * j + spine_in},0 V{H}" stroke="#C0392B" stroke-width=".02" stroke-dasharray=".15 .1"/>')
     add(f'''<div class="k">11 · Master binder</div><h1>Final book front - Trending Curated Fabrics Collection</h1>
@@ -468,7 +468,7 @@ def book_proof(books, bds, spine_in):
     W, H, j = P["cover_w"], P["cover_h"], P["joint"]
     front, _ = master_front(0, W, H, books)
     total = W + j + spine_in + j + W
-    wrap = (f'<rect width="{total}" height="{H}" fill="{LINEN}"/>' + master_back(0, W, H, books) + spine_art(W + j, spine_in, H)
+    wrap = (f'<rect width="{total}" height="{H}" fill="{LINEN}"/>' + master_back(0, W, H, books, image=all_img()) + spine_art(W + j, spine_in, H)
             + master_front(W + j + spine_in + j, W, H, books)[0])
     add(f'''<div style="display:flex;gap:.6in;align-items:center;height:100%">
       <div>{svgbox(f'<rect width="{W}" height="{H}" fill="{LINEN}"/>' + front, W, H, 8.4)}</div>
@@ -485,7 +485,7 @@ def book_proof(books, bds, spine_in):
         ow = open_size(fold)[0]
         cov, _ = cover_panel(0, P["board_w"], bd["books"])
         cov_svg = svgbox(f'<rect width="{P["board_w"]}" height="{P["board_h"]}" fill="{LINEN}"/>' + cov, P["board_w"], P["board_h"], 4.6)
-        out_art, *_r = outside_art(bd)
+        out_art, *_r = outside_art(bd, image=board_img(bd))
         out_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{LINEN}"/>' + out_art, ow, P["board_h"], 10.2 * ow / open_size(3)[0])
         if bd["ready"]:
             in_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{PAPER}"/>' + inside_art(bd, guides=True), ow, P["board_h"], 10.2 * ow / open_size(3)[0])

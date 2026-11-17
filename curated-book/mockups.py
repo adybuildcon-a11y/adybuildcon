@@ -10,7 +10,7 @@ Run on its own (python3 mockups.py) or from make.py.
 
 import os
 
-from art import FONT_CSS, LINEN, master_back, master_front, outside_art, spine_art
+from art import FONT_CSS, LINEN, master_back, master_front, outside_art, spine_art, all_img, board_img
 from data import P
 from layout import boards, layout_board, ordered_books
 from printfiles import chromium, spine_width
@@ -27,7 +27,7 @@ def svg(art, w, h, vx=0, bg=LINEN):
 
 def board_cover(bd):
     """The cover panel (front of the folded board) of one board, 9 x 12 in."""
-    art, xs, ws, _ = outside_art(bd)
+    art, xs, ws, _ = outside_art(bd, image=board_img(bd))
     i = 0 if (bd["fold"] or 2) == 2 else 1
     return svg(art, ws[i], P["board_h"], vx=xs[i])
 
@@ -148,7 +148,7 @@ def build(outdir=OUTDIR):
     sw, _ = spine_width(bds)
     W, H = P["cover_w"], P["cover_h"]
     front = svg(master_front(0, W, H, books)[0], W, H)
-    back = svg(master_back(0, W, H, books), W, H)
+    back = svg(master_back(0, W, H, books, image=all_img()), W, H)
     spine = svg(spine_art(0, sw, H), sw, H)
     covers = [board_cover(bd) for bd in bds]
 

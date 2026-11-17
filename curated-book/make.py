@@ -36,6 +36,8 @@ def main():
             layout_board(bd)
     spine_in, stack = spine_width(bds)
     hw = sorted(glob.glob(os.path.join(HERE, "assets", "reference", "handwritten-p*.jpg")))
+    import catalogue                                        # tilted catalogue-book pictures for the backs
+    catalogue.build(books, bds)
 
     excel.build(os.path.join(OUT, "01_Instructions_Curated_Fabrics_Book.xlsx"), books, bds, spine_in, stack)
     with Renderer() as r:
@@ -53,6 +55,12 @@ def main():
             print("board", bd["no"], os.path.basename(f), "inside" if bd["ready"] else "cover only")
     for f in mockups.build(os.path.join(OUT, "08_Mockups")):
         print("mockup", os.path.basename(f))
+    cards = os.path.join(OUT, "08_Mockups", "Card_Outsides")            # side 1 of every card as PNG
+    os.makedirs(cards, exist_ok=True)
+    import pymupdf
+    for f in sorted(glob.glob(os.path.join(PR, "Board_*.pdf"))):
+        pg = pymupdf.open(f)[0]
+        pg.get_pixmap(dpi=110, clip=pg.trimbox).save(os.path.join(cards, os.path.basename(f)[:-4] + "_outside.png"))
     with zipfile.ZipFile(os.path.join(OUT, "Curated_Fabrics_Book_Pack.zip"), "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(glob.glob(os.path.join(OUT, "**", "*"), recursive=True)):
             if os.path.isfile(f) and not f.endswith(".zip"):

@@ -6,7 +6,7 @@ import subprocess
 
 import pymupdf
 
-from art import FONT_CSS, LINEN, PAPER, INK, T, inside_art, outside_art, master_front, master_back, spine_art
+from art import FONT_CSS, LINEN, PAPER, INK, T, inside_art, outside_art, master_front, master_back, spine_art, board_img, all_img
 from data import P
 from layout import board_name, open_size, panel_widths, panel_x
 
@@ -95,7 +95,7 @@ def board_files(r, bd, outdir):
     ow, oh = open_size(fold)
     names = board_name(bd)
     ticks = [0, ow] + [panel_x(fold, i) - P["hinge"] for i in range(1, fold)] + [panel_x(fold, i) for i in range(1, fold)]
-    art, xs, ws, real = outside_art(bd)
+    art, xs, ws, real = outside_art(bd, image=board_img(bd))
     photo_note = "COVER: lifestyle photo" if real else "COVER: illustrated curtain art (final) - a photo saved as assets/photos/<book-id>.jpg replaces it"
     pages, boxes = [], []
     svg, pw, ph, bx = sheet(art, ow, oh, 0, LINEN, ticks,
@@ -140,7 +140,7 @@ def master_files(r, bds, books, outdir):
     sw, stack = spine_width(bds)
     W, H, j = P["cover_w"], P["cover_h"], P["joint"]
     total = W + j + sw + j + W
-    back = master_back(0, W, H, books)
+    back = master_back(0, W, H, books, image=all_img())
     front, real = master_front(W + j + sw + j, W, H, books)
     spine = spine_art(W + j, sw, H)
     art = back + spine + front

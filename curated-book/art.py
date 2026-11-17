@@ -236,8 +236,29 @@ def cover_panel(x0, pw, books, tab_right=True):
     return "".join(out), real
 
 
-def back_panel(x0, pw, books, bind_right=True):
-    """Outside of the binding panel: quiet spec plate (no brand)."""
+CAT_DIR = os.path.join(HERE, "assets", "catalogue")
+
+
+def board_img(bd):
+    return os.path.join(CAT_DIR, f"board-{bd['id']}.png")
+
+
+def all_img():
+    return os.path.join(CAT_DIR, "all-books.png")
+
+
+def catalogue_image(x, y, w, h, path, caption=True):
+    """Tilted catalogue-book picture (transparent PNG) with a small caption."""
+    if not path or not os.path.exists(path):
+        return ""
+    out = f'<image href="file://{path}" x="{x:.3f}" y="{y:.3f}" width="{w:.3f}" height="{h:.3f}" preserveAspectRatio="xMidYMid meet"/>'
+    if caption:
+        out = Ttr(x + w / 2, y - .08, "THE CATALOGUE BOOKS", "CZ", 600, 6.5, MUTED, "middle", .3) + out
+    return out
+
+
+def back_panel(x0, pw, books, bind_right=True, image=None):
+    """Outside of the binding panel: quiet spec plate (no brand) + 4 tilted catalogue books."""
     usable0, usable1 = (x0, x0 + pw - P["bind_margin"]) if bind_right else (x0 + P["bind_margin"], x0 + pw)
     cx = (usable0 + usable1) / 2
     top = 4.2 if len(books) < 3 else 1.25
@@ -258,6 +279,13 @@ def back_panel(x0, pw, books, bind_right=True):
             ty += .21
         y = ty + (.55 if len(books) < 3 else .4)
     out.append(f'<path d="M{cx - .5},{top - .35} h1" stroke="{BRASS}" stroke-width=".01"/>')
+    if image:                                             # 2400 x 860 px picture, 2.79 : 1
+        ih = 2.7 if len(books) < 3 else 1.95
+        iy = max(y + .2, 11.35 - ih)
+        ih = 11.35 - iy
+        iw = min(ih * 2400 / 860, usable1 - usable0 - .3)
+        ih = iw * 860 / 2400
+        out.append(catalogue_image(cx - iw / 2, 11.35 - ih, iw, ih, image))
     return "".join(out)
 
 
@@ -267,7 +295,7 @@ def plain_panel(x0, pw, books):
             Ttr(x0 + pw / 2, 11.45, b["name"].upper(), "CZ", 500, 7, MUTED, "middle", .3))
 
 
-def outside_art(bd):
+def outside_art(bd, image=None):
     """Outside wrap viewed from outside: inside order reversed. Cover = outside of panel B."""
     fold = bd["fold"] or 2
     ws = panel_widths(fold)[::-1]
@@ -279,10 +307,10 @@ def outside_art(bd):
     real = False
     if fold == 2:      # [B_out = cover | A_out = back]
         c, real = cover_panel(xs[0], ws[0], books)
-        parts += [c, back_panel(xs[1], ws[1], books)]
+        parts += [c, back_panel(xs[1], ws[1], books, image=image)]
     else:              # [C_out | B_out = cover | A_out = back]
         c, real = cover_panel(xs[1], ws[1], books)
-        parts += [plain_panel(xs[0], ws[0], books), c, back_panel(xs[2], ws[2], books)]
+        parts += [plain_panel(xs[0], ws[0], books), c, back_panel(xs[2], ws[2], books, image=image)]
     return "".join(parts), xs, ws, real
 
 
@@ -396,31 +424,27 @@ def master_front(x0, w, h, sample_books):
     return "".join(out), bool(p)
 
 
-def master_back(x0, w, h, books):
-    """Back of the master binder: light-control scale, the collections in two columns,
-    and how to read a board.  No brand anywhere."""
+def master_back(x0, w, h, books, image=None):
+    """Back of the master binder: the 20 catalogue books tilted in two rows of 10, the
+    light-control scale and the collections in two columns.  No brand anywhere."""
     cx = x0 + w / 2
-    out = [Ttr(cx, 1.3, "THE COLLECTIONS", "CZ", 600, 10, BRASS, "middle", .45),
-           T(cx, 1.95, "Sheer to Blackout", "CG", 600, 32, INK, "middle"),
-           T(cx, 2.3, "Twenty collections, arranged by light control, then by fabric weight", "CG", 500, 13, MUTED, "middle", italic=True)]
+    out = [Ttr(cx, 1.05, "THE COLLECTIONS", "CZ", 600, 10, BRASS, "middle", .45),
+           T(cx, 1.62, "Sheer to Blackout", "CG", 600, 30, INK, "middle"),
+           T(cx, 1.94, "Twenty collections, arranged by light control, then by fabric weight", "CG", 500, 13, MUTED, "middle", italic=True)]
+    # 20 books, two rows of 10 (3000 x 950 px picture)
+    iw = w - 1.0
+    ih = iw * 950 / 3000
+    if image and os.path.exists(image):
+        out.append(f'<image href="file://{image}" x="{x0 + .5:.3f}" y="2.2" width="{iw:.3f}" height="{ih:.3f}" preserveAspectRatio="xMidYMid meet"/>')
     # light-control scale
-    n, sx0, sx1, sy = len(LADDER), x0 + 1.0, x0 + w - 1.0, 2.95
+    n, sx0, sx1, sy = len(LADDER), x0 + 1.0, x0 + w - 1.0, 2.2 + ih + .45
     cw = (sx1 - sx0) / n
     out.append(Ttr(sx0, sy - .14, "MORE LIGHT", "CZ", 600, 6, MUTED, "start", .3))
     out.append(Ttr(sx1, sy - .14, "MORE PRIVACY & DARKNESS", "CZ", 600, 6, MUTED, "end", .3))
     for i, (k, name, desc, col) in enumerate(LADDER):
         bx = sx0 + i * cw
-        out.append(f'<rect x="{bx + .03:.3f}" y="{sy:.3f}" width="{cw - .06:.3f}" height=".16" fill="{col}"/>')
-        out.append(Ttr(bx + cw / 2, sy + .38, name.upper(), "CZ", 600, 6.5, INK, "middle", .2))
-        words, lines, cur = desc.split(), [], ""
-        for wd in words:                                   # wrap the one-line description
-            if text_w((cur + " " + wd).strip(), "PP", 400, 6 * PT) > cw - .15:
-                lines.append(cur); cur = wd
-            else:
-                cur = (cur + " " + wd).strip()
-        lines.append(cur)
-        for j, l in enumerate(lines[:2]):
-            out.append(T(bx + cw / 2, sy + .56 + j * .12, l, "PP", 400, 6, MUTED, "middle"))
+        out.append(f'<rect x="{bx + .03:.3f}" y="{sy:.3f}" width="{cw - .06:.3f}" height=".14" fill="{col}"/>')
+        out.append(Ttr(bx + cw / 2, sy + .34, name.upper(), "CZ", 600, 6.5, INK, "middle", .2))
     # collections in two columns (category groups kept together)
     groups, last = [], None
     for b in books:
@@ -431,12 +455,12 @@ def master_back(x0, w, h, books):
     rows = lambda g: 1 + len(g[1])
     total = sum(rows(g) for g in groups)
     split, acc = 0, 0
-    for i, g in enumerate(groups):                         # balance the two columns
+    for i, g in enumerate(groups):
         if acc + rows(g) > total / 2 + 1:
             break
         acc += rows(g); split = i + 1
     cols = [groups[:split], groups[split:]]
-    top, colw = 4.05, (w - 2.0 - .6) / 2
+    top, colw = sy + .95, (w - 2.0 - .6) / 2
     for ci, col in enumerate(cols):
         lx = x0 + 1.0 + ci * (colw + .6)
         y = top
@@ -448,37 +472,11 @@ def master_back(x0, w, h, books):
             y += .36
             for b in bs:
                 out.append(T(lx, y, f'{b["seq"]:02d}', "CZ", 600, 9, BRASS))
-                out.append(T(lx + .4, y, b["name"], "CG", 600, 15, INK))
+                out.append(T(lx + .4, y, b["name"], "CG", 600, 14.5, INK))
                 out.append(T(lx + colw, y, b["line"], "PP", 400, 6.5, MUTED, "end"))
                 y += .31
-            y += .22
-    # how to read a board
-    hy = 10.15
-    out.append(f'<path d="M{x0 + 1.0},{hy - .45} H{x0 + w - 1.0}" stroke="{GUIDE}" stroke-width=".006"/>')
-    out.append(Ttr(cx, hy - .15, "HOW TO READ A BOARD", "CZ", 600, 7.5, BRASS, "middle", .4))
-    iw = (w - 2.0) / 3
-    items = [("Main fabric", "The hero shades hang as", "a waterfall on the first panel"),
-             ("Shade range", "Every colour as a numbered", "cutting, light to dark"),
-             ("Specifications", "Width, weight and composition", "on the back of every board")]
-    for i, (title, l1, l2) in enumerate(items):
-        ix = x0 + 1.0 + i * iw + iw / 2
-        iy = hy + .2
-        if i == 0:                                         # waterfall icon
-            for k in range(4):
-                out.append(f'<rect x="{ix - .3 + k * .05:.3f}" y="{iy + k * .1:.3f}" width=".6" height=".42" fill="{mix(BRASS, LINEN, .15 + k * .18)}" stroke="{LINEN}" stroke-width=".01"/>')
-        elif i == 1:                                       # cuttings grid icon
-            for r_ in range(3):
-                for c_ in range(4):
-                    out.append(f'<rect x="{ix - .34 + c_ * .17:.3f}" y="{iy + .03 + r_ * .16:.3f}" width=".14" height=".12" fill="{mix("#B79C7A", "#414955", (r_ * 4 + c_) / 11)}"/>')
-        else:                                              # spec plate icon
-            out.append(f'<rect x="{ix - .3:.3f}" y="{iy:.3f}" width=".6" height=".72" fill="none" stroke="{INK}" stroke-width=".01"/>')
-            for r_ in range(4):
-                out.append(f'<path d="M{ix - .2:.3f},{iy + .17 + r_ * .14:.3f} h{.4 if r_ % 2 == 0 else .28}" stroke="{MUTED}" stroke-width=".02"/>')
-        out.append(T(ix, iy + 1.0, title, "CG", 600, 14, INK, "middle"))
-        out.append(T(ix, iy + 1.2, l1, "PP", 400, 6.5, MUTED, "middle"))
-        out.append(T(ix, iy + 1.33, l2, "PP", 400, 6.5, MUTED, "middle"))
-    nb = len(books)
-    out.append(Ttr(cx, 12.45, f"{nb} COLLECTIONS  ·  ONE BOOK", "CZ", 600, 8, INK, "middle", .35))
+            y += .2
+    out.append(Ttr(cx, 12.45, f"{len(books)} COLLECTIONS  ·  ONE BOOK", "CZ", 600, 8, INK, "middle", .35))
     return "".join(out)
 
 
