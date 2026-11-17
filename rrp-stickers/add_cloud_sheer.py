@@ -19,6 +19,7 @@ import pymupdf
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "original", "osho_signature_rrp_stickers_corrected.pdf")
 OUT = os.path.join(HERE, "output", "Osho_Signature_RRP_Stickers.pdf")
+OUT_CLOUD = os.path.join(HERE, "output", "Cloud_Sheer_RRP_Stickers_4_per_page.pdf")
 DEJAVU_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 CLOUD_SHEER = [("ASTON", 720), ("ASTON STRIPE", 720), ("CANDID", 470), ("INTEL", 470),
@@ -97,6 +98,24 @@ def main():
     doc.set_metadata(pymupdf.open(SRC).metadata)
     doc.save(OUT, garbage=4, deflate=True)
     print("Wrote", OUT)
+
+    # --- one-page sheet of Cloud Sheer stickers only: same sticker size, same page
+    # size and gutter as the main sheet; 2 x 2 is as many as fit at full size.
+    sheet = pymupdf.open(OUT)
+    one = pymupdf.open()
+    W, H = sheet[1].rect.width, sheet[1].rect.height
+    pg = one.new_page(width=W, height=H)
+    gap = FREE_BOX.x0 - DRIFT_BOX.x1                  # 18 pt, as on the main sheet
+    clip = FREE_BOX + (-1, -1, 1, 1)
+    for row in range(2):
+        for col in range(2):
+            x = DRIFT_BOX.x0 + col * (FREE_BOX.width + gap)
+            y = DRIFT_BOX.x0 + row * (FREE_BOX.height + gap)
+            box = pymupdf.Rect(x, y, x + FREE_BOX.width, y + FREE_BOX.height)
+            pg.show_pdf_page(box + (-1, -1, 1, 1), sheet, 1, clip=clip)
+    one.set_metadata({**sheet.metadata, "title": "Osho Signature RRP Stickers - Cloud Sheer"})
+    one.save(OUT_CLOUD, garbage=4, deflate=True)
+    print("Wrote", OUT_CLOUD)
 
 
 if __name__ == "__main__":
