@@ -302,11 +302,11 @@ async function main() {
     numBadge(s, 5.55, y + 0.16, 0.45, i + 1);
     T(s, `${m.phase}`, { x: 6.15, y: y + 0.08, w: 1.6, h: 0.32, fontSize: 14, bold: true, color: C.text2 });
     T(s, `by ${m.by}`, { x: 7.6, y: y + 0.08, w: 1.75, h: 0.32, fontSize: 12, bold: true, color: C.accent5, align: "right" });
-    T(s, `${inr(m.partners)} partners  ·  +${inr(m.partners - prev)} kits  ·  ${crLakh(m.partners * KIT_PRICE)}`,
+    T(s, `${inr(m.partners)} partners  ·  +${inr(m.partners - prev)} new kits`,
       { x: 6.15, y: y + 0.4, w: 3.2, h: 0.3, fontSize: 12, color: C.accent4 });
     prev = m.partners;
   });
-  s.addNotes("Phase 1 Launch: 100 partners by March 2027 (₹69 lakh in kit sales). Phase 2 Build: 500 by March 2028 (₹3.45 crore). Phase 3 Scale: 1,000 by March 2029 (₹6.9 crore). Phase 4 Nationwide: 5,000 by March 2032 (₹34.5 crore) - about 1,333 new partners a year over the last three years. Kit sales = partners x ₹69,000.");
+  s.addNotes("Phase 1 Launch: 100 partners by March 2027. Phase 2 Build: 500 by March 2028 (400 new kits). Phase 3 Scale: 1,000 by March 2029 (500 new kits). Phase 4 Nationwide: 5,000 by March 2032 (4,000 new kits) - about 1,333 new partners a year over the last three years.");
 
   // 8 - how we get there
   s = pres.addSlide({ masterName: "DARK", sectionTitle: "Our Goal" });
