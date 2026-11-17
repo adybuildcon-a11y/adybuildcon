@@ -247,6 +247,12 @@ def all_img():
     return os.path.join(CAT_DIR, "all-books.png")
 
 
+def png_aspect(path):
+    from PIL import Image
+    with Image.open(path) as im:
+        return im.width / im.height
+
+
 def catalogue_image(x, y, w, h, path, caption=True):
     """Tilted catalogue-book picture (transparent PNG) with a small caption."""
     if not path or not os.path.exists(path):
@@ -279,12 +285,13 @@ def back_panel(x0, pw, books, bind_right=True, image=None):
             ty += .21
         y = ty + (.55 if len(books) < 3 else .4)
     out.append(f'<path d="M{cx - .5},{top - .35} h1" stroke="{BRASS}" stroke-width=".01"/>')
-    if image:                                             # 2400 x 860 px picture, 2.79 : 1
+    if image and os.path.exists(image):                   # picture cropped to the books -> real aspect
+        ar = png_aspect(image)
         ih = 2.7 if len(books) < 3 else 1.95
         iy = max(y + .2, 11.35 - ih)
         ih = 11.35 - iy
-        iw = min(ih * 2400 / 860, usable1 - usable0 - .3)
-        ih = iw * 860 / 2400
+        iw = min(ih * ar, usable1 - usable0 - .3)
+        ih = iw / ar
         out.append(catalogue_image(cx - iw / 2, 11.35 - ih, iw, ih, image))
     return "".join(out)
 
@@ -433,7 +440,7 @@ def master_back(x0, w, h, books, image=None):
            T(cx, 1.94, "Twenty collections, arranged by light control, then by fabric weight", "CG", 500, 13, MUTED, "middle", italic=True)]
     # 20 books, two rows of 10 (3000 x 950 px picture)
     iw = w - 1.0
-    ih = iw * 950 / 3000
+    ih = iw / png_aspect(image) if image and os.path.exists(image) else 3.0
     if image and os.path.exists(image):
         out.append(f'<image href="file://{image}" x="{x0 + .5:.3f}" y="2.2" width="{iw:.3f}" height="{ih:.3f}" preserveAspectRatio="xMidYMid meet"/>')
     # light-control scale

@@ -405,12 +405,14 @@ def strip_html(rows, w, h, s):
     """rows = [(floor_y, [(book, x), ...]), ...] on a transparent page, all books tilted RY."""
     Hp = H * s
     parts = []
-    for floor, items in rows:
-        parts.append('<div class="scene" style="perspective-origin:50% 5%">')
+    k = 0
+    for ri, (floor, items) in enumerate(rows):
+        parts.append('<div class="scene" style="perspective:14000px;perspective-origin:50% 5%">')
         for b, x in items:
-            parts.append(f'<div class="shadow" style="left:{x + W * s * .04}px;top:{floor - s * .45}px;width:{W * s * .92}px;'
+            parts.append(f'<div class="shadow" data-i="{k}" style="left:{x + W * s * .04}px;top:{floor - s * .45}px;width:{W * s * .92}px;'
                          f'height:{s * .9}px;filter:blur({s * .35}px);background:rgba(35,28,20,.32)"></div>')
-            parts.append(book3d(b, x, floor - Hp, s, RY))
+            parts.append(book3d(b, x, floor - Hp, s, RY).replace('<div class="book"', f'<div class="book" data-i="{k}" data-row="{ri}"', 1))
+            k += 1
         parts.append("</div>")
     return (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}{SCENE_CSS}'
             f'html,body{{background:transparent}} body{{width:{w}px;height:{h}px;overflow:hidden;position:relative}}</style></head>'
@@ -432,8 +434,58 @@ def twenty_books_html(books20):
     return strip_html(rows, 3000, 950, s), 3000, 950
 
 
+MEASURE_JS = """() => {
+  const out = [];
+  document.querySelectorAll('.book').forEach(b => {
+    let r = null;
+    b.querySelectorAll('.face.front, .face.spine, .face.top, .rope svg').forEach(el => {
+      const q = el.getBoundingClientRect();
+      if (!q.width) return;
+      r = r ? {l: Math.min(r.l, q.left), t: Math.min(r.t, q.top), r: Math.max(r.r, q.right), b: Math.max(r.b, q.bottom)}
+            : {l: q.left, t: q.top, r: q.right, b: q.bottom};
+    });
+    out.push({i: +b.dataset.i, row: +b.dataset.row, l: r.l, t: r.t, r: r.r, b: r.b});
+  });
+  return out;
+}"""
+
+SHIFT_JS = """(moves) => {
+  for (const m of moves) {
+    document.querySelectorAll('[data-i="' + m.i + '"]').forEach(el => {
+      el.style.left = (parseFloat(el.style.left) + m.dx) + 'px';
+      el.style.top = (parseFloat(el.style.top) + m.dy) + 'px';
+    });
+  }
+}"""
+
+
+def even_out(pg, w, h, gap_ratio=.07):
+    """Equal gaps between the tilted books of every row, each row centred; the whole
+    picture centred vertically.  Two passes (perspective makes a shift slightly non-linear)."""
+    for _ in range(3):
+        boxes = pg.evaluate(MEASURE_JS)
+        moves = []
+        for row in sorted({b["row"] for b in boxes}):
+            items = sorted([b for b in boxes if b["row"] == row], key=lambda b: b["l"])
+            widths = [b["r"] - b["l"] for b in items]
+            gap = gap_ratio * sum(widths) / len(widths)
+            total = sum(widths) + gap * (len(items) - 1)
+            x = (w - total) / 2
+            for b, bw in zip(items, widths):
+                moves.append(dict(i=b["i"], dx=x - b["l"], dy=0))
+                x += bw + gap
+        top, bottom = min(b["t"] for b in boxes), max(b["b"] for b in boxes)
+        dy = (h - (bottom - top)) / 2 - top
+        for m in moves:
+            m["dy"] = dy
+        pg.evaluate(SHIFT_JS, moves)
+    boxes = pg.evaluate(MEASURE_JS)
+    return boxes
+
+
 def render_pngs(jobs):
-    """jobs = [(path, html, w, h)] -> transparent PNGs."""
+    """jobs = [(path, html, w, h)] -> transparent PNGs; tilted-book strips are evened out,
+    centred and cropped to the books with equal padding on every side."""
     from playwright.sync_api import sync_playwright
     with sync_playwright() as pw:
         br = pw.chromium.launch(executable_path=chromium())
@@ -444,7 +496,13 @@ def render_pngs(jobs):
             pg.goto("file://" + tmp)
             pg.evaluate("document.fonts.ready")
             pg.wait_for_timeout(300)
-            pg.screenshot(path=path, omit_background=True)
+            boxes = even_out(pg, w, h)
+            pg.wait_for_timeout(150)
+            l, t = min(b["l"] for b in boxes), min(b["t"] for b in boxes)
+            r, bt = max(b["r"] for b in boxes), max(b["b"] for b in boxes)
+            pad = max(24, min(60, (r - l) * .02))
+            clip = dict(x=max(0, l - pad), y=max(0, t - pad), width=min(w, r + pad) - max(0, l - pad), height=min(h, bt + pad) - max(0, t - pad))
+            pg.screenshot(path=path, omit_background=True, clip=clip)
             os.remove(tmp)
             pg.close()
         br.close()
