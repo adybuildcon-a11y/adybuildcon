@@ -195,8 +195,10 @@ def cover_panel(x0, pw, books, tab_right=True):
     # name block
     if len(books) == 1:
         lines = name_lines(b0["name"])
-    else:
+    elif len(books) == 2:
         lines = [books[0]["name"].upper(), "&", books[1]["name"].upper()]
+    else:                                                  # Stand A: three books
+        lines = [b["name"].upper() for b in books[:-1]] + ["&", books[-1]["name"].upper()]
     pt = fit_name([l for l in lines if l != "&"], colw, 46)
     y = 1.32 + .25 + pt * PT * .95
     for l in lines:
@@ -207,7 +209,7 @@ def cover_panel(x0, pw, books, tab_right=True):
         out.append(T(lx, y, l, "CG", 600, pt, INK, track=.02))
         y += pt * PT * 1.0
     # rule + category
-    cat_line = b0["line"] if len(books) == 1 else "Dimout"
+    cat_line = b0["line"] if len(books) == 1 else ("Three Collections" if len(books) > 2 else "Dimout")
     ry = y - pt * PT * .55 + .2
     cpt = 10.5
     while cpt > 7 and text_w(cat_line, "CZ", 600, cpt * PT, .06) > colw - .5:
@@ -238,8 +240,9 @@ def back_panel(x0, pw, books, bind_right=True):
     """Outside of the binding panel: quiet spec plate (no brand)."""
     usable0, usable1 = (x0, x0 + pw - P["bind_margin"]) if bind_right else (x0 + P["bind_margin"], x0 + pw)
     cx = (usable0 + usable1) / 2
-    out = [Ttr(cx, 4.2, "CURATED FABRICS COLLECTION", "CZ", 500, 7.5, MUTED, "middle", .35)]
-    y = 4.95
+    top = 4.2 if len(books) < 3 else 1.25
+    out = [Ttr(cx, top, "CURATED FABRICS COLLECTION", "CZ", 500, 7.5, MUTED, "middle", .35)]
+    y = top + .75
     for b in books:
         out.append(T(cx, y, b["name"].upper(), "CG", 600, 26, INK, "middle", .02))
         out.append(Ttr(cx, y + .3, b["line"].upper(), "CZ", 500, 7.5, BRASS, "middle", .25))
@@ -253,8 +256,8 @@ def back_panel(x0, pw, books, bind_right=True):
             out.append(T(cx - .08, ty, k.upper(), "PP", 500, 6.5, MUTED, "end"))
             out.append(T(cx + .08, ty, v, "PP", 400, 7.5, INK))
             ty += .21
-        y = ty + .55
-    out.append(f'<path d="M{cx - .5},{3.85} h1" stroke="{BRASS}" stroke-width=".01"/>')
+        y = ty + (.55 if len(books) < 3 else .4)
+    out.append(f'<path d="M{cx - .5},{top - .35} h1" stroke="{BRASS}" stroke-width=".01"/>')
     return "".join(out)
 
 
@@ -284,65 +287,72 @@ def outside_art(bd):
 
 
 # ---------------------------------------------------------------- inside liner
-def inside_art(bd):
+def inside_art(bd, guides=True):
+    """Inside liner of a board.  guides=False is the PRINT version (owner, 17 Nov): no swatch
+    placement boxes or slot labels - only the panel headers, the spec block and the footer.
+    guides=True draws the placement (5 x 7 mains, cuttings, shade numbers) for the proof / assembly."""
     fold, books = bd["fold"], bd["books"]
     out, run = [], 0
     for i, pn in enumerate(bd["panels"]):
         b = pn.get("book") or bd["eff"]
-        x0 = panel_x(fold, i)
-        pw = panel_widths(fold)[i]
         bx0, by0, bx1, by1 = content_box(fold, i)
         hy = P["margin"] + .5
         out.append(T(bx0, hy, b["name"].upper(), "CG", 600, 15, INK, track=.03))
         if pn["kind"] == "hero":
             tag = "MAIN FABRIC" if len(pn["shades"]) == 1 else f"MAIN FABRICS · WATERFALL OF {len(pn['shades'])}"
-        elif pn.get("title") and not pn.get("book"):
-            tag = pn["title"].upper()
         elif pn.get("book"):
-            tag = f"{len(pn['shades'])} SHADES"
+            tag = f"STAND {bd['stand']} · {len(pn['shades'])} SHADES" if bd.get("stand") else f"{len(pn['shades'])} SHADES"
+        elif pn.get("title"):
+            tag = pn["title"].upper()
         else:
             tag = f"SHADES {run + 1:02d} – {run + len(pn['shades']):02d}"
-        if pn["kind"] == "swatch":
+        if pn["kind"] == "swatch" and not pn.get("book"):
             run += len(pn["shades"])
         out.append(Ttr(bx1, hy, tag, "CZ", 600, 7, BRASS, "end", .25))
         out.append(f'<path d="M{bx0},{hy + .16} H{bx1}" stroke="{INK}" stroke-width=".006"/>')
-        if pn["kind"] == "hero":                      # waterfall of main fabrics
-            for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
-                out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{CELL}" stroke="{GUIDE}" stroke-width=".007"/>')
-                out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height=".06" fill="{GUIDE}" opacity=".45"/>')
-                lx = cx - WF_LABEL
-                out.append(T(lx, cy + .2, "MAIN", "CZ", 600, 6, BRASS, track=.15))
-                out.append(T(lx, cy + .42, shade or "No. ____", "PP", 500, 8.5 if shade else 7, INK if shade else MUTED))
-                out.append(T(lx, cy + .6, f'{pn["letter"]}{k:02d}', "PP", 400, 5.5, GUIDE))
-            out.append(hero_spec(pn["spec_box"], b))
-            fy = P["board_h"] - P["margin"] - .05
-            out.append(T(bx0, fy, f'NO. {b["seq"]:02d}  ·  {b["name"].upper()}  ·  PANEL {pn["letter"]}', "PP", 400, 5.5, MUTED, track=.1))
-            continue
-        for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
-            out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{CELL}" stroke="{GUIDE}" stroke-width=".007"/>')
-            ly = cy + ch + (.19 if pn["kind"] == "swatch" else .23)
-            slot = f'{pn["letter"]}{k:02d}'
-            if pn["kind"] == "hero":
-                lab = f"MAIN · {shade}" if shade else "MAIN · NO. ______"
-                out.append(T(cx, ly, lab, "CZ", 600, 8.5, INK, track=.12))
+        mains = set(m for m in b["mains"] if m)
+        if guides:
+            if pn["kind"] == "hero":                      # waterfall of 5 x 7 main pieces
+                step = max(pn["grid"].get("dy", 0), .5)
+                for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
+                    out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{mix(CELL, GUIDE, (k - 1) * .08)}" stroke="{GUIDE}" stroke-width=".007"/>')
+                    lx, ly = bx0, pn["cells"][0][1] + (k - 1) * step
+                    out.append(T(lx, ly + .2, "MAIN", "CZ", 600, 6, BRASS, track=.15))
+                    out.append(T(lx, ly + .4, shade or "No. ____", "PP", 500, 8 if shade else 7, INK if shade else MUTED))
+                x, y, w, h = pn["cells"][-1]
+                out.append(T(x + w / 2, y + h / 2, "5 × 7 in READY-CUT", "CZ", 600, 6.5, MUTED, "middle", .15))
             else:
-                if shade and shade in b["mains"]:
-                    out.append(T(cx, ly, f"MAIN · {shade}", "CZ", 600, 7.5, INK, track=.08))
-                elif shade:
-                    out.append(T(cx, ly, shade, "PP", 500, 7.5, INK))
-                else:
-                    out.append(T(cx, ly, "No.", "PP", 400, 7, MUTED))
-                    out.append(f'<path d="M{cx + .24},{ly + .015} h{min(.85, cw - .6):.3f}" stroke="{GUIDE}" stroke-width=".007"/>')
-            out.append(T(cx + cw, ly, slot, "PP", 400, 5.5, GUIDE, "end"))
+                for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
+                    is_main = pn.get("book") and k <= len(pn.get("mains", []))
+                    out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{CELL}" stroke="{GUIDE}" stroke-width=".007"/>')
+                    ly = cy + ch + .19
+                    if is_main:
+                        out.append(T(cx + cw / 2, cy + ch / 2, "5 × 7 in READY-CUT", "CZ", 600, 6.5, MUTED, "middle", .15))
+                        out.append(T(cx, ly, f"MAIN · {shade}" if shade else "MAIN · NO. ______", "CZ", 600, 7.5, INK, track=.08))
+                    elif shade and shade in mains:
+                        out.append(T(cx, ly, f"MAIN · {shade}", "CZ", 600, 7.5 if cw > 1.3 else 5.5, INK, track=.08))
+                    elif shade:
+                        out.append(T(cx, ly, shade, "PP", 500, 7.5 if cw > 1.3 else 6, INK))
+                    else:
+                        out.append(T(cx, ly, "No.", "PP", 400, 7 if cw > 1.3 else 5.5, MUTED))
+                    if cw > 1.3:
+                        out.append(T(cx + cw, ly, f'{pn["letter"]}{k:02d}', "PP", 400, 5.5, GUIDE, "end"))
         if pn["kind"] == "hero":
-            out.append(hero_spec(pn["spec_box"], b))
+            out.append(hero_spec(pn["spec_box"], b, compact=len(pn["shades"]) > 1))
         fy = P["board_h"] - P["margin"] - .05
         out.append(T(bx0, fy, f'NO. {b["seq"]:02d}  ·  {b["name"].upper()}  ·  PANEL {pn["letter"]}', "PP", 400, 5.5, MUTED, track=.1))
     return "".join(out)
 
 
-def hero_spec(box, b):
+def hero_spec(box, b, compact=False):
     x0, y0, x1, y1 = box
+    if compact:                                           # several mains: name, line, one spec row
+        out = [T(x0, y0 + .3, b["name"].upper(), "CG", 600, 20, INK, track=.02)]
+        bits = [b["line"].upper()] + [f'{b["shades"]} SHADES' if b["shades"] else None,
+                                      f'{b["width"]} IN' if b["width"] else None, f'{b["gsm"]} GSM' if b["gsm"] else None]
+        out.append(Ttr(x0, y0 + .55, "  ·  ".join(x for x in bits if x), "CZ", 500, 7, BRASS, "start", .2))
+        out.append(ladder_full(x0, y1 - .42, x1 - x0, b["cat"]))
+        return "".join(out)
     out = [T(x0, y0 + .32, b["name"].upper(), "CG", 600, 24, INK, track=.02)]
     if b["line"].lower() != b["name"].lower():
         out.append(Ttr(x0, y0 + .58, b["line"].upper(), "CZ", 500, 7.5, BRASS, "start", .25))

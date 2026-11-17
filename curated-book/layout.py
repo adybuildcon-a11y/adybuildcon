@@ -15,7 +15,7 @@ def ordered_books():
 
 
 def boards():
-    """Group books into physical boards (Eeco Dimout + Double Shade share one)."""
+    """Group books into physical boards (Stand A: Neo Crest + Glory Cotton + Eeco Dimout share one 3-fold board)."""
     out, seen = [], {}
     for b in ordered_books():
         key = b.get("board", b["id"])
@@ -27,8 +27,17 @@ def boards():
         out.append(bd)
     for i, bd in enumerate(out, 1):
         bd["no"] = i
+        bd["round"] = min(b["round"] for b in bd["books"])
+        bd["stand"] = "A" if bd["id"] == "stand-a" else None
         derive(bd)
     return out
+
+
+def board_name(bd):
+    names = [b["name"] for b in bd["books"]]
+    if len(names) > 2:
+        return f"Stand {bd['stand']}: " + ", ".join(names[:-1]) + " & " + names[-1]
+    return " & ".join(names)
 
 
 # ---------------------------------------------------------------- folds & panels
@@ -60,7 +69,7 @@ def derive(bd):
     if len(books) > 1:                                   # shared board: one panel per book
         bd["fold"], bd["fold_src"] = len(books), bd["books"][0]["fold_src"]
         if all(b["shades"] for b in books):
-            bd["panels"] = [dict(kind="swatch", title=b["name"], book=b, letter="ABC"[i],
+            bd["panels"] = [dict(kind="swatch", title=b["name"], book=b, letter="ABC"[i], mains=[m for m in b["mains"]],
                                  shades=list(b["mains"]) + list(b["others"])) for i, b in enumerate(books)]
             bd["ready"] = True
         else:
@@ -176,27 +185,62 @@ def place(n, box, grid=None, **kw):
     return gr, cells
 
 
-HERO_SPEC_H = 2.75
+HERO_SPEC_H = 2.75          # spec block under a single main
+HERO_SPEC_COMPACT = 1.45    # spec block when several mains need the height
 WF_LABEL = 0.62             # label column left of the waterfall
-WF_MAX_BAND = 1.6           # visible band of each stacked main (in)
+WF_MAX_STEP = 0.6           # largest step between stacked mains (in)
+
+
+def hero_spec_h(n):
+    return HERO_SPEC_H if n <= 1 else HERO_SPEC_COMPACT
 
 
 def waterfall(n, box):
-    """Main fabrics as a waterfall: full-width pieces, each stepped down by one band, all ending at
-    the same bottom edge. Band = min(1.6 in, H / (n + 1)) so the last piece shows the largest area."""
+    """Main fabrics as a waterfall of ready-cut 5 x 7 in pieces (HW-p8): each piece is stepped down
+    and to the right of the one before, so every main shows an edge and the last one shows whole."""
     x0, y0, x1, y1 = box
-    H, W = y1 - y0, x1 - x0 - WF_LABEL
-    band = min(WF_MAX_BAND, H / (n + 1)) if n > 1 else 0
-    cells = [(x0 + WF_LABEL, y0 + i * band, W, H - i * band) for i in range(n)]
-    avg_h = sum(c[3] for c in cells) / n
-    return dict(cols=1, rows=n, w=W, h=avg_h, band=band, waterfall=True), cells
+    W, H = x1 - x0 - WF_LABEL, y1 - y0
+    mw, mh = min(P["main_w"], W), min(P["main_h"], H)
+    dx = min(WF_MAX_STEP, (W - mw) / (n - 1)) if n > 1 else 0
+    dy = min(WF_MAX_STEP, (H - mh) / (n - 1)) if n > 1 else 0
+    cells = [(x0 + WF_LABEL + i * dx, y0 + i * dy, mw, mh) for i in range(n)]
+    return dict(cols=1, rows=n, w=mw, h=mh, band=max(dx, dy), dx=dx, dy=dy, waterfall=True), cells
+
+
+CUT_SIZES = [(2.5, 1.6), (2.2, 1.4), (2.0, 1.25), (1.8, 1.1), (1.6, 1.0), (1.4, .9), (1.25, .8), (1.1, .7), (1.0, .6)]
+
+
+def stand_cells(n_main, n_other, box):
+    """Stand panel: the 5 x 7 main at top-left, small cuttings to its right and below it."""
+    x0, y0, x1, y1 = box
+    g, lab = P["gutter"], P["label_h"]
+    mains = [(x0, y0, P["main_w"], P["main_h"])] if n_main else []
+    if n_main:
+        zones = [(x0 + P["main_w"] + g, y0, x1, y0 + P["main_h"] + lab),
+                 (x0, y0 + P["main_h"] + lab + g, x1, y1)]
+    else:
+        zones = [(x0, y0, x1, y1)]
+    def fit(w, h):
+        cells = []
+        for zx0, zy0, zx1, zy1 in zones:
+            cols = int((zx1 - zx0 + g) // (w + g))
+            rows = int((zy1 - zy0 + g) // (h + lab + g))
+            for r_ in range(rows):
+                for c_ in range(cols):
+                    cells.append((zx0 + c_ * (w + g), zy0 + r_ * (h + lab + g), w, h))
+        return cells
+    for w, h in CUT_SIZES:
+        cells = fit(w, h)
+        if len(cells) >= n_other:
+            return dict(cols=None, rows=None, w=w, h=h, stand=True, cuttings=n_other), mains + cells[:n_other]
+    raise ValueError(f"{n_other} cuttings do not fit a stand panel")
 SMALL_CUT = (2.5, 1.6)      # range books: other shades are small cuttings, max 2.5 x 1.6 in
 
 
 def layout_board(bd):
     """Attach swatch cells to every inside panel of a ready board."""
     fold = bd["fold"]
-    sw = [(i, pn) for i, pn in enumerate(bd["panels"]) if pn["kind"] == "swatch"]
+    sw = [(i, pn) for i, pn in enumerate(bd["panels"]) if pn["kind"] == "swatch" and not pn.get("book")]
     shared = None
     if sw:                                   # one grid for every swatch panel on the board
         boxes = [content_box(fold, i) for i, _ in sw]
@@ -206,12 +250,16 @@ def layout_board(bd):
         shared = solve_grid(max(len(pn["shades"]) for _, pn in sw), W, H, **kw)
     for i, pn in enumerate(bd["panels"]):
         box = content_box(fold, i)
-        if pn["kind"] == "swatch":
+        if pn.get("book"):                                  # stand panel: one book per panel
+            nm = len([s for s in pn["mains"]])
+            pn["grid"], pn["cells"] = stand_cells(nm, len(pn["shades"]) - nm, box)
+        elif pn["kind"] == "swatch":
             pn["grid"], pn["cells"] = place(len(pn["shades"]), box, grid=shared)
         elif pn["kind"] == "hero":
-            hb = (box[0], box[1], box[2], box[3] - HERO_SPEC_H)
+            sh = hero_spec_h(len(pn["shades"]))
+            hb = (box[0], box[1], box[2], box[3] - sh)
             pn["grid"], pn["cells"] = waterfall(len(pn["shades"]), hb)
-            pn["spec_box"] = (box[0], box[3] - HERO_SPEC_H + 0.2, box[2], box[3])
+            pn["spec_box"] = (box[0], box[3] - sh + 0.2, box[2], box[3])
     return bd
 
 
@@ -226,3 +274,41 @@ def level_of(b):
 
 def ladder_color(cat):
     return dict((k, c) for k, _, _, c in LADDER)[cat]
+
+
+# ---------------------------------------------------------------- fabric (HW-p8)
+def fabric_lines(bds):
+    """One line per book: main pieces (ready-cut 5 x 7 in, main_m metres of each main fabric) and
+    small swatches (swatch_m metres of each shade).  Counts come from the board layout when it is
+    ready; otherwise from the notes (None = not known yet)."""
+    out = []
+    for bd in bds:
+        for b in bd["books"]:
+            e = effective(b)
+            mains_list = [m for m in e["mains"]]
+            n_main, n_small = len(mains_list), None
+            if bd["ready"]:
+                n_small = 0
+                for pn in bd["panels"]:
+                    if pn.get("book") and pn["book"]["id"] != b["id"]:
+                        continue
+                    if pn["kind"] == "hero":
+                        continue
+                    k = len(pn.get("mains", [])) if pn.get("book") else 0
+                    n_small += len(pn["shades"]) - k
+                if not any(pn["kind"] == "hero" or pn.get("book") for pn in bd["panels"]):
+                    n_small -= n_main               # mains placed among equal swatches
+            elif e["shades"]:
+                n_small = e["shades"] - n_main
+            smalls = []
+            if bd["ready"]:
+                for pn in bd["panels"]:
+                    if pn["kind"] == "hero" or (pn.get("book") and pn["book"]["id"] != b["id"]):
+                        continue
+                    k = len(pn.get("mains", [])) if pn.get("book") else 0
+                    smalls += [s for s in pn["shades"][k:] if not (s and s in mains_list and not pn.get("book"))]
+            out.append(dict(board=bd, book=b, round=b["round"], mains=mains_list, n_main=n_main,
+                            n_small=n_small, smalls=smalls, provisional=bool(e.get("is_draft")),
+                            m_main=n_main * P["main_m"],
+                            m_small=None if n_small is None else round(n_small * P["swatch_m"], 2)))
+    return out

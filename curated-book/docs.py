@@ -5,7 +5,7 @@ import os
 from art import (outside_art, FONT_CSS, LINEN, INK, MUTED, BRASS, PAPER, CREAM, cover_panel, inside_art, master_front,
                  master_back, spine_art, T, esc)
 from data import LADDER, P, TRANSCRIPT, EXTRA
-from layout import panel_widths, panel_x, content_box, open_size, ladder_color
+from layout import board_name, panel_widths, panel_x, content_box, open_size, ladder_color
 from printfiles import draft_src
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -90,7 +90,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <p class="lead">A 4-ring master binder holds one fold-out mood-board leaf per collection, as in the reference binder. Each board opens on a hero swatch of the main fabric and a measured grid of every curated shade. The front of each board carries a photo and the collection name - and no company branding anywhere.</p>
       <div class="cols" style="margin:.3in 0">
         <div class="tile"><b>20</b><span>collections from the book list</span></div>
-        <div class="tile"><b>19</b><span>boards (Eeco Dimout + Double Shade share one)</span></div>
+        <div class="tile"><b>{len(bds)}</b><span>boards (Stand A: Neo Crest, Glory Cotton &amp; Eeco Dimout on one 3-fold board)</span></div>
         <div class="tile"><b>{len([b for b in ready if not b.get("draft")])}</b><span>inside layouts confirmed from the notes</span></div>
         <div class="tile"><b>{len([b for b in ready if b.get("draft")])}</b><span>draft layouts (count from price list / catalogue)</span></div>
         <div class="tile"><b>{len(pend)}</b><span>leaves waiting on shade lists (covers ready)</span></div>
@@ -192,7 +192,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <tr><td>Header</td><td>{P["header"]} in</td><td>Book name (Cormorant 15 pt) + panel tag (Cinzel 7 pt) + hairline</td></tr>
       <tr><td>Footer</td><td>{P["footer"]} in</td><td>Book No. · name · panel letter (Poppins 5.5 pt)</td></tr>
       <tr><td>Gutter</td><td>{P["gutter"]} in</td><td>Between swatches - enough for pinked edges</td></tr>
-      <tr><td>Label band</td><td>{P["label_h"]} in</td><td>Shade No. left, slot ID right</td></tr>
+      <tr><td>Label band</td><td>{P["label_h"]} in</td><td>Proof / assembly guide only - the print has no placement boxes or labels</td></tr>
       <tr><td>Minimum swatch</td><td>{P["min_sw_w"]} × {P["min_sw_h"]} in</td><td>Smallest size where weave & colour still read</td></tr>
       <tr><td>Maximum per panel</td><td>{P["cap_per_panel"]}</td><td>3 × 6 grid at minimum size; decides 2- vs 3-fold</td></tr></table>
       <div class="note">Fold rule when the notes don't give one: panels = 1 (hero, if a main is named) + ⌈other shades ÷ 18⌉, minimum 2.</div></div></div>''')
@@ -203,7 +203,7 @@ def design_guide(books, bds, spine_in, stack_mm):
         b = bd["books"][0]
         for pn in bd["panels"]:
             gr = pn["grid"]
-            rows.append(f'<tr><td>{bd["no"]:02d}</td><td>{esc(b["name"])}</td><td>{pn["letter"]}</td><td>{"Hero" if pn["kind"] == "hero" else (pn.get("title") or "Shades")}</td><td>{len(pn["shades"])}</td><td>{("waterfall " + str(gr["rows"])) if gr.get("waterfall") else (str(gr["cols"]) + " × " + str(gr["rows"]))}</td><td>{gr["w"]:.2f} × {gr["h"]:.2f}{" avg" if gr.get("waterfall") else ""}</td></tr>')
+            rows.append(f'<tr><td>{bd["no"]:02d}</td><td>{esc(b["name"])}</td><td>{pn["letter"]}</td><td>{"Main 5×7" if pn["kind"] == "hero" else (pn.get("title") or "Shades")}</td><td>{len(pn["shades"])}</td><td>{("waterfall " + str(gr["rows"])) if gr.get("waterfall") else ("5×7 main + " + str(gr["cuttings"])) if gr.get("stand") else (str(gr["cols"]) + " × " + str(gr["rows"]))}</td><td>{gr["w"]:.2f} × {gr["h"]:.2f}</td></tr>')
     th = '<tr><th>Bd</th><th>Book</th><th>Pnl</th><th>Content</th><th>Qty</th><th>Grid</th><th>Swatch in</th></tr>'
     mid = (len(rows) + 1) // 2
     halves = "".join(f'<table style="flex:1;font-size:6.6pt">{th}{"".join(part)}</table>' for part in (rows[:mid], rows[mid:]))
@@ -215,20 +215,22 @@ def design_guide(books, bds, spine_in, stack_mm):
     mixed_names = ", ".join(b["name"] for b in books if b["mode"] == "mixed")
     add(f'''<div class="k">06 · The swatch rule</div><h1>Main big, cuttings small - unless the designs differ</h1>
       <div class="cols"><div style="flex:1"><h2 style="margin-top:0">Colour range → main fabric big</h2>
-      <p>One design / texture offered in many colours: the main fabric gets a full panel so the hand and texture can be felt; every other shade is a small cutting (max {2.5} × {1.6} in) - the eye compares colour, not texture.</p>
+      <p>One design / texture offered in many colours: the main fabric is a ready-cut {P["main_w"]:g} × {P["main_h"]:g} in piece so the hand and texture can be felt; every other shade is a small cutting (max 2.5 × 1.6 in) - the eye compares colour, not texture.</p>
       <div style="margin-top:.1in">{svgbox(rng_r, ow3, P["board_h"], 5.1)}</div><p><b>Example: Virinche</b> - main 705 big, 20 colour cuttings.</p></div>
       <div style="flex:1"><h2 style="margin-top:0">Different designs → all the same size</h2>
       <p>When every fabric is a different design or texture, no swatch is "main": all are cut to one larger, near-square size so each texture reads equally. Mains, if named, go first and are marked MAIN.</p>
       <div style="margin-top:.1in">{svgbox(mix_r, ow3, P["board_h"], 5.1)}</div><p><b>Example: Texture Dimout</b> - 27 qualities, all equal.</p></div></div>
-      <div class="note"><b>Main fabrics are always a waterfall:</b> full-width pieces, each stepped down by one band (max 1.6 in), all ending at the same bottom edge - every main shows a band and the last one shows the most, like the layered cards in the e-catalogue. Same-size books: {mixed_names}. All others: colour range. Mode is a column in the Excel Book_List - change it and re-run to switch a book.</div>''')
+      <div class="note"><b>Main fabric = ready-cut {P["main_w"]:g} × {P["main_h"]:g} in piece</b> ({P["main_m"]:g} m of every main fabric). Several mains stack as a <b>waterfall</b>: each piece stepped down and to the right of the one before, so every main shows an edge and the last shows whole. Small swatches: {P["swatch_m"]:g} m (60 cm) of every shade. The printed inside card carries no placement boxes - this placement is the assembly guide. Same-size books: {mixed_names}. All others: colour range.</div>''')
 
     add(f'''<div class="k">07 · Swatch sizes</div><h1>Swatch sizes are solved, not guessed</h1>
       <div class="cols"><div style="flex:1"><p>For every panel the layout engine tries 1-6 columns and keeps the grid with the largest swatch area, biased to a 1.6 : 1 landscape swatch for colour cuttings (1.15 : 1 for mixed designs), never below the minimum size. All swatch panels on one board share the same grid so the board looks even.</p>
       <h2>Swatch rules</h2><ul>
-      <li>Cut each swatch <b>1 mm larger</b> than its printed frame, pinked edge (zig-zag) as in the reference cards.</li>
-      <li>Glue inside the frame; the shade No. prints under the swatch, slot ID at right in grey.</li>
+      <li>Main fabric: ready-cut <b>{P["main_w"]:g} × {P["main_h"]:g} in</b> pieces ({P["main_m"]:g} m of each main fabric for the run).</li>
+      <li>Small swatches pinked (zig-zag) as in the reference cards; {P["swatch_m"]:g} m of each shade for the run.</li>
+      <li>No boxes are printed inside: place every piece as in this guide / the proof, shade-number sticker under each.</li>
       <li>Within a panel, order light → dark, grouped by hue family (neutrals first). Where the notes give an order, keep it.</li>
-      <li>Main fabric(s): waterfall on the hero panel - band = min(1.6 in, height ÷ (mains + 1)); one main = one full piece.</li>
+      <li>Several mains: waterfall of {P["main_w"]:g} × {P["main_h"]:g} in pieces, each stepped down and right (max 0.6 in).</li>
+      <li>Stand A: one book per panel - its {P["main_w"]:g} × {P["main_h"]:g} in main top-left, cuttings to the right and below.</li>
       <li>Colour-range books: other shades small cuttings ≤ 2.5 × 1.6 in.</li>
       <li>Mixed-design books: one equal size for every swatch, biased near-square (1.15 : 1).</li></ul></div>
       <div style="flex:1.6;display:flex;gap:.15in">{halves}</div></div>''')
@@ -271,8 +273,8 @@ def design_guide(books, bds, spine_in, stack_mm):
     pts = [(.9, .7), (8.6, .7), (1.2, 2.2), (1.3, 3.05), (2.9, 3.05), (hero_box[0] + .3, hero_box[1] + .3), (hero_box[0] + .3, 8.6), (hero_box[0] + .3, 10.8)]
     add(f'''<div class="k">10 · Inside</div><h1>Inside (side 2) - the mood-board</h1>
       <div>{svgbox(ins + callouts(pts, r=.22, pt=10), ow3, bh, 10.4)}</div>
-      <div class="cols" style="margin-top:.12in"><p style="flex:1">1 Header name · 2 Panel tag (shade range / group / main) · 3 Swatch frame = glue guide</p>
-      <p style="flex:1">4 Shade No. (blank line until confirmed) · 5 Slot ID → Shade Register · 6 Hero main swatch(es)</p>
+      <div class="cols" style="margin-top:.12in"><p style="flex:1">1 Header name · 2 Panel tag (shade range / group / main) · 3 Swatch position (guide only - not printed)</p>
+      <p style="flex:1">4 Shade No. (sticker) · 5 Slot ID → Shade Register · 6 Main fabrics, {P["main_w"]:g} × {P["main_h"]:g} in ready-cut</p>
       <p style="flex:1">7 Spec block - only known values · 8 Light-control scale with the book's level highlighted</p></div>''')
 
     # 11 master case
@@ -303,7 +305,7 @@ def design_guide(books, bds, spine_in, stack_mm):
     add(f'''<div class="k">13 · Print & finishing</div><h1>Production specification</h1>
       <div class="cols"><div style="flex:1"><table><tr><th>Item</th><th>Specification</th></tr>
       <tr><td>Files</td><td>CMYK PDF, fonts embedded, TrimBox + BleedBox set, crop marks, fold ticks, slug</td></tr>
-      <tr><td>Leaves</td><td>350 GSM card, printed both sides: side 1 outside (cover + spec), side 2 inside (swatch layout); turn on the long edge. Matt laminate, double-scored folds ({P["hinge"]} in); 3-fold panel C {bw - P["roll_fold"]} in wide</td></tr>
+      <tr><td>Leaves</td><td>350 GSM card, printed both sides: side 1 outside (cover + spec), side 2 inside (headers + spec only, no placement boxes); turn on the long edge. Matt laminate, double-scored folds ({P["hinge"]} in); 3-fold panel C {bw - P["roll_fold"]} in wide</td></tr>
       <tr><td>Punching</td><td>4 holes in the 1 in binding zone of panel A, matched to the binder mechanism</td></tr>
       <tr><td>Master binder</td><td>{P["ring_mm"]} mm 4-D-ring binder, 2.5 mm boards, cover wrap 00_Master_Binder_Cover ({P["turn_in"]} in turn-in)</td></tr>
       <tr><td>Rigid option</td><td>Stand-alone boards (like the Neo Luna hanger) at 1.5 mm greyboard would make a 10 cm stack - too thick for rings; use card leaves in the binder</td></tr>
@@ -312,19 +314,19 @@ def design_guide(books, bds, spine_in, stack_mm):
       <div style="flex:1"><h2 style="margin-top:0">QC checklist</h2><ul>
       <li>No branding anywhere (logo, name, phone, address, website)</li>
       <li>Board sequence 01-20 matches the binder back index</li>
-      <li>Every swatch sits inside its frame; shade No. matches the fabric</li>
+      <li>Every piece placed as in the proof; shade No. sticker matches the fabric</li>
       <li>Slot IDs match the Shade Register; blank lines filled or labelled</li>
       <li>Cover art approved - illustrated curtain or supplied photo</li>
       <li>Boards close flat; panel C folds inside without buckling</li>
       <li>Index tabs visible on the hinge edge, colours correct per level</li>
-      <li>Binder closes with all 19 leaves; rings turn freely</li></ul></div></div>''')
+      <li>Binder closes with all {len(bds)} leaves; rings turn freely</li></ul></div></div>''')
 
     # 14-15 contact sheets
     for chunk in (bds[:10], bds[10:]):
         cells = ""
         for bd in chunk:
             c, _ = cover_panel(0, bw, bd["books"])
-            names = " & ".join(b["name"] for b in bd["books"])
+            names = board_name(bd)
             st = bd["books"][0]["status"]
             bgrect = f'<rect width="{bw}" height="{bh}" fill="{LINEN}"/>'
             thumb = svgbox(bgrect + c, bw, bh, 1.95)
@@ -336,18 +338,8 @@ def design_guide(books, bds, spine_in, stack_mm):
 
 # ==================================================================== INSTRUCTIONS
 def fabric_rows(bds):
-    from excel import fabric_entries
-    rows, a = [], .04
-    for bd in bds:
-        if not bd["ready"]:
-            continue
-        b = bd["books"][0]
-        for label, n, g, noted in fabric_entries(bd):
-            area = (g["w"] + 2 * a) * (g["h"] + 2 * a)
-            per = area * P["copies"] * (1 + P["wastage"]) / (P["fabric_width_in"] * 39.37)
-            possible = int(noted * P["fabric_width_in"] * 39.37 / (area * (1 + P["wastage"]))) if noted else None
-            rows.append((bd["no"], " & ".join(x["name"] for x in bd["books"]), label, n, g["w"], g["h"], per, per * n, noted, possible))
-    return rows
+    from layout import fabric_lines
+    return sorted(fabric_lines(bds), key=lambda l: (l["round"], l["board"]["no"]))
 
 
 def instructions(books, bds, spine_in, stack_mm, hw_pages):
@@ -364,7 +356,11 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
       <h2>The book</h2><table><tr><th>Item</th><th>Specification</th><th>Source</th></tr>
       <tr><td>Master binder cover</td><td>{P["cover_w"]} × {P["cover_h"]} in, {P["ring_mm"]} mm 4-D-ring, spine {spine_in} in</td><td>Notes p.4; reference binder; spine from leaf stack</td></tr>
       <tr><td>Inside boards</td><td>{P["board_w"]} × {P["board_h"]} in per panel; 2-fold or 3-fold</td><td>Notes p.4</td></tr>
-      <tr><td>Collections</td><td>20 on 19 boards (Eeco Dimout + Double Shade share one, 1 page each)</td><td>Notes p.1, p.3</td></tr>
+      <tr><td>Collections</td><td>20 on {len(bds)} boards - Stand A: Neo Crest, Glory Cotton &amp; Eeco Dimout on one 3-fold board, one panel each</td><td>Notes p.1, p.8</td></tr>
+      <tr><td>Production rounds</td><td>Round 1 = {sum(1 for b in books if b["round"] == 1)} double-ticked books · Round 2 = {sum(1 for b in books if b["round"] == 2)} books marked "2nd"</td><td>Notes p.8</td></tr>
+      <tr><td>Main fabric</td><td>Ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces · {P["main_m"]:g} m of every main fabric</td><td>Notes p.8</td></tr>
+      <tr><td>Small swatches</td><td>{P["swatch_m"]:g} m (60 cm) of every other shade</td><td>Notes p.8</td></tr>
+      <tr><td>Inside card print</td><td>No swatch placement boxes - placement from the Book Proof (assembly guide)</td><td>Owner, 17 Nov</td></tr>
       <tr><td>Front covering</td><td>Photo + book name on every board; final book front "Trending - Curated Fabrics Collection"</td><td>Brief</td></tr>
       <tr><td>Branding</td><td>None - no logo, company name or contact anywhere</td><td>Brief</td></tr>
       <tr><td>Order</td><td>By light control (sheer → lining), then fabric weight</td><td>Design Guide p.3</td></tr>
@@ -373,7 +369,11 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
       <tr><td>01_Instructions_Curated_Fabrics_Book.xlsx</td><td>Working sheet - parameters, book list, board plan, shade register, fabric metres (live formulas), steps, questions</td></tr>
       <tr><td>02_Instructions_Curated_Fabrics_Book.pdf</td><td>This document, with the handwritten notes as an appendix</td></tr>
       <tr><td>03_Design_Guide_Curated_Fabrics_Book.pdf</td><td>How the book looks and why</td></tr>
-      <tr><td>04_Print_Ready/</td><td>CMYK print files - master binder cover + one duplex file per leaf</td></tr></table>''')
+      <tr><td>04_Print_Ready/</td><td>CMYK print files - master binder cover + one duplex file per leaf</td></tr>
+      <tr><td>05_Book_Proof_Preview.pdf</td><td>The whole book - and the assembly guide for placing mains and swatches</td></tr>
+      <tr><td>06_Missing_Data_Form.pdf</td><td>Hand-fill form for everything still open</td></tr>
+      <tr><td>07_Production_Rounds_Selected_Shades.pdf</td><td>Round 1 and Round 2 books, selected shades and metres, with instructions</td></tr>
+      <tr><td>08_Mockups/</td><td>PNG images of the finished book</td></tr></table>''')
 
     # book list
     rows = ""
@@ -383,49 +383,60 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
         mains = ", ".join(m for m in b["mains"] if m) or (f'{len(b["mains"])} TBC' if b["mains"] else "-")
         rows += (f'<tr><td>{b["seq"]:02d}</td><td><b>{esc(b["name"])}</b></td><td><span class="chip" style="background:{ladder_color(b["cat"])}"></span>{CATNAME[b["cat"]]}</td>'
                  f'<td>{bd["fold"] or "-"}{" *" if bd["fold_src"] == "derived" else ""}</td><td>{b["shades"] or "-"}</td><td>{mains}</td>'
-                 f'<td>{b["gsm"] or "-"}</td><td><span class="st {b["status"].split()[0]}">{b["status"]}</span></td></tr>')
+                 f'<td>{b["gsm"] or "-"}</td><td>R{b["round"]}</td><td><span class="st {b["status"].split()[0]}">{b["status"]}</span></td></tr>')
     add(f'''<div class="k">Book list</div><h1>20 collections, in book order</h1>
-      <table><tr><th>No.</th><th>Book</th><th>Light control</th><th>Fold</th><th>Shades</th><th>Main</th><th>GSM</th><th>Status</th></tr>{rows}</table>
+      <table><tr><th>No.</th><th>Book</th><th>Light control</th><th>Fold</th><th>Shades</th><th>Main</th><th>GSM</th><th>Round</th><th>Status</th></tr>{rows}</table>
       <p style="margin-top:.1in">* Fold not written in the notes - derived from the shade count (1 hero panel + ⌈others ÷ 18⌉ swatch panels, minimum 2).</p>
       <div class="note">Also in the notes but not on the book list: <b>{EXTRA["name"]}</b> - 803 main, 14 shades (price list: 3 Pass Plain Blackout 801-830, 14 colours). Add as a 21st book?</div>''')
 
     # board cards, 3 per page
     cards = []
     for bd in bds:
-        names = " & ".join(b["name"] for b in bd["books"])
+        names = board_name(bd)
         b = bd["books"][0]
         fold = bd["fold"]
         if bd["ready"]:
             ow = open_size(fold)[0]
-            pan = "".join(f'<tr><td>{pn["letter"]}</td><td>{"Hero - main " + ", ".join(s or "TBC" for s in pn["shades"]) if pn["kind"] == "hero" else (pn.get("title") or "Shades") + " - " + str(len(pn["shades"])) + " swatches"}</td>'
-                          f'<td>{("waterfall of " + str(pn["grid"]["rows"])) if pn["grid"].get("waterfall") else (str(pn["grid"]["cols"]) + " × " + str(pn["grid"]["rows"]))}</td><td>{pn["grid"]["w"]:.2f} × {pn["grid"]["h"]:.2f} in</td></tr>' for pn in bd["panels"])
+            def gdesc(pn):
+                g = pn["grid"]
+                if g.get("waterfall"):
+                    return f'waterfall of {g["rows"]} × 5×7 in'
+                if g.get("stand"):
+                    return f'5×7 main + {g["cuttings"]} cuttings'
+                return f'{g["cols"]} × {g["rows"]}'
+            pan = "".join(f'<tr><td>{pn["letter"]}</td><td>{"Main 5×7 in - " + ", ".join(s or "TBC" for s in pn["shades"]) if pn["kind"] == "hero" else (pn.get("title") or "Shades") + " - " + str(len(pn["shades"])) + " swatches"}</td>'
+                          f'<td>{gdesc(pn)}</td><td>{pn["grid"]["w"]:.2f} × {pn["grid"]["h"]:.2f} in</td></tr>' for pn in bd["panels"])
             dnote = f'<div class="note"><b>DRAFT layout</b> - provisional count from {esc(draft_src(bd))}. Confirm before print.</div>' if bd.get("draft") else ""
-            body = f'{dnote}<p>Open size {ow:.3f} × {P["board_h"]} in · {fold}-fold ({bd["fold_src"]}) · cover = outside of panel B</p><table><tr><th>Panel</th><th>Content</th><th>Grid</th><th>Cut each swatch</th></tr>{pan}</table>'
+            body = f'{dnote}<p>Open size {ow:.3f} × {P["board_h"]} in · {fold}-fold ({bd["fold_src"]}) · cover = outside of panel B</p><table><tr><th>Panel</th><th>Content</th><th>Layout</th><th>Cut each swatch</th></tr>{pan}</table>'
         else:
             body = f'<p>Fold: {fold or "not written"} · Cover printed now. Inside layout is generated as soon as the shade list is confirmed in the Excel.</p>'
         issues = "".join(f"<li>{esc(q)}</li>" for bk in bd["books"] for q in bk["issues"])
         notes = " / ".join(esc(bk["notes"]) for bk in bd["books"])
         cards.append(f'''<div style="border-top:2px solid {ladder_color(b["cat"])};padding-top:.08in;margin-bottom:.16in">
-          <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0">Board {bd["no"]:02d} · {esc(names)}</h2><span class="st {b["status"].split()[0]}">{b["status"]}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0">Board {bd["no"]:02d} · {esc(names)} <span style="font-size:9pt;color:#8C6B36">ROUND {bd["round"]}</span></h2><span class="st {b["status"].split()[0]}">{b["status"]}</span></div>
           <p style="color:#6E655A"><i>Notes:</i> {notes}</p>{body}{f"<ul>{issues}</ul>" if issues else ""}</div>''')
     for i in range(0, len(cards), 3):
         add(f'<div class="k">Board-by-board</div><h1 style="font-size:20pt">What to make</h1>{"".join(cards[i:i + 3])}')
 
     # fabric
     fr = fabric_rows(bds)
-    trs = "".join(f'<tr><td>{r[0]:02d}</td><td>{esc(r[1])}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]:.2f} × {r[5]:.2f}</td><td>{r[6]:.2f}</td><td>{r[7]:.2f}</td>'
-                  f'<td>{r[8] if r[8] else "-"}</td><td>{r[9] if r[9] else "-"}</td></tr>' for r in fr)
-    total = sum(r[7] for r in fr)
-    add(f'''<div class="k">Fabric</div><h1>Fabric needed for {P["copies"]} books</h1>
-      <p>Metres per shade = (W + 2 mm) × (H + 2 mm) × {P["copies"]} books × {1 + P["wastage"]:.2f} wastage ÷ ({P["fabric_width_in"]} in × 39.37). Change copies or wastage in the Excel Parameters sheet - all figures update.</p>
-      <table style="margin-top:.1in"><tr><th>Board</th><th>Book</th><th>Role</th><th>Qty</th><th>Swatch (in)</th><th>m / shade</th><th>m total</th><th>m noted / shade</th><th>Books from noted m</th></tr>{trs}
-      <tr><td></td><td><b>Total</b></td><td></td><td></td><td></td><td></td><td><b>{total:.1f}</b></td><td></td><td></td></tr></table>
-      <div class="note">Reading the check: Texture Dimout notes give 1 m per shade - enough for the number of books shown. Where noted metres are far above need, the extra is buffer for re-makes and showroom hangers.</div>''')
+    def mfmt(v):
+        return "TBC" if v is None else f"{v:.1f}"
+    trs = "".join(f'<tr><td>R{l["round"]}</td><td>{l["board"]["no"]:02d}</td><td><b>{esc(l["book"]["name"])}</b></td><td>{l["n_main"]} · {esc(", ".join(m or "TBC" for m in l["mains"]) or "-")}</td>'
+                  f'<td>{mfmt(l["m_main"])}</td><td>{l["n_small"] if l["n_small"] is not None else "TBC"}</td><td>{mfmt(l["m_small"])}</td>'
+                  f'<td><b>{mfmt(l["m_main"] + (l["m_small"] or 0))}</b>{" *" if l["provisional"] or l["n_small"] is None else ""}</td></tr>' for l in fr)
+    tot = {rd: sum(l["m_main"] + (l["m_small"] or 0) for l in fr if l["round"] == rd) for rd in (1, 2)}
+    add(f'''<div class="k">Fabric</div><h1>Fabric needed, by round</h1>
+      <p>Notes p.8: <b>main fabric</b> = ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces, <b>{P["main_m"]:g} m of every main fabric</b>; <b>small swatches</b> = <b>{P["swatch_m"]:g} m (60 cm) of every other shade</b>. Change either value in the Excel Parameters sheet - all totals update.</p>
+      <table style="margin-top:.1in;font-size:7.6pt"><tr><th>Rnd</th><th>Bd</th><th>Book</th><th>Main fabrics</th><th>Main m</th><th>Swatches</th><th>Swatch m</th><th>Total m</th></tr>{trs}
+      <tr><td></td><td></td><td><b>Round 1</b></td><td></td><td></td><td></td><td></td><td><b>{tot[1]:.1f}</b></td></tr>
+      <tr><td></td><td></td><td><b>Round 2</b></td><td></td><td></td><td></td><td></td><td><b>{tot[2]:.1f}</b></td></tr></table>
+      <p style="margin-top:.06in">* provisional count (price list / catalogue) or shade count not known yet - add these metres when the shade list is confirmed.</p>''')
 
     # questions
     qs = [(b["name"], q) for b in books for q in b["issues"]]
     qs.append(("3 Pass Blackout", EXTRA["issue"]))
-    qs.append(("All", f"Binder: 19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder. Confirm card leaves (as in the reference binder) rather than rigid greyboard (10 cm, too thick for rings)."))
+    qs.append(("All", f"Binder: {len(bds)} leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder. Confirm card leaves (as in the reference binder) rather than rigid greyboard (10 cm, too thick for rings)."))
     qs.append(("All", "Covers use illustrated curtain art (final). Optional: supply a lifestyle photo per collection to replace it."))
     trs = "".join(f"<tr><td>{i}</td><td><b>{esc(bk)}</b></td><td>{esc(q)}</td></tr>" for i, (bk, q) in enumerate(qs, 1))
     add(f'<div class="k">Decisions needed</div><h1>Open questions</h1><table><tr><th>#</th><th>Book</th><th>Question</th></tr>{trs}</table>')
@@ -469,7 +480,7 @@ def book_proof(books, bds, spine_in):
       <div style="margin-top:.2in">{svgbox(wrap, total, H, 15.3)}</div>''')
 
     for bd in bds:
-        names = " & ".join(b["name"] for b in bd["books"])
+        names = board_name(bd)
         fold = bd["fold"] or 2
         ow = open_size(fold)[0]
         cov, _ = cover_panel(0, P["board_w"], bd["books"])
@@ -477,7 +488,7 @@ def book_proof(books, bds, spine_in):
         out_art, *_r = outside_art(bd)
         out_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{LINEN}"/>' + out_art, ow, P["board_h"], 10.2 * ow / open_size(3)[0])
         if bd["ready"]:
-            in_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{PAPER}"/>' + inside_art(bd), ow, P["board_h"], 10.2 * ow / open_size(3)[0])
+            in_svg = svgbox(f'<rect width="{ow}" height="{P["board_h"]}" fill="{PAPER}"/>' + inside_art(bd, guides=True), ow, P["board_h"], 10.2 * ow / open_size(3)[0])
         else:
             in_svg = (f'<div style="width:{10.2 * ow / open_size(3)[0]:.2f}in;height:{10.2 * P["board_h"] / open_size(3)[0]:.2f}in;border:1px dashed #B4A894;'
                       f'display:flex;align-items:center;justify-content:center;background:{PAPER}"><p class="lead" style="text-align:center">Inside layout waits for the shade list<br>'
@@ -485,10 +496,10 @@ def book_proof(books, bds, spine_in):
         st = bd["books"][0]["status"]
         badge = '<span class="st Pending">DRAFT layout - provisional count</span>' if bd.get("draft") else f'<span class="st {st.split()[0]}">{st}</span>'
         add(f'''<div style="display:flex;justify-content:space-between;align-items:baseline">
-          <div><div class="k">Leaf {bd["no"]:02d} of {len(bds)} · {fold}-fold · {CATNAME[bd["books"][0]["cat"]]}</div><h1 style="font-size:24pt;margin-bottom:.1in">{esc(names)}</h1></div>{badge}</div>
+          <div><div class="k">Leaf {bd["no"]:02d} of {len(bds)} · Round {bd["round"]} · {fold}-fold · {CATNAME[bd["books"][0]["cat"]]}</div><h1 style="font-size:24pt;margin-bottom:.1in">{esc(names)}</h1></div>{badge}</div>
           <div style="display:flex;gap:.4in">
             <div>{cov_svg}<p style="margin-top:4px"><b>Closed</b> - front covering (photo + name)</p></div>
-            <div><div>{in_svg}</div><p style="margin:4px 0 .18in"><b>Opened</b> - inside, the mood-board</p>
+            <div><div>{in_svg}</div><p style="margin:4px 0 .18in"><b>Opened</b> - inside, assembly guide: grey boxes show where each piece goes (they are <b>not printed</b> on the card)</p>
                  <div>{out_svg}</div><p style="margin-top:4px"><b>Back</b> - outside of the leaf (cover + spec plate)</p></div></div>''')
     return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:{PW}in {PH}in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'
 
@@ -506,7 +517,7 @@ def missing_form(books, bds):
     line = '<span style="display:inline-block;border-bottom:1px solid #8C8273;min-width:{w}in;height:.2in"></span>'
     blocks = []
     for bd in bds:
-        names = " & ".join(b["name"] for b in bd["books"])
+        names = board_name(bd)
         qs = [q for b in bd["books"] for q in b["issues"]]
         blanks = []
         if bd["ready"]:
@@ -525,7 +536,7 @@ def missing_form(books, bds):
         qhtml = "".join(f'<li>{esc(q)}<br>Answer: {line.format(w=5.6)}</li>' for q in qs)
         bhtml = ""
         if blanks:
-            bhtml = ('<p><b>Shade No. for each blank slot</b> (slot ID is printed next to the swatch frame):</p><div style="display:flex;flex-wrap:wrap;gap:.06in .18in">' +
+            bhtml = ('<p><b>Shade No. for each blank slot</b> (slot IDs are shown in the Book Proof assembly guide):</p><div style="display:flex;flex-wrap:wrap;gap:.06in .18in">' +
                      "".join(f'<span style="width:1.55in;font-size:8pt">{sid}&nbsp; No. {line.format(w=.85)}</span>' for sid in blanks) + "</div>")
         st = "DRAFT" if bd.get("draft") else bd["books"][0]["status"]
         blocks.append(f'''<div style="border-top:2px solid {ladder_color(bd["books"][0]["cat"])};padding-top:.06in;margin-bottom:.18in;break-inside:avoid">
@@ -543,4 +554,88 @@ def missing_form(books, bds):
         cur.append(b); h += est
     if cur:
         add("".join(cur))
+    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:8.27in 11.69in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'
+
+
+# ==================================================================== PRODUCTION ROUNDS
+def rounds_doc(books, bds, hw_p8):
+    """Round 1 / Round 2 books with selected shades, metres and step-by-step instructions (notes p.8)."""
+    from layout import fabric_lines
+    pages, n = [], 0
+
+    def add(inner):
+        nonlocal n
+        n += 1
+        pages.append(page("Pt", inner, n, "PRODUCTION ROUNDS - SELECTED SHADES"))
+
+    lines = fabric_lines(bds)
+    by_round = {rd: sorted([l for l in lines if l["round"] == rd], key=lambda l: l["book"]["list_no"]) for rd in (1, 2)}
+    tot = {rd: sum(l["m_main"] + (l["m_small"] or 0) for l in by_round[rd]) for rd in (1, 2)}
+    nb = {rd: len({l["board"]["no"] for l in by_round[rd]}) for rd in (1, 2)}
+    stand = next(bd for bd in bds if bd.get("stand"))
+    stand_txt = " · ".join(f'panel {pn["letter"]} {esc(pn["book"]["name"])}' for pn in stand["panels"]) if stand["panels"] else ", ".join(b["name"] for b in stand["books"])
+
+    add(f'''<div class="k">Production rounds</div><h1 style="font-size:32pt">Round 1 &amp; Round 2<br>books and selected shades</h1>
+      <p class="lead">From the book list with ticks (notes p.8): every double-ticked book is made in the first round, every book marked "2nd" in the second round.</p>
+      <div class="cols" style="margin:.2in 0">
+        <div class="tile"><b>{len(by_round[1])}</b><span>books in Round 1 · {nb[1]} boards · {tot[1]:.0f} m fabric known so far</span></div>
+        <div class="tile"><b>{len(by_round[2])}</b><span>books in Round 2 · {nb[2]} boards · {tot[2]:.0f} m fabric known so far</span></div></div>
+      <h2>Rules from the notes</h2>
+      <table><tr><th>Mark / note</th><th>Meaning</th></tr>
+      <tr><td>Double tick</td><td><b>Round 1</b> - make now</td></tr>
+      <tr><td>2nd</td><td><b>Round 2</b> - make after Round 1</td></tr>
+      <tr><td>A</td><td><b>Stand A</b> - three books in ONE 3-fold board, one panel each: {stand_txt}</td></tr>
+      <tr><td>MAIN: 5 × 7 [READY] - 2 MTRS EACH</td><td>Main fabric as ready-cut <b>{P["main_w"]:g} × {P["main_h"]:g} in</b> pieces; <b>{P["main_m"]:g} m of every main fabric</b></td></tr>
+      <tr><td>SWATCH: 0.6</td><td><b>{P["swatch_m"]:g} m (60 cm) of every other shade</b> for the small swatches</td></tr>
+      <tr><td>Inside cards</td><td>Printed with <b>no placement boxes</b> - place pieces as shown in the Book Proof (assembly guide)</td></tr></table>
+      <h2>How to make a round</h2>
+      <ol style="font-size:9.5pt;line-height:1.5">
+        <li><b>Confirm the shades.</b> Every book in the round needs its main and shade numbers (pages 2-3; blanks are marked TBC). Fill gaps on the Missing Data Form.</li>
+        <li><b>Pull the fabric.</b> {P["main_m"]:g} m of each main fabric and {P["swatch_m"]:g} m of each other shade (metres per book on the next pages).</li>
+        <li><b>Cut.</b> Mains: ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces, one per book copy. Swatches: to the size in the Excel Board_Plan, pinked edge.</li>
+        <li><b>Label.</b> A shade-number sticker for every piece; bag the pieces board by board.</li>
+        <li><b>Print the round's boards</b> from 04_Print_Ready (the slug line says ROUND 1 or ROUND 2); score, fold, punch.</li>
+        <li><b>Mount.</b> Main piece(s) and swatches exactly as in the Book Proof assembly guide - the card has no boxes. Several mains: waterfall, each stepped down and right.</li>
+        <li><b>Stand A.</b> One 3-fold board: each panel carries one book - its {P["main_w"]:g} × {P["main_h"]:g} in main top-left, cuttings to the right and below.</li>
+        <li><b>Check and file.</b> Two-person check (sticker = fabric), then into the binder in board order.</li></ol>''')
+
+    def table(rd):
+        rows = []
+        for l in by_round[rd]:
+            b, bd = l["book"], l["board"]
+            known = [x for x in l["smalls"] if x]
+            if l["n_small"] is None:
+                others = '<span style="color:#B04A3C">Shade list not written yet</span>'
+            elif known and len(known) == l["n_small"]:
+                others = esc(", ".join(known))
+            elif known:
+                others = esc(", ".join(known)) + f' <span style="color:#B04A3C">(+{l["n_small"] - len(known)} TBC)</span>'
+            else:
+                others = f'{l["n_small"]} shades <span style="color:#B04A3C">- numbers TBC</span>'
+            mains = esc(", ".join(m or "TBC" for m in l["mains"])) or "-"
+            board = f'{bd["no"]:02d}' + (f' · Stand {bd["stand"]}' if bd.get("stand") else "") + f' · {bd["fold"] or "?"}-fold'
+            total = l["m_main"] + (l["m_small"] or 0)
+            msm = "TBC" if l["m_small"] is None else f'{l["m_small"]:.1f}'
+            flag = ' <span class="st Pending">provisional</span>' if l["provisional"] else ""
+            rows.append(f'<tr><td>{b["list_no"]}</td><td><b>{esc(b["name"])}</b>{flag}<br><span style="color:#6E655A">{board}</span></td>'
+                        f'<td><b>{mains}</b></td><td style="font-size:7pt">{others}</td>'
+                        f'<td>{l["m_main"]:.1f}</td><td>{msm}</td><td><b>{total:.1f}</b></td></tr>')
+        return rows
+
+    th = '<tr><th>List</th><th>Book · board</th><th>Main selected (5×7)</th><th>Other shades selected</th><th>Main m</th><th>Swatch m</th><th>Total m</th></tr>'
+    for rd in (1, 2):
+        rows = table(rd)
+        chunk, h, first = [], 0, True
+        for r_ in rows:
+            est = .42 + r_.count(",") * .016
+            if chunk and h + est > 8.4:
+                add(f'<div class="k">Round {rd}</div><h1>Round {rd} - {"double tick" if rd == 1 else "marked 2nd"}{"" if first else " (cont.)"}</h1><table style="font-size:8pt">{th}{"".join(chunk)}</table>')
+                chunk, h, first = [], 0, False
+            chunk.append(r_); h += est
+        foot = (f'<tr><td></td><td><b>Round {rd} total</b></td><td></td><td></td><td></td><td></td><td><b>{tot[rd]:.1f}</b></td></tr>')
+        add(f'<div class="k">Round {rd}</div><h1>Round {rd} - {"double tick" if rd == 1 else "marked 2nd"}{"" if first else " (cont.)"}</h1><table style="font-size:8pt">{th}{"".join(chunk)}{foot}</table>'
+            f'<p style="margin-top:.08in">TBC = not written in the notes yet; provisional = count taken from the price list / e-catalogue until confirmed. Metres: {P["main_m"]:g} m per main fabric, {P["swatch_m"]:g} m per other shade.</p>')
+    if hw_p8:
+        add(f'<div class="k">Source</div><h1>Book list with rounds - notes page 8</h1>'
+            f'<div style="text-align:center;margin-top:.1in"><img src="file://{hw_p8}" style="width:6.6in;height:8.8in;object-fit:contain"></div>')
     return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:8.27in 11.69in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'

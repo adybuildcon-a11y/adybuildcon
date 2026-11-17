@@ -8,7 +8,7 @@ import pymupdf
 
 from art import FONT_CSS, LINEN, PAPER, INK, T, inside_art, outside_art, master_front, master_back, spine_art
 from data import P
-from layout import open_size, panel_widths, panel_x
+from layout import board_name, open_size, panel_widths, panel_x
 
 SLUG = 0.5
 VERSION = "v1"
@@ -93,13 +93,13 @@ def board_files(r, bd, outdir):
     """Board PDF: page 1 outside wrap (with cover), page 2 inside liner (when layout is confirmed)."""
     fold = bd["fold"] or 2
     ow, oh = open_size(fold)
-    names = " & ".join(b["name"] for b in bd["books"])
+    names = board_name(bd)
     ticks = [0, ow] + [panel_x(fold, i) - P["hinge"] for i in range(1, fold)] + [panel_x(fold, i) for i in range(1, fold)]
     art, xs, ws, real = outside_art(bd)
     photo_note = "COVER: lifestyle photo" if real else "COVER: illustrated curtain art (final) - a photo saved as assets/photos/<book-id>.jpg replaces it"
     pages, boxes = [], []
     svg, pw, ph, bx = sheet(art, ow, oh, 0, LINEN, ticks,
-                            f"BOARD {bd['no']:02d}  {names.upper()}  |  SIDE 1 OUTSIDE  |  leaf {ow:.3f} x {oh} in, {fold}-fold, 350 GSM card, "
+                            f"BOARD {bd['no']:02d}  {names.upper()}  |  ROUND {bd['round']}  |  SIDE 1 OUTSIDE  |  leaf {ow:.3f} x {oh} in, {fold}-fold, 350 GSM card, "
                             f"bleed {P['bleed']} in  |  dashed ticks = score/fold lines  |  4-ring punch on the right 1 in of this side  |  {photo_note}  |  {VERSION}")
     tmp = []
     p1 = os.path.join(outdir, f".b{bd['no']}-out.pdf")
@@ -107,9 +107,9 @@ def board_files(r, bd, outdir):
     tmp.append(p1); boxes.append(bx)
     if bd["ready"]:
         lt = [t for t in ticks if 0 < t < ow]
-        svg, pw, ph, bx = sheet(inside_art(bd), ow, oh, 0, PAPER, lt,
-                                f"BOARD {bd['no']:02d}  {names.upper()}  |  SIDE 2 INSIDE (back-up, turn on long edge)  |  leaf {ow:.3f} x {oh} in  |  "
-                                f"grey frames = swatch glue guides, cut swatches 1 mm larger  |  "
+        svg, pw, ph, bx = sheet(inside_art(bd, guides=False), ow, oh, 0, PAPER, lt,
+                                f"BOARD {bd['no']:02d}  {names.upper()}  |  ROUND {bd['round']}  |  SIDE 2 INSIDE (back-up, turn on long edge)  |  leaf {ow:.3f} x {oh} in  |  "
+                                f"no placement boxes printed - place mains (5 x 7 in ready-cut) and swatches as in the proof / Board_Plan  |  "
                                 + (f"DRAFT LAYOUT - provisional count ({draft_src(bd)}) - confirm before print  |  " if bd.get("draft") else "")
                                 + VERSION)
         p2 = os.path.join(outdir, f".b{bd['no']}-in.pdf")
@@ -120,7 +120,7 @@ def board_files(r, bd, outdir):
     for t in tmp:
         m.insert_pdf(pymupdf.open(t))
     m.save(merged)
-    slug = "_".join(b["name"].replace(" ", "-") for b in bd["books"])
+    slug = ("Stand-" + bd["stand"] + "_" if bd.get("stand") else "") + "_".join(b["name"].replace(" ", "-") for b in bd["books"])
     final = os.path.join(outdir, f"Board_{bd['no']:02d}_{slug}.pdf")
     to_cmyk(merged, final, boxes)
     for t in tmp + [merged]:

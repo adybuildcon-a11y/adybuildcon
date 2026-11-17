@@ -5,7 +5,8 @@
   output/04_Print_Ready/  (CMYK print files)
   output/05_Book_Proof_Preview.pdf  (whole book for approval)
   output/06_Missing_Data_Form.pdf  (hand-fill form for everything still open)
-  output/07_Mockups/  (PNG: back cover, front cover, catalogue set, all collections in one)
+  output/07_Production_Rounds_Selected_Shades.pdf  (Round 1 / Round 2 books, selected shades, metres, steps)
+  output/08_Mockups/  (PNG: back cover, front cover, catalogue set, all collections in one)
   output/Curated_Fabrics_Book_Pack.zip
 """
 
@@ -16,7 +17,7 @@ import zipfile
 
 import excel
 import mockups
-from docs import book_proof, design_guide, instructions, missing_form
+from docs import book_proof, design_guide, instructions, missing_form, rounds_doc
 from layout import boards, layout_board, ordered_books
 from printfiles import Renderer, board_files, master_files, spine_width
 
@@ -42,12 +43,15 @@ def main():
         r.pdf(design_guide(books, bds, spine_in, stack), os.path.join(OUT, "03_Design_Guide_Curated_Fabrics_Book.pdf"), 11.69, 8.27)
         r.pdf(book_proof(books, bds, spine_in), os.path.join(OUT, "05_Book_Proof_Preview.pdf"), 16.54, 11.69)
         r.pdf(missing_form(books, bds), os.path.join(OUT, "06_Missing_Data_Form.pdf"), 8.27, 11.69)
+        p8 = os.path.join(HERE, "assets", "reference", "handwritten-p08.jpg")
+        r.pdf(rounds_doc(books, bds, p8 if os.path.exists(p8) else None),
+              os.path.join(OUT, "07_Production_Rounds_Selected_Shades.pdf"), 8.27, 11.69)
         master, front_tmp, _, _ = master_files(r, bds, books, PR)
         os.replace(front_tmp, os.path.join(OUT, "Final_Book_Front_Proof_11x13.pdf"))
         for bd in bds:
             f, real = board_files(r, bd, PR)
             print("board", bd["no"], os.path.basename(f), "inside" if bd["ready"] else "cover only")
-    for f in mockups.build(os.path.join(OUT, "07_Mockups")):
+    for f in mockups.build(os.path.join(OUT, "08_Mockups")):
         print("mockup", os.path.basename(f))
     with zipfile.ZipFile(os.path.join(OUT, "Curated_Fabrics_Book_Pack.zip"), "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(glob.glob(os.path.join(OUT, "**", "*"), recursive=True)):

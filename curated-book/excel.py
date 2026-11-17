@@ -9,6 +9,7 @@ from openpyxl.formatting.rule import CellIsRule
 
 from data import EXTRA, LADDER, P, TRANSCRIPT
 from printfiles import draft_src
+from layout import board_name, fabric_lines
 
 INK, HEAD, BAND, LINE = "2B2723", "2B2723", "F3EEE5", "D9D0C0"
 F_H = Font(name="Calibri", bold=True, color="FFFFFF", size=10)
@@ -72,13 +73,15 @@ def build(path, books, bds, spine_in, stack_mm):
     title(ws, "Curated Fabrics Collection - Book Production Instructions",
           "Source: handwritten notes (7 pages), Sep 2026 price list, fabric e-catalogue, sample covers. Nothing is guessed - unknowns are blank and listed in Open_Questions.")
     rows = [
-        ("What this book is", "One 4-ring master binder (11 x 13 in) holding one fold-out mood-board leaf per collection: 20 collections on 19 boards (Eeco Dimout and Double Shade share a board). Each board is 9 x 12 in per panel, 2-fold or 3-fold, with a photo + name front cover. No company branding anywhere."),
-        ("Main fabrics", "Always a WATERFALL: full-width pieces stepped down by one band (max 1.6 in) so every main shows; the last piece shows the most. Cut each piece to its full printed frame (Board_Plan gives width; heights step down by the band)."),
-        ("Swatch rule", "Same design / texture in colour variations = main fabric BIG, other shades small cuttings (max 2.5 x 1.6 in). Different designs and textures (e.g. Neo Luna, Texture Dimout, Breeze) = all swatches the SAME size."),
+        ("What this book is", f"One 4-ring master binder (11 x 13 in) holding one fold-out mood-board leaf per collection: 20 collections on {len(bds)} boards. Stand A = Neo Crest, Glory Cotton and Eeco Dimout on ONE 3-fold board, one panel each (notes p.8). Each board is 9 x 12 in per panel, 2-fold or 3-fold, with a photo + name front cover. No company branding anywhere."),
+        ("Production rounds", "ROUND 1 = the double-ticked books on the book list (14 books); ROUND 2 = the books marked '2nd' (6 books) - notes p.8. See the Rounds sheet and 07_Production_Rounds PDF."),
+        ("Main fabrics", f"Ready-cut {P['main_w']:g} x {P['main_h']:g} in pieces, {P['main_m']:g} m of EVERY main fabric (notes p.8). Several mains stack as a waterfall, each piece stepped down and right."),
+        ("Small swatches", f"{P['swatch_m']:g} m (60 cm) of EVERY other shade (notes p.8). Same design / texture in colour variations = small cuttings (max 2.5 x 1.6 in). Different designs and textures (e.g. Texture Dimout, Breeze) = all swatches the SAME size."),
+        ("Inside cards", "Printed WITHOUT swatch placement boxes (owner, 17 Nov). Placement is in the Book Proof (assembly guide) and Board_Plan; shade numbers go on stickers."),
         ("Order of books", "By light control - Sheer > Curtain > Texture Dimout > Dimout > Blackout > Lining - then by fabric weight (GSM, light to heavy). A customer moves through the book from airy to room-darkening."),
-        ("Sheets", "Parameters - every size and allowance (change here, formulas update).\nBook_List - the 20 books, folds, shades, mains, status.\nBoard_Plan - what goes on every panel of every board.\nShade_Register - one row per swatch slot (slot IDs are printed on the boards).\nFabric_Requirement - metres to buy and copies you can make, live formulas.\nProduction_Steps - the build sequence with checks.\nOpen_Questions - decisions needed before print.\nTranscription - the handwritten notes, word for word."),
+        ("Sheets", "Parameters - every size and allowance (change here, formulas update).\nBook_List - the 20 books, folds, shades, mains, status.\nBoard_Plan - what goes on every panel of every board.\nShade_Register - one row per swatch slot (slot IDs are printed on the boards).\nFabric_Requirement - metres per book and per round (2 m per main, 0.6 m per swatch), live formulas.\nRounds - Round 1 / Round 2 books with selected shades.\nProduction_Steps - the build sequence with checks.\nOpen_Questions - decisions needed before print.\nTranscription - the handwritten notes, word for word."),
         ("Status colours", "Green = Confirmed (inside layout printed).  Amber = Pending (cover printed, inside waits for shade list).  Red = Reconsider / Details needed."),
-        ("Print files", "04_Print_Ready/: one CMYK PDF per leaf (page 1 = side 1 outside with cover, page 2 = side 2 inside swatch layout, duplex) + master binder cover wrap. Crop marks, 0.125 in bleed, score ticks, TrimBox/BleedBox set."),
+        ("Print files", "04_Print_Ready/: one CMYK PDF per leaf (page 1 = side 1 outside with cover, page 2 = side 2 inside - headers and spec only, no placement boxes; duplex) + master binder cover wrap. Crop marks, 0.125 in bleed, score ticks, TrimBox/BleedBox set."),
     ]
     for i, (k, v) in enumerate(rows, 4):
         body(ws, i, 1, k, bold=True); body(ws, i, 2, v)
@@ -103,6 +106,10 @@ def build(path, books, bds, spine_in, stack_mm):
         ("bind_margin", "Binding-side margin (panel A)", P["bind_margin"], "in", "Kept clear for screw-post / ring option"),
         ("cut_allow", "Swatch cut allowance per side", 0.04, "in", "Cut 1 mm larger than the printed frame"),
         ("fabric_width", "Usable fabric width", P["fabric_width_in"], "in", "Price list: 54 in for almost every quality"),
+        ("main_w", "Main fabric piece width (ready-cut)", P["main_w"], "in", "Notes p.8: MAIN 5 x 7 [READY]"),
+        ("main_h", "Main fabric piece height (ready-cut)", P["main_h"], "in", "Notes p.8"),
+        ("main_m", "Metres of every main fabric", P["main_m"], "m", "Notes p.8: 2 MTRS EACH"),
+        ("swatch_m", "Metres of every small-swatch shade", P["swatch_m"], "m", "Notes p.8: SWATCH 0.6 (60 cm)"),
         ("wastage", "Cutting wastage (pinking, nesting)", P["wastage"], "ratio", "15% allowance"),
         ("copies", "Books to produce", P["copies"], "pcs", "HW-p4 Neo Luna note '100 PCS' - confirm"),
         ("board_mm", "Leaf thickness", P["board_mm"], "mm", "350 GSM card, as in the reference ring binder"),
@@ -118,8 +125,8 @@ def build(path, books, bds, spine_in, stack_mm):
     title(ws, "Book List - 20 collections in book order", "Seq = position in the master book. List No. = number on the handwritten list.")
     cols = ["Seq", "List No.", "Book", "Board", "Light control", "Cover line", "Fold", "Fold source", "Total shades",
             "Main shade(s)", "No. of mains", "Other shades", "Swatch mode", "Width (in)", "Weight (GSM)", "Composition",
-            "Metres / main (notes)", "Metres / other (notes)", "Status", "Notes (verbatim)", "Cross-check (price list / catalogue)"]
-    header(ws, 3, cols, [5, 7, 17, 7, 14, 22, 6, 10, 8, 18, 7, 8, 30, 8, 9, 20, 9, 9, 13, 50, 50])
+            "Metres / main fabric", "Metres / small swatch", "Status", "Notes (verbatim)", "Cross-check (price list / catalogue)", "Round"]
+    header(ws, 3, cols, [5, 7, 17, 7, 14, 22, 6, 10, 8, 18, 7, 8, 30, 8, 9, 20, 9, 9, 13, 50, 50, 7])
     board_of = {b["id"]: bd for bd in bds for b in bd["books"]}
     catname = {k: n for k, n, *_ in LADDER}
     for r, b in enumerate(books, 4):
@@ -134,8 +141,8 @@ def build(path, books, bds, spine_in, stack_mm):
                 bd["fold_src"], b["shades"], ", ".join(mains) if mains else (f"{len(b['mains'])} (numbers TBC)" if b["mains"] else ""),
                 len(b["mains"]) or None, other,
                 ("Mixed designs - all same size" if b["mode"] == "mixed" else "Colour range - main big, others small") + f' ({b["mode_src"]})',
-                b["width"], b["gsm"], b["comp"], b["m_main"], b["m_other"], b["status"],
-                b["notes"], b["xref"]]
+                b["width"], b["gsm"], b["comp"], "=main_m" if b["mains"] else "", "=swatch_m", b["status"],
+                b["notes"], b["xref"], b["round"]]
         for c, v in enumerate(vals, 1):
             cell = body(ws, r, c, v, bold=(c == 3))
         ws.cell(row=r, column=19).fill = PatternFill("solid", fgColor=STATUS_FILL[b["status"]])
@@ -154,7 +161,7 @@ def build(path, books, bds, spine_in, stack_mm):
            [7, 26, 6, 13, 7, 10, 30, 9, 11, 10, 10, 30, 11])
     r = 4
     for bd in bds:
-        names = " & ".join(b["name"] for b in bd["books"])
+        names = board_name(bd)
         fold = bd["fold"]
         if not bd["panels"] or not bd["ready"]:
             reason = "Pending - shade list not confirmed" if bd["books"][0]["status"] != "Reconsider" else "On hold - under reconsideration"
@@ -173,7 +180,8 @@ def build(path, books, bds, spine_in, stack_mm):
                 else (pn.get("title") or "Shades") + f" ({len(pn['shades'])})"
             vals = [bd["no"] if i == 0 else "", names if i == 0 else "", fold if i == 0 else "",
                     f"{open_w:.3f} x {P['board_h']}" if i == 0 else "", pn["letter"], widths[i], what, len(pn["shades"]),
-                    (f"waterfall of {g['rows']} (band {g['band']:.2f} in)" if g.get("waterfall") else f"{g['cols']} x {g['rows']}"), round(g["w"], 3), round(g["h"], 3),
+                    (f"waterfall of {g['rows']} x 5x7 in (step {g['band']:.2f} in)" if g.get("waterfall") else
+                     (f"5x7 main + {g['cuttings']} cuttings" if g.get("stand") else f"{g['cols']} x {g['rows']}")), round(g["w"], 3), round(g["h"], 3),
                     ("DRAFT - provisional count: " + draft_src(bd) if bd.get("draft") else "Ready - printed on side 2") if i == 0 else "",
                     f"=C{r}*(board_mm+fabric_mm)" if i == 0 else ""]
             for c, v in enumerate(vals, 1):
@@ -187,9 +195,9 @@ def build(path, books, bds, spine_in, stack_mm):
 
     # ------------------------------------------------ Shade_Register
     ws = wb.create_sheet("Shade_Register")
-    title(ws, "Shade Register - one row per swatch slot", "Slot ID is printed beside every swatch on the inside liner. Fill blank shade numbers here, then re-run make.py to print them.")
-    header(ws, 3, ["Board", "Book", "Panel", "Slot ID", "Role", "Group", "Shade No.", "Source", "Printed on liner"],
-           [7, 18, 7, 8, 8, 11, 12, 34, 10])
+    title(ws, "Shade Register - one row per swatch slot", "Slot IDs are shown in the Book Proof (assembly guide); the inside card has no printed boxes. Fill blank shade numbers here, then re-run make.py.")
+    header(ws, 3, ["Board", "Book", "Panel", "Slot ID", "Role", "Group", "Shade No.", "Source", "Number known", "Round"],
+           [7, 18, 7, 8, 8, 11, 12, 34, 10, 7])
     r = 4
     for bd in bds:
         if not bd["ready"]:
@@ -202,55 +210,79 @@ def build(path, books, bds, spine_in, stack_mm):
                     src = ("Provisional - " if s else "TBC (draft) - ") + b["draft"]["src"]
                 if b["id"] == "glorious-dimout" and s is None:
                     src = "Duplicate '634' in notes - correct"
-                vals = [bd["no"], b["name"], pn["letter"], f"{pn['letter']}{k:02d}", "Main" if pn["kind"] == "hero" else "Shade",
-                        (pn.get("title") if not pn.get("book") else "") or "", s or "", src, "Yes" if s else "No"]
+                main = pn["kind"] == "hero" or (pn.get("book") and k <= len(pn.get("mains", [])))
+                vals = [bd["no"], b["name"], pn["letter"], f"{pn['letter']}{k:02d}", "Main 5x7" if main else "Swatch",
+                        (pn.get("title") if not pn.get("book") else "") or "", s or "", src, "Yes" if s else "No", b["round"]]
                 for c, v in enumerate(vals, 1):
                     cell = body(ws, r, c, v)
                 if not s:
                     ws.cell(row=r, column=7).fill = PatternFill("solid", fgColor="FBE9C9")
                 r += 1
-    ws.auto_filter.ref = f"A3:I{r - 1}"
+    ws.auto_filter.ref = f"A3:J{r - 1}"
 
     # ------------------------------------------------ Fabric_Requirement
     ws = wb.create_sheet("Fabric_Requirement")
-    title(ws, "Fabric Requirement - metres to cut for the production run",
-          "Metres per shade = (W + 2*allowance) x (H + 2*allowance) x copies x (1 + wastage) / (fabric width x 39.37). Copies possible = metres noted / metres per copy.")
-    cols = ["Board", "Book", "Role", "Swatches per book", "Swatch W (in)", "Swatch H (in)", "Cut area per swatch (sq in)",
-            "Metres per shade for run", "Metres for all these shades", "Metres per shade noted", "Books possible from noted metres", "Check"]
-    header(ws, 3, cols, [7, 18, 8, 10, 10, 10, 12, 12, 12, 12, 13, 26])
+    title(ws, "Fabric Requirement - metres for the production run (notes p.8)",
+          "Main fabric: ready-cut 5 x 7 in pieces, main_m metres of EVERY main fabric. Small swatches: swatch_m metres of EVERY other shade. Change the values on Parameters - all totals update.")
+    cols = ["Board", "Book", "Round", "Main fabrics (5x7 in)", "Main shade No(s).", "Metres per main", "Main metres",
+            "Small swatches", "Metres per swatch", "Swatch metres", "Total metres", "Note"]
+    header(ws, 3, cols, [7, 22, 7, 10, 22, 9, 10, 10, 9, 10, 11, 40])
     r = 4
-    for bd in bds:
-        if not bd["ready"]:
-            continue
-        b = bd["books"][0]
-        for label, n, g, noted in fabric_entries(bd):
-            vals = [bd["no"], " & ".join(x["name"] for x in bd["books"]), label, n, round(g["w"], 3), round(g["h"], 3),
-                    f"=(E{r}+2*cut_allow)*(F{r}+2*cut_allow)",
-                    f"=ROUND(G{r}*copies*(1+wastage)/(fabric_width*39.37),2)",
-                    f"=ROUND(H{r}*D{r},2)",
-                    noted,
-                    f'=IF(J{r}="","",ROUNDDOWN(J{r}*fabric_width*39.37/(G{r}*(1+wastage)),0))',
-                    f'=IF(J{r}="","Enter metres to check",IF(K{r}>=copies,"OK - enough for the run","SHORT - increase metres"))']
-            for c, v in enumerate(vals, 1):
-                body(ws, r, c, v, fmt="0.00" if c in (7, 8, 9) else None)
-            r += 1
-    body(ws, r + 1, 8, "Total metres", bold=True); body(ws, r + 1, 9, f"=SUM(I4:I{r - 1})", bold=True, fmt="0.0")
-    ws.conditional_formatting.add(f"L4:L{r}", CellIsRule(operator="equal", formula=['"SHORT - increase metres"'], fill=PatternFill("solid", fgColor="F6D6D0")))
+    for ln in sorted(fabric_lines(bds), key=lambda l: (l["round"], l["board"]["no"])):
+        bd, b = ln["board"], ln["book"]
+        note = "Provisional count - " + b["draft"]["src"] if ln["provisional"] else ("Shade count not known yet" if ln["n_small"] is None else "")
+        vals = [bd["no"], b["name"], ln["round"], ln["n_main"], ", ".join(m or "TBC" for m in ln["mains"]) or "-",
+                "=main_m", f"=D{r}*F{r}", ln["n_small"] if ln["n_small"] is not None else "", "=swatch_m",
+                f'=IF(H{r}="","",H{r}*I{r})', f"=G{r}+IF(J{r}=\"\",0,J{r})", note]
+        for c, v in enumerate(vals, 1):
+            cell = body(ws, r, c, v, bold=c == 2, fmt="0.0" if c in (6, 7, 9, 10, 11) else None)
+        if ln["n_small"] is None or ln["provisional"]:
+            ws.cell(row=r, column=12).fill = PatternFill("solid", fgColor="FBE9C9")
+        r += 1
+    last = r - 1
+    r += 1
+    for rd in (1, 2):
+        body(ws, r, 10, f"Round {rd} total (m)", bold=True); body(ws, r, 11, f"=SUMIF(C4:C{last},{rd},K4:K{last})", bold=True, fmt="0.0")
+        r += 1
+    body(ws, r, 10, "Grand total (m)", bold=True); body(ws, r, 11, f"=SUM(K4:K{last})", bold=True, fmt="0.0")
+    ws.auto_filter.ref = f"A3:L{last}"
+
+    # ------------------------------------------------ Rounds
+    ws = wb.create_sheet("Rounds")
+    title(ws, "Production Rounds - selected shades per book (notes p.8)", "Round 1 = double tick on the book list; Round 2 = marked '2nd'. Stand A = Neo Crest + Glory Cotton + Eeco Dimout on one 3-fold board.")
+    header(ws, 3, ["Round", "List No.", "Book", "Board", "Fold", "Main shade(s) selected", "Other shades selected", "Status"], [7, 7, 18, 26, 6, 22, 80, 13])
+    r = 4
+    for ln in sorted(fabric_lines(bds), key=lambda l: (l["round"], l["book"]["list_no"])):
+        bd, b = ln["board"], ln["book"]
+        known = [x for x in ln["smalls"] if x]
+        if ln["n_small"] is None:
+            others = "Shade list not written yet"
+        elif known and len(known) == ln["n_small"]:
+            others = ", ".join(known)
+        elif known:
+            others = ", ".join(known) + f"  (+{ln['n_small'] - len(known)} numbers TBC)"
+        else:
+            others = f"{ln['n_small']} shades - numbers TBC"
+        for c, v in enumerate([b["round"], b["list_no"], b["name"], board_name(bd), bd["fold"], ", ".join(m or "TBC" for m in ln["mains"]) or "-", others, b["status"]], 1):
+            body(ws, r, c, v, bold=c == 3)
+        ws.row_dimensions[r].height = 15 * max(2, len(others) // 95 + 1)
+        r += 1
+    ws.auto_filter.ref = f"A3:H{r - 1}"
 
     # ------------------------------------------------ Production_Steps
     ws = wb.create_sheet("Production_Steps")
     title(ws, "Production Steps", "Work top to bottom. Each step has a check that must pass before the next.")
     header(ws, 3, ["#", "Step", "Detail", "Check / acceptance", "Owner", "Status"], [4, 26, 70, 50, 12, 12])
     steps = [
-        ("Close open questions", "Answer every row in Open_Questions; update Book_List and Shade_Register.", "No red rows left in Book_List."),
+        ("Close open questions", "Answer every row in Open_Questions; update Book_List and Shade_Register. Do Round 1 books first, then Round 2.", "No red rows left for the round being made."),
         ("Approve cover art", "Covers carry illustrated curtain art (final). Optional: one lifestyle photo per book saved as assets/photos/<book-id>.jpg replaces it.", "If photos are used: min 1231 x 2895 px, no logos or text."),
         ("Regenerate files", "Run python3 make.py - covers pick up photos, inside sides pick up shade numbers.", "No DRAFT in any slug line; no blank shade lines left."),
         ("Pre-press check", "Open each PDF: TrimBox/BleedBox present, CMYK, fonts embedded, nothing in the 0.5 in margin.", "Printer pre-flight report clean."),
         ("Hard proof", "Print one leaf both sides at 100% on 350 GSM card, score, fold, punch.", "Cover sits on top; panel C closes flat; sides back up exactly."),
-        ("Cut fabric", "Cut per Fabric_Requirement; pinking shears for swatches; 1 mm larger than frames.", "Count per Shade_Register = swatches cut."),
+        ("Cut fabric", "Per round: main fabrics as ready-cut 5 x 7 in pieces from 2 m each; small swatches from 0.6 m of each shade, pinked, sizes per Board_Plan.", "Count per Shade_Register = pieces cut."),
         ("Make leaves", "Duplex print (turn on long edge), matt laminate, double-score folds, 4-hole punch in panel A binding zone.", "Leaf folds square; holes clear of print."),
-        ("Mount swatches", "Glue each swatch inside its printed frame, matching Slot ID to Shade_Register.", "Two-person check: shade number under every swatch matches the fabric."),
-        ("Master binder", "11 x 13 in 4-D-ring binder; wrap with 00_Master_Binder_Cover (spine from stack).", "All 19 leaves turn freely on the rings."),
+        ("Mount swatches", "No boxes are printed: place the 5 x 7 main(s) and every swatch as in the Book Proof (assembly guide); shade-number sticker under each.", "Two-person check: sticker number matches the fabric."),
+        ("Master binder", "11 x 13 in 4-D-ring binder; wrap with 00_Master_Binder_Cover (spine from stack).", f"All {len(bds)} leaves turn freely on the rings."),
         ("Final QC", "Order boards by Seq, tabs visible, metal corners fitted, rope handle if used.", "Book opens Sheer -> Lining in order."),
     ]
     for i, (s, d, c) in enumerate(steps, 1):
@@ -268,7 +300,7 @@ def build(path, books, bds, spine_in, stack_mm):
         for q in b["issues"]:
             qs.append((b["name"], q))
     qs.append(("3 Pass Blackout", EXTRA["issue"]))
-    qs.append(("All", f"19 leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder (as in the reference binder). Confirm card leaves rather than rigid greyboard (10 cm, too thick)."))
+    qs.append(("All", f"{len(bds)} leaves stack to {stack_mm:.0f} mm on 350 GSM card -> {P['ring_mm']} mm 4-D-ring binder (as in the reference binder). Confirm card leaves rather than rigid greyboard (10 cm, too thick)."))
     qs.append(("All", "Covers use illustrated curtain art (final). Optional: supply a lifestyle photo per book to replace it."))
     why = {"Shade": "Liner prints shade numbers", "Fold": "Changes board size and price", "Main": "Hero swatch & cover"}
     for i, (bk, q) in enumerate(qs, 1):

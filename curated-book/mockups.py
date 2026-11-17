@@ -1,9 +1,9 @@
 """Presentation PNGs of the finished book, built from the real print artwork.
 
-  output/07_Mockups/01_Back_Cover.png           back of the master binder, flat (11 x 13 in)
-  output/07_Mockups/02_Front_Cover.png          front of the master binder, flat
-  output/07_Mockups/03_Catalogue_Set.png        4 binders in a studio scene (front, back, spine, open board)
-  output/07_Mockups/04_All_Collections_In_One.png  the binder with all board covers laid out
+  output/08_Mockups/01_Back_Cover.png           back of the master binder, flat (11 x 13 in)
+  output/08_Mockups/02_Front_Cover.png          front of the master binder, flat
+  output/08_Mockups/03_Catalogue_Set.png        4 binders in a studio scene (front, back, spine, open board)
+  output/08_Mockups/04_All_Collections_In_One.png  the binder with all board covers laid out
 
 Run on its own (python3 mockups.py) or from make.py.
 """
