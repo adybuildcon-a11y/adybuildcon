@@ -1,4 +1,5 @@
-"""Osho Signature RRP stickers: add the Cloud Sheer sticker and fix Crom -> Croma.
+"""Osho Signature RRP stickers: add the Cloud Sheer (Elite Edition) sticker and fix
+Crom -> Croma.
 
 The original sticker sheet is kept as-is.  The new Cloud Sheer sticker fills the
 empty slot on page 2 (next to Drift Sheer) and is a copy of the Drift Sheer
@@ -28,6 +29,7 @@ CLOUD_SHEER = [("ASTON", 720), ("ASTON STRIPE", 720), ("CANDID", 470), ("INTEL",
 NAVY = (0x1B / 255, 0x28 / 255, 0x4C / 255)
 DRIFT_BOX = pymupdf.Rect(40, 258, 297, 558)          # Drift Sheer sticker, page 2
 FREE_BOX = pymupdf.Rect(315, 258, 572, 558)          # empty slot beside it
+TT_BOX = pymupdf.Rect(315, 40, 572, 240)             # Thread Touch sticker (Elite)
 FIRST_BASELINE, PITCH, SIZE = 359.02, 12.3, 9.5      # model rows on the sticker
 LEFT, RIGHT = 52.0, 285.01                           # model / price text edges
 
@@ -56,7 +58,8 @@ def main():
     wdoc = pymupdf.open(SRC)
     work = wdoc[1]
     old = [s for s in spans(work, DRIFT_BOX)
-           if s["text"].startswith("BOOK:") or s["font"].endswith("DejaVuSans-Bold")]
+           if s["text"].startswith("BOOK:") or s["font"].endswith("DejaVuSans-Bold")
+           or "E D I T I O N" in s["text"]]          # Millennium label -> Elite (below)
     title = next(s for s in old if s["text"].startswith("BOOK:"))
     redact(work, old)
     work.insert_font(fontname="DJVB", fontfile=DEJAVU_BOLD)
@@ -69,6 +72,14 @@ def main():
         work.insert_text((RIGHT - dejavu.text_length(price, SIZE), y), price,
                          fontname="DJVB", fontsize=SIZE, color=NAVY)
     assert FIRST_BASELINE + (len(CLOUD_SHEER) - 1) * PITCH + 3 < DRIFT_BOX.y1 - 8
+
+    # Cloud Sheer is an Elite Edition book: take the "ELITE EDITION" label from the
+    # Thread Touch sticker (top right of page 2) and put it in the same spot.
+    label_src = pymupdf.open(SRC)
+    elite = next(s for s in spans(label_src[1]) if s["text"].startswith("E L I T E"))
+    src_rect = pymupdf.Rect(elite["bbox"]) + (-3, -2, 3, 2)
+    dx, dy = DRIFT_BOX.x0 - TT_BOX.x0, DRIFT_BOX.y0 - TT_BOX.y0
+    work.show_pdf_page(src_rect + (dx, dy, dx, dy), label_src, 1, clip=src_rect)
 
     clip = DRIFT_BOX + (-1, -1, 1, 1)                # include the dashed outline
     doc[1].show_pdf_page(FREE_BOX + (-1, -1, 1, 1), wdoc, 1, clip=clip)

@@ -4,12 +4,12 @@ The original pages are reused as-is (same fonts, colours, lines and spacing);
 only the affected rows are moved, duplicated or have their text replaced.
 
 Corrections
-  * Osho Signature list: Cloud Sheer book (16 designs) added to the Millennium
-    Edition after Drift Sheer, S.No 43-58; the Elite Edition becomes 59-86.
+  * Osho Signature list: Cloud Sheer book (16 designs) added to the Elite
+    Edition after Thread Touch, S.No 71-86.
     Rate = dealer cut rate + 15 (above 200) / + 10 (below 200), rounded up to
     the next multiple of 5; RRP = rate x 2.5 rounded up to the next 10.
-  * Textura Homes list: Cloud Sheer added as Millennium Edition book 9 after
-    Drift Sheer; Your Price = the dealer cut rate on the Cloud Sheer card, Cut and
+  * Textura Homes list: Cloud Sheer added as Elite Edition book 14 after
+    Thread Touch; Your Price = the dealer cut rate on the Cloud Sheer card, Cut and
     Roll by the list's own rule.
   * Premiere Texture-1 and Premiere Texture-2 each list
         Cera  - Rate Rs. 365 / RRP 920
@@ -83,7 +83,7 @@ def place(dst_page, src_doc, pno, y0, y1, dst_y):
 
 
 # ---------------------------------------------------------------------------
-# Cloud Sheer (Millennium Edition, after Drift Sheer).  Dealer cut rates from the
+# Cloud Sheer (Elite Edition, after Thread Touch).  Dealer cut rates from the
 # Cloud Sheer card; list rate = dealer + 15 (above 200) or + 10 (below 200), then
 # rounded UP to the next multiple of 5.  RRP follows the list's own rule
 # (rate x 2.5, rounded up to the next 10 - matches the list's rows).
@@ -106,8 +106,8 @@ def correct_signature():
     """Rebuilds the Osho Signature list from the original by moving whole table rows
     (same fonts, colours, lines and spacing) and replacing only the text that changes.
 
-      * Cloud Sheer (16 designs) added to the Millennium Edition after Drift Sheer,
-        S.No 43-58; the Elite Edition is renumbered 59-86.
+      * Cloud Sheer (16 designs) added to the Elite Edition after Thread Touch,
+        S.No 71-86.
       * Premiere Texture-1 and -2 each list Cera Rs.365 / 920 and Clare Rs.285 / 720.
       * Jute Craft RRP "990" set in Arial like every other cell (was Calibri).
     """
@@ -158,53 +158,43 @@ def correct_signature():
     # 45 Natural hdr, 46 "64", 47 Foldscape hdr, 48 "65 Kenya"; table ends at row 49.
     # original page 3 rows: 0 "66 Foldscape Cera", 1 Thread hdr, 2 "67", 3 "68", 4 blank,
     # 5 TERMS, ...
-    shift = len(CLOUD_SHEER)
-    data_rows = [15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 33, 34, 36, 38, 40, 46, 48]
+    # Cloud Sheer is an Elite Edition book: it follows Thread Touch, S.No 71-86.
+    first_cloud = 71
     calibri = next(s for s in spans(A) if s["font"].endswith("Calibri"))
     jute = find(A, "Rs. 395", calibri["bbox"][1])
-    no = 43 + shift
-    edits = []
-    for k in data_rows:
-        if k == 46:
-            no += 4                                # 4 Premiere Texture rows come before
-        edits.append((cell(A, k, SNO), str(no), "center"))
-        no += 1
-    edits += [(cell(A, 42, SNO), str(62 + shift), "center"),
-              (cell(A, 42, DESIGN), "Cera", "left"),
-              (cell(A, 44, SNO), str(63 + shift), "center"),
-              (cell(A, 44, DESIGN), "Clare", "left"),
-              (calibri, "990", "left", {"y": jute["origin"][1], "color": (0.2, 0.2, 0.2)})]
-    edit(A, edits)
+    edit(A, [(cell(A, 42, DESIGN), "Cera", "left"),                  # 62 PT-1 Cera
+             (cell(A, 44, DESIGN), "Clare", "left"),                 # 63 PT-1 Clare
+             (cell(A, 46, SNO), "66", "center"),                     # Natural Base
+             (cell(A, 48, SNO), "67", "center"),                     # Foldscape Kenya
+             (calibri, "990", "left", {"y": jute["origin"][1], "color": (0.2, 0.2, 0.2)})])
 
     def cloud_row(page, k, i):
         name, dealer = CLOUD_SHEER[i]
         rate = list_rate(dealer)
-        return [(cell(page, k, SNO), str(43 + i), "center"),
+        return [(cell(page, k, SNO), str(first_cloud + i), "center"),
                 (cell(page, k, COLL), "Cloud Sheer", "left"),
                 (cell(page, k, DESIGN), name, "left"),
                 (cell(page, k, RATE), f"Rs. {rate}", "right"),
                 (rrp_cell(page, k), str(rrp(rate)), "center")]
 
+    n = len(CLOUD_SHEER)
     edits = [e for k in range(12) for e in cloud_row(B, k, k)]
     edits += [(cell(B, 14, 74.11), "Cloud Sheer", "left"),
-              (cell(B, 42, SNO), str(64 + shift), "center"),
-              (cell(B, 42, DESIGN), "Cera", "left"),
-              (cell(B, 44, SNO), str(65 + shift), "center"),
-              (cell(B, 44, DESIGN), "Clare", "left")]
+              (cell(B, 42, SNO), "64", "center"), (cell(B, 42, DESIGN), "Cera", "left"),
+              (cell(B, 44, SNO), "65", "center"), (cell(B, 44, DESIGN), "Clare", "left")]
     edit(B, edits)
-    edit(C, [e for k in range(shift - 12) for e in cloud_row(C, k, 12 + k)])
-    edit(D, [(cell(D, 0, SNO), str(66 + shift + 2), "center"),     # + 2 Premiere Texture
-             (cell(D, 2, SNO), str(67 + shift + 2), "center"),     #   rows added before
-             (cell(D, 3, SNO), str(68 + shift + 2), "center")])
+    edit(C, [e for k in range(n - 12) for e in cloud_row(C, k, 12 + k)])
+    edit(D, [(cell(D, 0, SNO), "68", "center"),
+             (cell(D, 2, SNO), "69", "center"),
+             (cell(D, 3, SNO), "70", "center")])
 
     pa, pb, pc, pd = (p.number for p in (A, B, C, D))
-    seq = ([(pa, k) for k in range(12)]                       # Drift Sheer 31-42
-           + [(pb, 14)]                                       # Cloud Sheer header
-           + [(pb, k) for k in range(12)] + [(pc, k) for k in range(shift - 12)]
-           + [(pa, k) for k in range(12, 42)]                 # blank, ELITE ... PT-1 hdr
+    seq = ([(pa, k) for k in range(42)]                       # Drift Sheer 31-42 ... PT-1 hdr
            + [(pa, 42), (pa, 44), (pa, 43), (pb, 42), (pb, 44)]   # PT-1 Cera/Clare, PT-2 ...
-           + [(pa, k) for k in range(45, 49)]                 # Natural Theory, Foldscape 83
-           + [(pd, k) for k in range(4)])                     # 84 Cera, Thread Touch 85-86
+           + [(pa, k) for k in range(45, 49)]                 # Natural Theory 66, Foldscape 67
+           + [(pd, k) for k in range(4)]                      # 68 Cera, Thread Touch 69-70
+           + [(pb, 14)]                                       # Cloud Sheer header
+           + [(pb, k) for k in range(12)] + [(pc, k) for k in range(n - 12)])   # 71-86
     per_page = 49
 
     out = pymupdf.open()
@@ -263,10 +253,10 @@ def correct_textura():
                   (find(p2b, "9", row(20) + 1.9), "10", "center"),
                   (find(p2b, "9", row(21) + 1.9), "10", "center")] + prices(p2b), font)
 
-    # Cloud Sheer = Millennium Edition book 9, after Drift Sheer (Brill, row 0).
-    # Your Price = the dealer cut rate on the Cloud Sheer card; Cut and Roll follow
-    # the list's rule above.  Rows 1-16 of the page-2 copy are the templates, so the
-    # white / grey row stripes stay in step (16 rows = even shift).
+    # Cloud Sheer = Elite Edition book 14, after Thread Touch (rows 29-44 of the new
+    # page 2).  Your Price = the dealer cut rate on the Cloud Sheer card; Cut and Roll
+    # follow the list's rule above.  Rows 1-16 of the page-2 copy are the templates,
+    # which keeps the white / grey row stripes in step (29 - 1 = even).
     def cells(page, k):
         found = sorted((s for s in spans(page) if abs(s["bbox"][1] - (row(k) + 1.9)) < 3),
                        key=lambda s: s["bbox"][0])
@@ -274,7 +264,7 @@ def correct_textura():
         return found
     edits = []
     for i, (name, your) in enumerate(CLOUD_SHEER):
-        new = ["9", "Millennium Edition", "Cloud Sheer", name, f"Rs.{your}",
+        new = ["14", "Elite Edition", "Cloud Sheer", name, f"Rs.{your}",
                f"Rs.{int(your * 0.8075 + 0.5)}", f"Rs.{int(your * 0.7125 + 0.5)}"]
         align = ["center", "left", "left", "left", "right", "right", "right"]
         edits += list(zip(cells(p2c, 1 + i), new, align))
@@ -285,11 +275,11 @@ def correct_textura():
     out.insert_pdf(work, from_page=0, to_page=0)
     W, H = p2.rect.width, p2.rect.height
     pg = out.new_page(width=W, height=H)
-    place(pg, work, 1, 0, row(1), 0)                        # header, 8 Drift Sheer Brill
-    place(pg, work, 3, row(1), row(1 + n), row(1))          # 9 Cloud Sheer (16 rows)
-    place(pg, work, 1, row(1), row(22), row(1 + n))         # Elite ... Premiere Texture-1
-    place(pg, work, 2, row(20), row(22), row(22 + n))       # Premiere Texture-2 Cera, Clare
-    place(pg, work, 1, row(22), row(27) + 1, row(24 + n))   # Natural Theory ... Thread Touch
+    place(pg, work, 1, 0, row(22), 0)                       # ... Premiere Texture-1 Cera, Clare
+    place(pg, work, 2, row(20), row(22), row(22))           # Premiere Texture-2 Cera, Clare
+    place(pg, work, 1, row(22), row(27), row(24))           # Natural Theory ... Thread Touch
+    place(pg, work, 3, row(1), row(1 + n), row(29))         # 14 Cloud Sheer (16 rows)
+    place(pg, work, 1, row(27), row(27) + 1, row(29 + n))   # table bottom line
 
     out.set_metadata(src.metadata)
     out.save(OUT_TEX, garbage=4, deflate=True)
