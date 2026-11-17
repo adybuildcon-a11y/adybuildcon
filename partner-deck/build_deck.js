@@ -231,7 +231,7 @@ async function main() {
   const tiles = [["₹" + inr(FOUNDING_SECURITY), "First 100 founding partners", true],
                  ["₹" + inr(STANDARD_SECURITY), "Every partner after the first 100", false],
                  ["₹5,000 off", "For women entrepreneurs", false],
-                 ["₹5 Lakh", "Sales at which your security amount is adjusted in full", false]];
+                 ["₹7 Lakh", "Sales at which your security amount is adjusted in full", false]];
   tiles.forEach(([big, small, hi], i) => {
     const x = 0.5 + i * 2.3;
     card(s, x, 1.45, 2.1, 1.15, hi ? C.accent1 : C.background2);
@@ -250,7 +250,7 @@ async function main() {
       fill: { color: i % 2 ? H.lt1 : H.lt2 } } }))),
   ], { x: 0.5, y: 2.85, w: 9.0, colW: [1.3, 3.85, 3.85], rowH: 0.4, margin: [0, 0.12, 0, 0.12], valign: "middle",
        border: { type: "solid", pt: 0.5, color: "D9DCE1" }, objectName: name("table") });
-  s.addNotes("The Business Kit is given against a security amount, not sold: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that. Women entrepreneurs get ₹5,000 off, and the security amount is adjusted in full once the partner's sales cross ₹5 lakh. Building a comparable range alone costs ₹10 lakh+ in catalogues and 300-400 sq. ft. of storage.");
+  s.addNotes("The Business Kit is given against a security amount, not sold: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that. Women entrepreneurs get ₹5,000 off, and the security amount is adjusted in full once the partner's sales cross ₹7 lakh (₹7,00,000). Building a comparable range alone costs ₹10 lakh+ in catalogues and 300-400 sq. ft. of storage.");
 
   // ================= OUR GOAL (3 slides) =================
   pres.addSection({ title: "Our Goal" });
