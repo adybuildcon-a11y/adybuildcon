@@ -45,6 +45,34 @@ const MILESTONES = [
 ];
 const inr = (n) => n.toLocaleString("en-IN");
 
+// ---- forecast model (base case) ----
+// Drivers: each partner serves 60 customers a year (5 a month); the ₹1 crore a month
+// first-month target with the 100 founding partners sets the turnover per partner at
+// ₹1 lakh a month, i.e. an average order of ₹1,00,000 / 5 = ₹20,000.
+const CUSTOMERS_PER_PARTNER_YEAR = 60;
+const FIRST_MONTH_TURNOVER = 1e7;                       // ₹1 crore
+const FOUNDING_PARTNERS = 100;
+const TURNOVER_PER_PARTNER_MONTH = FIRST_MONTH_TURNOVER / FOUNDING_PARTNERS;     // ₹1,00,000
+const AVG_ORDER = TURNOVER_PER_PARTNER_MONTH / (CUSTOMERS_PER_PARTNER_YEAR / 12);  // ₹20,000
+// Partners at each March: the four milestones, with March 2030 and 2031 filled in at a
+// constant growth rate between 1,000 (2029) and 5,000 (2032): x 5^(1/3) = x 1.71 a year.
+const g = Math.pow(5000 / 1000, 1 / 3);
+const PARTNERS_MARCH = { 2027: 100, 2028: 500, 2029: 1000,
+  2030: Math.round(1000 * g), 2031: Math.round(1000 * g * g), 2032: 5000 };
+// Financial years FY 2027-28 ... FY 2031-32 (April - March): partners active on average
+// = mean of the opening and closing count.
+const FORECAST = [2028, 2029, 2030, 2031, 2032].reduce((rows, y) => {
+  const avg = (PARTNERS_MARCH[y - 1] + PARTNERS_MARCH[y]) / 2;
+  const customers = avg * CUSTOMERS_PER_PARTNER_YEAR;
+  const turnover = avg * TURNOVER_PER_PARTNER_MONTH * 12;
+  const prevCum = rows.length ? rows[rows.length - 1].cumCustomers : 0;
+  rows.push({ fy: `FY ${String(y - 1).slice(2)}-${String(y).slice(2)}`, endPartners: PARTNERS_MARCH[y],
+              avg, customers, cumCustomers: prevCum + customers, turnover });
+  return rows;
+}, []);
+const crore = (r) => r / 1e7;
+const lakh = (r) => r / 1e5;
+
 // ---- icons: react-icons -> white PNG ----
 async function icon(Comp, color = "#FFFFFF") {
   const svg = ReactDOMServer.renderToStaticMarkup(React.createElement(Comp, { color, size: 256 }));
@@ -174,11 +202,12 @@ async function main() {
     { x: 0.5, y: 2.68, w: 5.25, h: 0.55, fontSize: 13, italic: true, color: C.text1, valign: "top" });
   T(s, "YOUR BUSINESS TOOLS", { x: 0.5, y: 3.38, w: 5, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 2 });
   const tools = [[fa.FaTabletScreenButton, "AI Styling Tablet"], [fa.FaSignHanging, "Promotional Standee"],
-                 [fa.FaAddressCard, "Visiting Cards"], [fa.FaSuitcaseRolling, "Trolley Bag"]];
+                 [fa.FaAddressCard, "Visiting Cards"], [fa.FaSuitcaseRolling, "Trolley Bag"],
+                 [fa.FaToolbox, "Hardware Tool Kit"]];
   for (let i = 0; i < tools.length; i++) {
-    const x = 0.5 + i * 1.35;
-    await badge(s, x + 0.33, 3.75, 0.55, tools[i][0]);
-    T(s, tools[i][1], { x, y: 4.36, w: 1.2, h: 0.5, fontSize: 12, bold: true, color: C.text2, align: "center", valign: "top" });
+    const x = 0.45 + i * 1.07;
+    await badge(s, x + 0.25, 3.75, 0.5, tools[i][0]);
+    T(s, tools[i][1], { x, y: 4.33, w: 1.0, h: 0.5, fontSize: 12, bold: true, color: C.text2, align: "center", valign: "top" });
   }
   card(s, 6.05, 1.45, 3.45, 3.45, C.background2);
   T(s, "SECURITY AMOUNT AGAINST THE KIT", { x: 6.3, y: 1.62, w: 3.1, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
@@ -188,7 +217,7 @@ async function main() {
   T(s, ["Rights to the brand name", "Welcome training programme", "Support, always on call", "Weekly webinars", "Ready digital marketing content"]
     .map((t, i, a) => ({ text: t, options: { bullet: true, breakLine: i < a.length - 1 } })),
     { x: 6.3, y: 3.35, w: 3.1, h: 1.45, fontSize: 14, color: C.text1, paraSpaceAfter: 2, valign: "top" });
-  s.addNotes("Each partner receives 4 swatch books with 300 samples each - 1,200 fabrics in 600+ curated mood boards - plus an AI styling tablet, standee, visiting cards and a trolley bag. The kit is given against a security amount: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that.");
+  s.addNotes("Each partner receives 4 swatch books with 300 samples each - 1,200 fabrics in 600+ curated mood boards - plus an AI styling tablet, standee, visiting cards, a trolley bag and a hardware tool kit. The kit is given against a security amount: ₹69,000 for the first 100 founding partners and ₹1,35,000 for every partner after that.");
 
   // 4 - markets & earnings
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "The Project" });
@@ -301,9 +330,69 @@ async function main() {
   });
   s.addNotes("Phase 1 Launch: 100 partners by March 2027. Phase 2 Build: 500 by March 2028 (400 new partners). Phase 3 Scale: 1,000 by March 2029 (500 new partners). Phase 4 Global: 5,000 partners across the globe by March 2032 (4,000 new partners) - about 1,333 new partners a year over the last three years.");
 
-  // 8 - how we get there
+  // 8 - network database
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
-  s.addText("07  ·  HOW WE GET THERE", { placeholder: "kicker" });
+  s.addText("07  ·  FACTS & FIGURES: THE NETWORK", { placeholder: "kicker" });
+  s.addText("A Community of 5 Lakh+ Customers by 2032", { placeholder: "title" });
+  const chartLook = (title) => ({
+    barDir: "col", barGapWidthPct: 55, chartColors: [H.accent1], showValue: true, dataLabelPosition: "outEnd",
+    dataLabelColor: H.dk2, dataLabelFontSize: 12, dataLabelFontBold: true, dataLabelFontFace: "+mn-lt",
+    showTitle: true, title, titleFontSize: 12, titleColor: H.accent4, titleFontFace: "+mn-lt",
+    catAxisLabelColor: H.dk1, catAxisLabelFontSize: 12, catAxisLabelFontFace: "+mn-lt",
+    catAxisLineShow: true, catAxisLineColor: "D9DCE1",
+    valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" }, showLegend: false,
+  });
+  s.addChart(pres.charts.BAR, [{ name: "Customer database (lakh, cumulative)",
+    labels: FORECAST.map((r) => "Mar 20" + r.fy.slice(-2)), values: FORECAST.map((r) => +lakh(r.cumCustomers).toFixed(2)) }],
+    { x: 0.4, y: 1.4, w: 5.0, h: 3.5, ...chartLook("Customer database, cumulative (lakh customers)"),
+      dataLabelFormatCode: "0.00", valAxisMaxVal: 6, objectName: name("chart") });
+  const last = FORECAST[FORECAST.length - 1];
+  const netStats = [
+    [String(CUSTOMERS_PER_PARTNER_YEAR), "customers per partner a year — 5 a month"],
+    [`${+lakh(PARTNERS_MARCH[2032] * CUSTOMERS_PER_PARTNER_YEAR).toFixed(1)} Lakh`, "new customers a year once 5,000 partners are active"],
+    [`${lakh(last.cumCustomers).toFixed(1)} Lakh`, "customers in the network database by March 2032"],
+  ];
+  netStats.forEach(([big, small], i) => {
+    const y = 1.45 + i * 1.0;
+    card(s, 5.75, y, 3.75, 0.88, C.background2);
+    T(s, big, { x: 5.9, y: y + 0.1, w: 1.45, h: 0.68, fontSize: 24, bold: true, color: C.accent5, fontFace: "+mj-lt", valign: "middle" });
+    T(s, small, { x: 7.4, y: y + 0.1, w: 1.95, h: 0.68, fontSize: 12, color: C.text1, valign: "middle" });
+  });
+  T(s, "Base case: partners grow 100 → 500 → 1,000 → 5,000 (Mar 2030 and 2031 at a steady ×1.71 a year); each year counts the average partners active.",
+    { x: 5.75, y: 4.45, w: 3.75, h: 0.5, fontSize: 10, italic: true, color: C.accent4, valign: "top" });
+  s.addNotes("Network database model (base case). Every partner adds 60 customers a year (5 a month). Partners at each March: 100 (2027), 500 (2028), 1,000 (2029), " + inr(PARTNERS_MARCH[2030]) + " (2030), " + inr(PARTNERS_MARCH[2031]) + " (2031), 5,000 (2032); 2030 and 2031 are filled in at a constant growth rate of x1.71 a year between the 2029 and 2032 milestones. Customers in a year = average partners in that year (opening + closing / 2) x 60. Cumulative customer database: " + FORECAST.map((r) => r.fy + ": " + inr(Math.round(r.cumCustomers))).join("; ") + ". The launch period up to March 2027 is not counted, so these figures are conservative.");
+
+  // 9 - turnover forecast
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
+  s.addText("08  ·  FACTS & FIGURES: TURNOVER FORECAST", { placeholder: "kicker" });
+  s.addText("From ₹1 Crore a Month to ₹50 Crore a Month", { placeholder: "title" });
+  const eq = [["5", "customers per partner a month"], ["₹" + inr(AVG_ORDER), "average order value"],
+              ["₹1 Lakh", "turnover per partner a month"]];
+  eq.forEach(([big, small], i) => {
+    const x = 0.5 + i * 3.1;
+    card(s, x, 1.42, 2.6, 0.85, i === 2 ? C.accent1 : C.background2);
+    T(s, big, { x: x + 0.1, y: 1.47, w: 2.4, h: 0.45, fontSize: 22, bold: true, color: i === 2 ? C.background1 : C.text2, align: "center", fontFace: "+mj-lt" });
+    T(s, small, { x: x + 0.1, y: 1.92, w: 2.4, h: 0.28, fontSize: 11, color: i === 2 ? C.background1 : C.accent4, align: "center" });
+    if (i < 2) T(s, i === 0 ? "×" : "=", { x: x + 2.6, y: 1.42, w: 0.5, h: 0.85, fontSize: 26, bold: true, color: C.accent5, align: "center", valign: "middle" });
+  });
+  s.addChart(pres.charts.BAR, [{ name: "Annual turnover (₹ crore)",
+    labels: FORECAST.map((r) => r.fy), values: FORECAST.map((r) => +crore(r.turnover).toFixed(1)) }],
+    { x: 0.4, y: 2.45, w: 5.0, h: 2.55, ...chartLook("Annual turnover (₹ crore)"),
+      dataLabelFormatCode: "#,##0", valAxisMaxVal: 540, objectName: name("chart") });
+  T(s, "MONTHLY TURNOVER AT EACH MILESTONE", { x: 5.75, y: 2.5, w: 3.75, h: 0.28, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
+  MILESTONES.forEach((m, i) => {
+    const y = 2.85 + i * 0.53;
+    card(s, 5.75, y, 3.75, 0.45, C.background2, false);
+    T(s, `${inr(m.partners)} partners${i === 0 ? " (first month)" : ""}`, { x: 5.9, y, w: 2.2, h: 0.45, fontSize: 12, color: C.text1, valign: "middle" });
+    const monthly = crore(m.partners * TURNOVER_PER_PARTNER_MONTH);
+    T(s, `₹${+monthly.toFixed(1)} Cr / month`, { x: 7.6, y, w: 1.75, h: 0.45, fontSize: 13, bold: true, color: C.text2, align: "right", valign: "middle" });
+  });
+  const total = FORECAST.reduce((a, r) => a + r.turnover, 0);
+  s.addNotes("Turnover model (base case). Target: ₹1 crore turnover from the first month with the 100 founding partners = ₹1 lakh per partner a month. With 5 customers per partner a month (60 a year) this means an average order of ₹20,000. Monthly turnover = active partners x ₹1 lakh: ₹1 crore at 100 partners, ₹5 crore at 500, ₹10 crore at 1,000 and ₹50 crore at 5,000. Annual turnover uses the average partners active in each financial year: " + FORECAST.map((r) => r.fy + " ₹" + crore(r.turnover).toFixed(1) + " crore").join("; ") + ". Five-year total FY 27-28 to FY 31-32: about ₹" + inr(Math.round(crore(total))) + " crore. Assumes every partner reaches steady productivity; new partners usually take a few months to ramp up, so treat this as the base case.");
+
+  // 10 - how we get there
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Our Goal" });
+  s.addText("09  ·  HOW WE GET THERE", { placeholder: "kicker" });
   s.addText("Six Engines That Take Us to 5,000", { placeholder: "title" });
   const engines = [[fa.FaShareNodes, "Partner referrals", "₹5,000 per new partner turns every partner into a recruiter."],
                    [fa.FaPersonDress, "Women entrepreneurs", "₹5,000 off the security amount widens who can start."],
