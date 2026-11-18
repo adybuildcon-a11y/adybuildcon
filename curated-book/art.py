@@ -355,14 +355,14 @@ def inside_art(bd, guides=True):
                     out.append(T(lx, ly + .2, "MAIN", "CZ", 600, 6, BRASS, track=.15))
                     out.append(T(lx, ly + .4, shade or "No. ____", "PP", 500, 8 if shade else 7, INK if shade else MUTED))
                 x, y, w, h = pn["cells"][-1]
-                out.append(T(x + w / 2, y + h / 2, "5 × 7 in READY-CUT", "CZ", 600, 6.5, MUTED, "middle", .15))
+                out.append(T(x + w / 2, y + h / 2, f"{w:g} × {h:g} in READY-CUT", "CZ", 600, 6.5, MUTED, "middle", .15))
             else:
                 for k, ((cx, cy, cw, ch), shade) in enumerate(zip(pn["cells"], pn["shades"]), 1):
                     is_main = pn.get("book") and k <= len(pn.get("mains", []))
                     out.append(f'<rect x="{cx:.3f}" y="{cy:.3f}" width="{cw:.3f}" height="{ch:.3f}" fill="{CELL}" stroke="{GUIDE}" stroke-width=".007"/>')
                     ly = cy + ch + .19
                     if is_main:
-                        out.append(T(cx + cw / 2, cy + ch / 2, "5 × 7 in READY-CUT", "CZ", 600, 6.5, MUTED, "middle", .15))
+                        out.append(T(cx + cw / 2, cy + ch / 2, f"{cw:g} × {ch:g} in READY-CUT", "CZ", 600, 6.5, MUTED, "middle", .15))
                         out.append(T(cx, ly, f"MAIN · {shade}" if shade else "MAIN · NO. ______", "CZ", 600, 7.5, INK, track=.08))
                     elif shade and shade in mains:
                         out.append(T(cx, ly, f"MAIN · {shade}", "CZ", 600, 7.5 if cw > 1.3 else 5.5, INK, track=.08))

@@ -195,12 +195,17 @@ def hero_spec_h(n):
     return HERO_SPEC_H if n <= 1 else HERO_SPEC_COMPACT
 
 
-def waterfall(n, box):
+def main_size(b):
+    return b.get("main_size") or (P["main_w"], P["main_h"])
+
+
+def waterfall(n, box, size=None):
     """Main fabrics as a waterfall of ready-cut 5 x 7 in pieces (HW-p8): each piece is stepped down
     and to the right of the one before, so every main shows an edge and the last one shows whole."""
     x0, y0, x1, y1 = box
     W, H = x1 - x0 - WF_LABEL, y1 - y0
-    mw, mh = min(P["main_w"], W), min(P["main_h"], H)
+    sw_, sh_ = size or (P["main_w"], P["main_h"])
+    mw, mh = min(sw_, W), min(sh_, H)
     dx = min(WF_MAX_STEP, (W - mw) / (n - 1)) if n > 1 else 0
     dy = min(WF_MAX_STEP, (H - mh) / (n - 1)) if n > 1 else 0
     cells = [(x0 + WF_LABEL + i * dx, y0 + i * dy, mw, mh) for i in range(n)]
@@ -210,14 +215,15 @@ def waterfall(n, box):
 CUT_SIZES = [(2.5, 1.6), (2.2, 1.4), (2.0, 1.25), (1.8, 1.1), (1.6, 1.0), (1.4, .9), (1.25, .8), (1.1, .7), (1.0, .6)]
 
 
-def stand_cells(n_main, n_other, box):
+def stand_cells(n_main, n_other, box, size=None):
     """Stand panel: the 5 x 7 main at top-left, small cuttings to its right and below it."""
     x0, y0, x1, y1 = box
     g, lab = P["gutter"], P["label_h"]
-    mains = [(x0, y0, P["main_w"], P["main_h"])] if n_main else []
+    mw, mh = size or (P["main_w"], P["main_h"])
+    mains = [(x0, y0, mw, mh)] if n_main else []
     if n_main:
-        zones = [(x0 + P["main_w"] + g, y0, x1, y0 + P["main_h"] + lab),
-                 (x0, y0 + P["main_h"] + lab + g, x1, y1)]
+        zones = [(x0 + mw + g, y0, x1, y0 + mh + lab),
+                 (x0, y0 + mh + lab + g, x1, y1)]
     else:
         zones = [(x0, y0, x1, y1)]
     def fit(w, h):
@@ -252,13 +258,13 @@ def layout_board(bd):
         box = content_box(fold, i)
         if pn.get("book"):                                  # stand panel: one book per panel
             nm = len([s for s in pn["mains"]])
-            pn["grid"], pn["cells"] = stand_cells(nm, len(pn["shades"]) - nm, box)
+            pn["grid"], pn["cells"] = stand_cells(nm, len(pn["shades"]) - nm, box, main_size(pn["book"]))
         elif pn["kind"] == "swatch":
             pn["grid"], pn["cells"] = place(len(pn["shades"]), box, grid=shared)
         elif pn["kind"] == "hero":
             sh = hero_spec_h(len(pn["shades"]))
             hb = (box[0], box[1], box[2], box[3] - sh)
-            pn["grid"], pn["cells"] = waterfall(len(pn["shades"]), hb)
+            pn["grid"], pn["cells"] = waterfall(len(pn["shades"]), hb, main_size(bd["eff"]))
             pn["spec_box"] = (box[0], box[3] - sh + 0.2, box[2], box[3])
     return bd
 
@@ -307,7 +313,7 @@ def fabric_lines(bds):
                         continue
                     k = len(pn.get("mains", [])) if pn.get("book") else 0
                     smalls += [s for s in pn["shades"][k:] if not (s and s in mains_list and not pn.get("book"))]
-            out.append(dict(board=bd, book=b, round=b["round"], mains=mains_list, n_main=n_main,
+            out.append(dict(board=bd, book=b, round=b["round"], mains=mains_list, n_main=n_main, main_size=main_size(b),
                             n_small=n_small, smalls=smalls, provisional=bool(e.get("is_draft")),
                             m_main=n_main * P["main_m"],
                             m_small=None if n_small is None else round(n_small * P["swatch_m"], 2)))

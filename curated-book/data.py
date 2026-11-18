@@ -42,9 +42,11 @@ P = dict(
     swatch_m=0.6,                        # HW-p8 "SWATCH: 0.6" - metres of every small-swatch shade
 )
 
-ROUND_1 = ["virinche", "neo-soft", "neo-crest", "noble-texture", "glory-cotton", "texture-dimout", "double-shade",
+ROUND_1 = ["virinche", "neo-soft", "neo-crest", "noble-texture", "glory-cotton", "texture-coated", "double-shade",
            "lexus-texture", "ritz-satin", "glorious-dimout", "eeco-dimout", "paris-dimout", "lord-dimout", "premium-dimouts"]
-ROUND_2 = ["breeze", "texture-coated", "aria", "neo-luna", "linen-sheer", "sereno"]
+ROUND_2 = ["breeze", "texture-dimout", "aria", "neo-luna", "linen-sheer", "sereno"]
+# Owner, 18 Nov: "TEXTURE DIMOUT was mistakenly written and put instead of TEXTURE COATED" on the round
+# list - the double tick at no. 11 belongs to Texture Coated, so the two books swap rounds.
 STAND_A = ["neo-crest", "glory-cotton", "eeco-dimout"]       # HW-p8 marked "A": one 3-fold board, one panel each
 
 # Light-control ladder (open -> closed). Lining is an accessory, shown last.
@@ -184,6 +186,39 @@ BOOKS = [
       issues=["Main '184' does not appear on the Ritz Satin shade card (183 and 189 do). Confirm 184."]),
 ]
 
+# ---------------------------------------------------------------- owner corrections, 18 Nov
+_by = {b["id"]: b for b in BOOKS}
+for _id in ("double-shade", "eeco-dimout"):                 # "DOUBLE SHADE 5*5", "EECO DIMOUT 5*5"
+    _by[_id]["main_size"] = (5.0, 5.0)
+_ds = _by["double-shade"]                                    # "DOUBLE SHADE ... MAIN - 6"
+_ds["mains"] = [None] * 6
+_ds["draft"] = dict(shades=8, mains=[None] * 6, others=[None] * 2, src="owner 18 Nov: 6 mains; total 8 from the price list")
+_ds["issues"] = ["Owner 18 Nov: 6 main fabrics, 5 x 5 in. Price list shows 8 colours - so 6 mains + 2 other shades? Confirm the total and the shade numbers.",
+                 "Now its own 2-fold board - Eeco Dimout moved to Stand A (HW-p8)."]
+_ee = _by["eeco-dimout"]
+_ee["issues"] = ["Owner 18 Nov: main fabric 5 x 5 in - but the number of mains after 'MAIN -' is not written. How many, and which shade numbers?"] + _ee["issues"]
+_pd = _by["premium-dimouts"]                                 # "PREMIUM DIMOUT MAIN - 5"
+_pd["mains"], _pd["others"] = [None] * 5, [None] * 28
+_pd["notes"] += "  |  Owner 18 Nov: MAIN - 5"
+_pd["issues"] = ["Owner 18 Nov: 5 main fabrics (was 8). Total kept at 33 -> 28 other shades. Which 5 mains, which 28 others?",
+                 "Fold not written - derived as 3-fold."]
+_tc = _by["texture-coated"]                                  # now Round 1
+_tc["issues"] = ["Owner 18 Nov: Texture Coated is the double-ticked Round 1 book (no. 11 on the round list).",
+                 "Main shade not written - Round 1 books show a main; which one? 52 shades - keep all?"]
+# Round 2 (owner 18 Nov): every swatch the SAME size, no main - except Neo Luna (main given 101-106)
+for _id in ROUND_2:
+    _b = _by[_id]
+    if _id == "neo-luna":
+        continue
+    _b["mode"], _b["mode_src"] = "mixed", "Owner 18 Nov: Round 2 - all swatches the same size"
+    if _b["mains"]:
+        if _b.get("others") is not None:
+            _b["others"] = list(_b["mains"]) + list(_b["others"])
+        _b["issues"] = _b["issues"] + [f"Round 2: no main - the former main(s) {', '.join(m for m in _b['mains'] if m)} are same-size swatches now."]
+        _b["mains"] = []
+_by["texture-dimout"]["issues"] = ["Owner 18 Nov: moved to Round 2 (swap with Texture Coated) - all 27 swatches the same size."] + \
+    [q for q in _by["texture-dimout"]["issues"] if not q.startswith("4 mains")]
+
 for _b in BOOKS:
     _b["round"] = 1 if _b["id"] in ROUND_1 else 2
     if _b["id"] in STAND_A:
@@ -195,6 +230,9 @@ EXTRA = dict(name="3 Pass Blackout - Carnation", notes="* 3 PASS BLACKOUT CARNAT
              issue="Written in the notes but not on the 20-book list. Add as a 21st book?")
 
 TRANSCRIPT = [
+ ("Owner message, 18 Nov", "Round 1: book name one column, main fabric - 2 mtr requirement, list of other shades in another column - 0.6 mtr. "
+  "Round 2: all same size except Neo Luna, main given. Round 1: DOUBLE SHADE 5*5 MAIN - 6. EECO DIMOUT 5*5 MAIN - . PREMIUM DIMOUT MAIN - 5. "
+  "One correction - TEXTURE DIMOUT was mistakenly written and put instead of TEXTURE COATED."),
  ("HW-p8  OSHO DECOR - BOOK LIST (rounds, 17 Nov)", "MAIN: 5 x 7 [READY] - 2 MTRS EACH. SWATCH: 0.6.  1) VIRINCHE (double tick)  2) BREEZE 2nd  3) TEXTURE COATED 2nd  "
   "4) NEO SOFT (double tick)  5) NEO CREST (double tick) A  6) ARIA 2nd  7) NEO LUNA 2nd  8) NOBLE TEXTURE (double tick)  9) LINEN SHEER 2nd  "
   "10) GLORY COTTON (double tick) A  11) TEXTURE DIMOUT (double tick)  12) DOUBLE SHADE (double tick)  13) LEXUS TEXTURE (double tick)  "

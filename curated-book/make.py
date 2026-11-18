@@ -1,4 +1,5 @@
 """Build everything:  python3 make.py
+  output/00_Guide_Book_Round_1_and_2.xlsx / .pdf  (Round 1 & 2: book, main fabric 2 m, other shades 0.6 m)
   output/01_Instructions_Curated_Fabrics_Book.xlsx
   output/02_Instructions_Curated_Fabrics_Book.pdf
   output/03_Design_Guide_Curated_Fabrics_Book.pdf
@@ -48,6 +49,9 @@ def main():
         p8 = os.path.join(HERE, "assets", "reference", "handwritten-p08.jpg")
         r.pdf(rounds_doc(books, bds, p8 if os.path.exists(p8) else None),
               os.path.join(OUT, "07_Production_Rounds_Selected_Shades.pdf"), 8.27, 11.69)
+        import guide                                        # owner 18 Nov: guide book, Excel + PDF
+        guide.excel(os.path.join(OUT, "00_Guide_Book_Round_1_and_2.xlsx"), bds)
+        r.pdf(guide.pdf_html(bds, books), os.path.join(OUT, "00_Guide_Book_Round_1_and_2.pdf"), 8.27, 11.69)
         master, front_tmp, _, _ = master_files(r, bds, books, PR)
         os.replace(front_tmp, os.path.join(OUT, "Final_Book_Front_Proof_11x13.pdf"))
         for bd in bds:

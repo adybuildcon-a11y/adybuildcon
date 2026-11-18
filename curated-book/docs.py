@@ -585,14 +585,16 @@ def rounds_doc(books, bds, hw_p8):
       <tr><td>Double tick</td><td><b>Round 1</b> - make now</td></tr>
       <tr><td>2nd</td><td><b>Round 2</b> - make after Round 1</td></tr>
       <tr><td>A</td><td><b>Stand A</b> - three books in ONE 3-fold board, one panel each: {stand_txt}</td></tr>
-      <tr><td>MAIN: 5 × 7 [READY] - 2 MTRS EACH</td><td>Main fabric as ready-cut <b>{P["main_w"]:g} × {P["main_h"]:g} in</b> pieces; <b>{P["main_m"]:g} m of every main fabric</b></td></tr>
+      <tr><td>MAIN: 5 × 7 [READY] - 2 MTRS EACH</td><td>Main fabric as ready-cut <b>{P["main_w"]:g} × {P["main_h"]:g} in</b> pieces (Double Shade &amp; Eeco Dimout <b>5 × 5 in</b>, owner 18 Nov); <b>{P["main_m"]:g} m of every main fabric</b></td></tr>
+      <tr><td>Round 2 (owner 18 Nov)</td><td>Every swatch the <b>same size</b>, no main - except <b>Neo Luna</b> (mains 101-106)</td></tr>
+      <tr><td>Correction (18 Nov)</td><td><b>Texture Coated</b> is the Round 1 book (written as Texture Dimout by mistake); <b>Texture Dimout</b> moves to Round 2</td></tr>
       <tr><td>SWATCH: 0.6</td><td><b>{P["swatch_m"]:g} m (60 cm) of every other shade</b> for the small swatches</td></tr>
       <tr><td>Inside cards</td><td>Printed with <b>no placement boxes</b> - place pieces as shown in the Book Proof (assembly guide)</td></tr></table>
       <h2>How to make a round</h2>
       <ol style="font-size:9.5pt;line-height:1.5">
         <li><b>Confirm the shades.</b> Every book in the round needs its main and shade numbers (pages 2-3; blanks are marked TBC). Fill gaps on the Missing Data Form.</li>
         <li><b>Pull the fabric.</b> {P["main_m"]:g} m of each main fabric and {P["swatch_m"]:g} m of each other shade (metres per book on the next pages).</li>
-        <li><b>Cut.</b> Mains: ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces, one per book copy. Swatches: to the size in the Excel Board_Plan, pinked edge.</li>
+        <li><b>Cut.</b> Mains: ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces (5 × 5 in for Double Shade and Eeco Dimout), one per book copy. Swatches: to the size in the Excel Board_Plan, pinked edge.</li>
         <li><b>Label.</b> A shade-number sticker for every piece; bag the pieces board by board.</li>
         <li><b>Print the round's boards</b> from 04_Print_Ready (the slug line says ROUND 1 or ROUND 2); score, fold, punch.</li>
         <li><b>Mount.</b> Main piece(s) and swatches exactly as in the Book Proof assembly guide - the card has no boxes. Several mains: waterfall, each stepped down and right.</li>
