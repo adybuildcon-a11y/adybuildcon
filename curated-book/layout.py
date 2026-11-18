@@ -312,7 +312,8 @@ def fabric_lines(bds):
                     if pn["kind"] == "hero" or (pn.get("book") and pn["book"]["id"] != b["id"]):
                         continue
                     k = len(pn.get("mains", [])) if pn.get("book") else 0
-                    smalls += [s for s in pn["shades"][k:] if not (s and s in mains_list and not pn.get("book"))]
+                    has_main_slot = any(q["kind"] == "hero" or q.get("book") for q in bd["panels"])
+                    smalls += [s for s in pn["shades"][k:] if has_main_slot or not (s and s in mains_list)]
             out.append(dict(board=bd, book=b, round=b["round"], mains=mains_list, n_main=n_main, main_size=main_size(b),
                             n_small=n_small, smalls=smalls, provisional=bool(e.get("is_draft")),
                             m_main=n_main * P["main_m"],

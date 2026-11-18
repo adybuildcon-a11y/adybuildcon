@@ -50,8 +50,8 @@ def main():
         r.pdf(rounds_doc(books, bds, p8 if os.path.exists(p8) else None),
               os.path.join(OUT, "07_Production_Rounds_Selected_Shades.pdf"), 8.27, 11.69)
         import guide                                        # owner 18 Nov: guide book, Excel + PDF
-        guide.excel(os.path.join(OUT, "00_Guide_Book_Round_1_and_2.xlsx"), bds)
-        r.pdf(guide.pdf_html(bds, books), os.path.join(OUT, "00_Guide_Book_Round_1_and_2.pdf"), 8.27, 11.69)
+        guide.simple_excel(os.path.join(OUT, "00_Guide_Book_Round_1_and_2.xlsx"), bds)
+        r.pdf(guide.simple_pdf_html(bds), os.path.join(OUT, "00_Guide_Book_Round_1_and_2.pdf"), 8.27, 11.69)
         master, front_tmp, _, _ = master_files(r, bds, books, PR)
         os.replace(front_tmp, os.path.join(OUT, "Final_Book_Front_Proof_11x13.pdf"))
         for bd in bds:

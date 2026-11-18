@@ -202,3 +202,138 @@ def pdf_html(bds, books):
     trs = "".join(f'<tr><td>{no}</td><td><b>{esc(nm)}</b></td><td>{esc(nt)}</td></tr>' for no, nm, nt in todo)
     add(f'<div class="k">To complete</div><h1>Still to write in</h1><table><tr><th>No.</th><th>Book</th><th>What is missing</th></tr>{trs}</table>')
     return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:8.27in 11.69in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'
+
+
+# ---------------------------------------------------------------- simple list version (owner, 18 Nov)
+def simple_rows(bds, rd):
+    """Per book: main fabrics and other fabrics as plain lists (None = number not written yet)."""
+    out = []
+    for l in sorted([l for l in fabric_lines(bds) if l["round"] == rd], key=lambda l: l["book"]["list_no"]):
+        b = l["book"]
+        others = list(l["smalls"]) if l["n_small"] is not None and l["smalls"] else \
+            ([None] * l["n_small"] if l["n_small"] is not None else None)
+        out.append(dict(no=b["list_no"], name=b["name"], mains=list(l["mains"]), others=others,
+                        eeco_main=b["id"] == "eeco-dimout"))
+    return out
+
+
+def simple_excel(path, bds):
+    wb = Workbook()
+    wb.remove(wb.active)
+    hdr_fill, bold = PatternFill("solid", fgColor=INK), Font(bold=True)
+    for rd in (1, 2):
+        ws = wb.create_sheet(f"Round {rd}")
+        rows = simple_rows(bds, rd)
+        ws["A1"] = f"ROUND {rd}" + ("  -  double tick" if rd == 1 else "  -  marked 2nd (all same size, Neo Luna main given)")
+        ws["A1"].font = Font(bold=True, size=14, color=INK)
+        r = 3
+
+        def head(cols):
+            nonlocal r
+            for c, v in enumerate(cols, 1):
+                cell = ws.cell(row=r, column=c, value=v)
+                cell.font, cell.fill, cell.border = Font(bold=True, color="FFFFFF"), hdr_fill, BOX
+            r += 1
+
+        def put(vals, b=False, fill=None):
+            nonlocal r
+            for c, v in enumerate(vals, 1):
+                cell = ws.cell(row=r, column=c, value=v)
+                cell.border = BOX
+                if b:
+                    cell.font = bold
+                if fill:
+                    cell.fill = PatternFill("solid", fgColor=fill)
+            r += 1
+
+        # 1 book list
+        ws.cell(row=r, column=1, value="1. BOOK LIST").font = Font(bold=True, size=12); r += 1
+        head(["No.", "Book"])
+        for x in rows:
+            put([x["no"], x["name"]])
+        r += 1
+        # 2 main fabric list
+        ws.cell(row=r, column=1, value=f"2. MAIN FABRIC LIST - {P['main_m']:g} m each").font = Font(bold=True, size=12); r += 1
+        head(["No.", "Book", "Main fabric", "Metres"])
+        m0 = r
+        for x in rows:
+            if x["eeco_main"] and not x["mains"]:
+                put([x["no"], x["name"], "Main - number not written", ""], fill=AMBER)
+            for m in x["mains"]:
+                put([x["no"], x["name"], m or "TBC", P["main_m"]], fill=None if m else AMBER)
+        if r == m0:
+            put(["", "-", "No main fabric in this round", ""])
+        main_total = f"=SUM(D{m0}:D{r - 1})"
+        put(["", "", "Main fabric total (m)", main_total], b=True)
+        r += 1
+        # 3 other fabric list
+        ws.cell(row=r, column=1, value=f"3. OTHER FABRIC LIST - {P['swatch_m']:g} m each" + ("  (all same size)" if rd == 2 else "")).font = Font(bold=True, size=12); r += 1
+        head(["No.", "Book", "Fabric (shade no.)", "Metres"])
+        o0 = r
+        for x in rows:
+            if x["others"] is None:
+                put([x["no"], x["name"], "Shade list not written yet", ""], fill=AMBER)
+                continue
+            for s_ in x["others"]:
+                put([x["no"], x["name"], s_ or "TBC", P["swatch_m"]], fill=None if s_ else AMBER)
+        put(["", "", "Other fabric total (m)", f"=SUM(D{o0}:D{r - 1})"], b=True)
+        r += 1
+        put(["", "", f"ROUND {rd} TOTAL (m)", f'=SUMIF(C1:C{r - 1},"Main fabric total (m)",D1:D{r - 1})+SUMIF(C1:C{r - 1},"Other fabric total (m)",D1:D{r - 1})'], b=True)
+        for col, wd in zip("ABCD", (6, 22, 30, 10)):
+            ws.column_dimensions[col].width = wd
+        ws.sheet_view.showGridLines = False
+    wb.save(path)
+
+
+def simple_pdf_html(bds):
+    pages, n = [], 0
+
+    def add(inner):
+        nonlocal n
+        n += 1
+        pages.append(page("Pt", inner, n, "GUIDE BOOK - BOOK LIST · MAIN FABRIC LIST · OTHER FABRIC LIST"))
+
+    for rd in (1, 2):
+        rows = simple_rows(bds, rd)
+        books = "".join(f'<tr><td>{x["no"]}</td><td><b>{esc(x["name"])}</b></td></tr>' for x in rows)
+        mains, mtot = [], 0.0
+        for x in rows:
+            if x["eeco_main"] and not x["mains"]:
+                mains.append(f'<tr style="background:#FBE9C9"><td>{x["no"]}</td><td>{esc(x["name"])}</td><td>Main - number not written</td><td></td></tr>')
+            for m in x["mains"]:
+                mtot += P["main_m"]
+                st = "" if m else ' style="background:#FBE9C9"'
+                mains.append(f'<tr{st}><td>{x["no"]}</td><td>{esc(x["name"])}</td><td><b>{esc(m or "TBC")}</b></td><td>{P["main_m"]:g} m</td></tr>')
+        if not mains:
+            mains = ['<tr><td></td><td>-</td><td>No main fabric in this round</td><td></td></tr>']
+        others, otot = [], 0.0
+        for x in rows:
+            if x["others"] is None:
+                others.append(f'<tr style="background:#FBE9C9"><td>{x["no"]}</td><td><b>{esc(x["name"])}</b></td><td>Shade list not written yet</td><td></td><td></td></tr>')
+                continue
+            k = len(x["others"])
+            otot += k * P["swatch_m"]
+            known = [s_ for s_ in x["others"] if s_]
+            lst = ", ".join(known) + (f" + {k - len(known)} TBC" if known and len(known) < k else "") if known else f"{k} shades - numbers TBC"
+            st = "" if len(known) == k else ' style="background:#FBE9C9"'
+            others.append(f'<tr{st}><td>{x["no"]}</td><td><b>{esc(x["name"])}</b></td><td style="font-size:7.4pt">{esc(lst)}</td><td>{k}</td><td>{k * P["swatch_m"]:.1f} m</td></tr>')
+        title = "Round 1 - double tick" if rd == 1 else "Round 2 - marked 2nd"
+        sub = "" if rd == 1 else '<p>All swatches the same size, no main - except Neo Luna (main given).</p>'
+        add(f'''<div class="k">Round {rd}</div><h1>{title}</h1>{sub}
+          <div class="cols"><div style="flex:.8"><h2>1. Book list</h2><table><tr><th>No.</th><th>Book</th></tr>{books}</table></div>
+          <div style="flex:1.4"><h2>2. Main fabric list - {P["main_m"]:g} m each</h2>
+          <table><tr><th>No.</th><th>Book</th><th>Main fabric</th><th>Metres</th></tr>{"".join(mains)}
+          <tr><td></td><td></td><td><b>Main total</b></td><td><b>{mtot:.1f} m</b></td></tr></table></div></div>''')
+        chunk, h, first = [], 0, True
+        for tr in others:
+            est = .36 + tr.count(",") * .016
+            if chunk and h + est > 8.8:
+                add(f'<div class="k">Round {rd}</div><h2 style="font-size:16pt">3. Other fabric list - {P["swatch_m"]:g} m each{"" if first else " (cont.)"}</h2>'
+                    f'<table><tr><th>No.</th><th>Book</th><th>Other fabrics (shade no.)</th><th>Qty</th><th style="width:.75in">Metres</th></tr>{"".join(chunk)}</table>')
+                chunk, h, first = [], 0, False
+            chunk.append(tr); h += est
+        add(f'<div class="k">Round {rd}</div><h2 style="font-size:16pt">3. Other fabric list - {P["swatch_m"]:g} m each{"" if first else " (cont.)"}</h2>'
+            f'<table><tr><th>No.</th><th>Book</th><th>Other fabrics (shade no.)</th><th>Qty</th><th style="width:.75in">Metres</th></tr>{"".join(chunk)}'
+            f'<tr><td></td><td></td><td><b>Other total</b></td><td></td><td><b>{otot:.1f} m</b></td></tr></table>'
+            f'<h2>Round {rd} total: {mtot + otot:.1f} m</h2><p>Amber = shade numbers still to write (TBC).</p>')
+    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}@page{{size:8.27in 11.69in;margin:0}}</style></head><body>{"".join(pages)}</body></html>'
