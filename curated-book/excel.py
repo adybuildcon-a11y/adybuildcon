@@ -73,7 +73,7 @@ def build(path, books, bds, spine_in, stack_mm):
     title(ws, "Curated Fabrics Collection - Book Production Instructions",
           "Source: handwritten notes (7 pages), Sep 2026 price list, fabric e-catalogue, sample covers. Nothing is guessed - unknowns are blank and listed in Open_Questions.")
     rows = [
-        ("What this book is", f"One 4-ring master binder (11 x 13 in) holding one fold-out mood-board leaf per collection: 20 collections on {len(bds)} boards. Stand A = Neo Crest, Glory Cotton and Eeco Dimout on ONE 3-fold board, one panel each (notes p.8). Each board is 9 x 12 in per panel, 2-fold or 3-fold, with a photo + name front cover. No company branding anywhere."),
+        ("What this book is", f"One 4-ring master binder (11 x 13 in) holding one fold-out mood-board leaf per collection: 20 collections on {len(bds)} boards. Stand A = Neo Crest, Ecoluxe Dimout and Double Shade on ONE 3-fold board, one panel each (notes p.8). Each board is 9 x 12 in per panel, 2-fold or 3-fold, with a photo + name front cover. No logo; the back of every mood board carries oshodecor@gmail.com (owner, 21 Nov)."),
         ("Production rounds", "ROUND 1 = the double-ticked books on the book list (14 books); ROUND 2 = the books marked '2nd' (6 books) - notes p.8. See the Rounds sheet and 07_Production_Rounds PDF."),
         ("Main fabrics", f"Ready-cut {P['main_w']:g} x {P['main_h']:g} in pieces, {P['main_m']:g} m of EVERY main fabric (notes p.8). Several mains stack as a waterfall, each piece stepped down and right."),
         ("Small swatches", f"{P['swatch_m']:g} m (60 cm) of EVERY other shade (notes p.8). Same design / texture in colour variations = small cuttings (max 2.5 x 1.6 in). Different designs and textures (e.g. Texture Dimout, Breeze) = all swatches the SAME size."),
@@ -249,7 +249,7 @@ def build(path, books, bds, spine_in, stack_mm):
 
     # ------------------------------------------------ Rounds
     ws = wb.create_sheet("Rounds")
-    title(ws, "Production Rounds - selected shades per book (notes p.8)", "Round 1 = double tick on the book list; Round 2 = marked '2nd'. Stand A = Neo Crest + Glory Cotton + Eeco Dimout on one 3-fold board.")
+    title(ws, "Production Rounds - selected shades per book (notes p.8)", "Round 1 = double tick on the book list; Round 2 = marked '2nd'. Stand A = Neo Crest + Ecoluxe Dimout + Double Shade on one 3-fold board.")
     header(ws, 3, ["Round", "List No.", "Book", "Board", "Fold", "Main shade(s) selected", "Other shades selected", "Status"], [7, 7, 18, 26, 6, 22, 80, 13])
     r = 4
     for ln in sorted(fabric_lines(bds), key=lambda l: (l["round"], l["book"]["list_no"])):

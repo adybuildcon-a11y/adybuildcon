@@ -15,7 +15,7 @@ def ordered_books():
 
 
 def boards():
-    """Group books into physical boards (Stand A: Neo Crest + Glory Cotton + Eeco Dimout share one 3-fold board)."""
+    """Group books into physical boards (Stand A: Neo Crest + Ecoluxe Dimout + Double Shade share one 3-fold board)."""
     out, seen = [], {}
     for b in ordered_books():
         key = b.get("board", b["id"])
@@ -220,10 +220,12 @@ def stand_cells(n_main, n_other, box, size=None):
     x0, y0, x1, y1 = box
     g, lab = P["gutter"], P["label_h"]
     mw, mh = size or (P["main_w"], P["main_h"])
-    mains = [(x0, y0, mw, mh)] if n_main else []
+    st = 0.3 if n_main > 1 else 0                        # several mains: a small waterfall, stepped down-right
+    mains = [(x0 + i * st, y0 + i * st, mw, mh) for i in range(n_main)]
+    bw, bh = mw + max(0, n_main - 1) * st, mh + max(0, n_main - 1) * st
     if n_main:
-        zones = [(x0 + mw + g, y0, x1, y0 + mh + lab),
-                 (x0, y0 + mh + lab + g, x1, y1)]
+        zones = [(x0 + bw + g, y0, x1, y0 + bh + lab),
+                 (x0, y0 + bh + lab + g, x1, y1)]
     else:
         zones = [(x0, y0, x1, y1)]
     def fit(w, h):

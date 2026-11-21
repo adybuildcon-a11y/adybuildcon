@@ -33,11 +33,11 @@ def rows_for(bds, rd):
             others, note = "", f"{l['n_small']} shades - numbers to fill"
         mw, mh = main_size(b)
         mains = ", ".join(m or "TBC" for m in l["mains"])
-        if b["id"] == "eeco-dimout":
+        if b["id"] == "ecoluxe-dimout":
             mains = f"Count not written ({mw:g} x {mh:g} in)"
         issues = [q for q in b["issues"] if "18 Nov" in q]
         out.append(dict(no=b["list_no"], name=b["name"], board=l["board"]["no"], stand=l["board"].get("stand"),
-                        mains=mains, n_main=l["n_main"], size=f"{mw:g} x {mh:g} in" if (l["n_main"] or b["id"] == "eeco-dimout") else "",
+                        mains=mains, n_main=l["n_main"], size=f"{mw:g} x {mh:g} in" if (l["n_main"] or b["id"] == "ecoluxe-dimout") else "",
                         others=others, n_other=l["n_small"], note="; ".join(x for x in [note] + issues if x),
                         provisional=l["provisional"]))
     return out
@@ -59,10 +59,10 @@ def excel(path, bds):
         c = ws.cell(row=i, column=2, value=val); c.font = Font(bold=True, color="1F4E99"); c.border = BOX
         ws.cell(row=i, column=3, value=unit).border = BOX
         wb.defined_names[key] = DefinedName(key, attr_text=f"Rules!$B${i}")
-    notes = ["Round 1 = double-ticked books on the book list. Each book: main fabric (ready-cut 5 x 7 in; Double Shade & Eeco Dimout 5 x 5 in) + small swatches of the other shades.",
+    notes = ["Round 1 = double-ticked books on the book list. Each book: main fabric (ready-cut 5 x 7 in; Double Shade & Ecoluxe Dimout 5 x 5 in) + small swatches of the other shades.",
              "Round 2 = books marked '2nd'. Every swatch the SAME size, no main - except Neo Luna (mains 101-106).",
              "Correction 18 Nov: Texture Coated is the Round 1 book (it was written as Texture Dimout); Texture Dimout moves to Round 2.",
-             "Stand A: Glory Cotton, Eeco Dimout and Neo Crest share one 3-fold board (one panel each).",
+             "Stand A: Neo Crest, Ecoluxe Dimout and Double Shade share one 3-fold board (one panel each).",
              "Amber rows: shade numbers or counts still to be written - fill them on the Missing Data Form."]
     for i, t in enumerate(notes, 8):
         ws.cell(row=i, column=1, value=t).alignment = WRAP
@@ -151,12 +151,12 @@ def pdf_html(bds, books):
         <div class="tile"><b>{len(r2)}</b><span>books in Round 2 · {tot[2]:.0f} m known so far</span></div></div>
       <h2>Rules</h2><table>
       <tr><th>Round</th><th>What goes in the book</th><th>Fabric to pull</th></tr>
-      <tr><td><b>Round 1</b><br>double tick</td><td>Main fabric as a ready-cut piece - <b>5 × 7 in</b> (Double Shade and Eeco Dimout <b>5 × 5 in</b>) - plus small swatches of every other shade</td><td><b>{P["main_m"]:g} m</b> of every main fabric · <b>{P["swatch_m"]:g} m</b> of every other shade</td></tr>
+      <tr><td><b>Round 1</b><br>double tick</td><td>Main fabric as a ready-cut piece - <b>5 × 7 in</b> (Double Shade and Ecoluxe Dimout <b>5 × 5 in</b>) - plus small swatches of every other shade</td><td><b>{P["main_m"]:g} m</b> of every main fabric · <b>{P["swatch_m"]:g} m</b> of every other shade</td></tr>
       <tr><td><b>Round 2</b><br>marked 2nd</td><td>Every swatch the <b>same size</b>, no main - <b>except Neo Luna</b>, main given (101-106)</td><td><b>{P["swatch_m"]:g} m</b> of every shade · Neo Luna mains <b>{P["main_m"]:g} m</b> each</td></tr></table>
       <h2>Corrections in this guide</h2><ul>
         <li><b>Texture Coated</b> is the Round 1 book - it was written as Texture Dimout by mistake. <b>Texture Dimout</b> moves to Round 2.</li>
-        <li><b>Double Shade</b>: 6 main fabrics, 5 × 5 in. &nbsp; <b>Eeco Dimout</b>: main 5 × 5 in (number of mains still to write). &nbsp; <b>Premium Dimouts</b>: 5 main fabrics.</li>
-        <li><b>Stand A</b>: Glory Cotton, Eeco Dimout and Neo Crest share one 3-fold board, one panel each.</li></ul>
+        <li><b>Double Shade</b>: 6 main fabrics, 5 × 5 in. &nbsp; <b>Ecoluxe Dimout</b>: main 5 × 5 in (number of mains still to write). &nbsp; <b>Premium Dimouts</b>: 5 main fabrics.</li>
+        <li><b>Stand A</b>: Neo Crest, Ecoluxe Dimout and Double Shade share one 3-fold board, one panel each.</li></ul>
       <div class="note">Rows marked in amber still need shade numbers or counts - write them on the Missing Data Form. The Excel version of this guide recalculates every metre total when you change 2 m or 0.6 m.</div>''')
 
     def r1_row(x):
@@ -213,7 +213,7 @@ def simple_rows(bds, rd):
         others = list(l["smalls"]) if l["n_small"] is not None and l["smalls"] else \
             ([None] * l["n_small"] if l["n_small"] is not None else None)
         out.append(dict(no=b["list_no"], name=b["name"], mains=list(l["mains"]), others=others,
-                        eeco_main=b["id"] == "eeco-dimout"))
+                        eeco_main=b["id"] == "ecoluxe-dimout"))
     return out
 
 

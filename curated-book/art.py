@@ -5,7 +5,7 @@ from functools import lru_cache
 
 from PIL import ImageFont
 
-from data import LADDER, LEVEL, P
+from data import CONTACT_EMAIL, LADDER, LEVEL, P
 from layout import panel_widths, panel_x, content_box, ladder_color, WF_LABEL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -285,14 +285,18 @@ def back_panel(x0, pw, books, bind_right=True, image=None):
             ty += .21
         y = ty + (.55 if len(books) < 3 else .4)
     out.append(f'<path d="M{cx - .5},{top - .35} h1" stroke="{BRASS}" stroke-width=".01"/>')
+    base = 10.95                                          # leave room for the e-mail line below
     if image and os.path.exists(image):                   # picture cropped to the books -> real aspect
         ar = png_aspect(image)
-        ih = 2.7 if len(books) < 3 else 1.95
-        iy = max(y + .2, 11.35 - ih)
-        ih = 11.35 - iy
+        ih = 2.6 if len(books) < 3 else 1.85
+        iy = max(y + .2, base - ih)
+        ih = base - iy
         iw = min(ih * ar, usable1 - usable0 - .3)
         ih = iw / ar
-        out.append(catalogue_image(cx - iw / 2, 11.35 - ih, iw, ih, image))
+        out.append(catalogue_image(cx - iw / 2, base - ih, iw, ih, image))
+    # owner, 21 Nov: the e-mail on the back of every mood board
+    out.append(f'<path d="M{cx - .9},{base + .14} h1.8" stroke="{GUIDE}" stroke-width=".006"/>')
+    out.append(T(cx, base + .4, CONTACT_EMAIL, "PP", 500, 10, INK, "middle"))
     return "".join(out)
 
 

@@ -10,7 +10,9 @@ Values not in any source are None and are listed as open questions - nothing is 
 Main fabrics (owner, 13 Nov): always shown as a WATERFALL - full-width pieces stepped down so every main shows a band.
 Categories (owner, 13 Nov): Neo Crest, Neo Soft, Premium Dimouts, Ritz Satin = Lining; Neo Luna, Texture Coated = 100% Blackout Curtain.
 Production rounds (owner, 17 Nov, HW-p8): double-ticked books are made in ROUND 1, books marked "2nd" in ROUND 2.
-Stand A (HW-p8 "A"): Neo Crest, Glory Cotton and Eeco Dimout share ONE 3-fold board - one panel per book.
+Stand A (owner, 21 Nov): Neo Crest (100% Blackout), Ecoluxe Dimout and Double Shade (One Side Black) share ONE
+3-fold mood board - one panel per book. (On HW-p8 the "A" stand was Neo Crest, Glory Cotton and Eeco Dimout.)
+Eeco Dimout is renamed ECOLUXE DIMOUT (owner, 21 Nov). Every mood board carries oshodecor@gmail.com on its back.
 Main fabric (HW-p8): ready-cut 5 x 7 in pieces, 2 m of every main fabric; small swatches 0.6 m (60 cm) of every shade.
 Inside cards (owner, 17 Nov): no swatch placement boxes printed - placement is shown in the proof and the Board_Plan.
 Swatch mode (owner's rule, 12 Nov):
@@ -43,11 +45,12 @@ P = dict(
 )
 
 ROUND_1 = ["virinche", "neo-soft", "neo-crest", "noble-texture", "glory-cotton", "texture-coated", "double-shade",
-           "lexus-texture", "ritz-satin", "glorious-dimout", "eeco-dimout", "paris-dimout", "lord-dimout", "premium-dimouts"]
+           "lexus-texture", "ritz-satin", "glorious-dimout", "ecoluxe-dimout", "paris-dimout", "lord-dimout", "premium-dimouts"]
 ROUND_2 = ["breeze", "texture-dimout", "aria", "neo-luna", "linen-sheer", "sereno"]
 # Owner, 18 Nov: "TEXTURE DIMOUT was mistakenly written and put instead of TEXTURE COATED" on the round
 # list - the double tick at no. 11 belongs to Texture Coated, so the two books swap rounds.
-STAND_A = ["neo-crest", "glory-cotton", "eeco-dimout"]       # HW-p8 marked "A": one 3-fold board, one panel each
+STAND_A = ["neo-crest", "ecoluxe-dimout", "double-shade"]     # owner 21 Nov: one 3-fold mood board, one panel each
+CONTACT_EMAIL = "oshodecor@gmail.com"                           # owner 21 Nov: on the back of every mood board
 
 # Light-control ladder (open -> closed). Lining is an accessory, shown last.
 LADDER = [
@@ -100,7 +103,7 @@ BOOKS = [
  dict(id="glory-cotton", mode="range", mode_src="One quality, colour range", name="Glory Cotton", list_no=10, cat="curtain", line="Cotton-Look Curtain Fabric", fold=None, fold_src="derived",
       shades=19, mains=["3110"], others=[None]*18, gsm=280, width=54, comp=None, m_main=None, m_other=None,
       status="Confirmed", notes="GLORY COTTON - 3110 MAIN - 19 SHADES",
-      xref="PL: Glory Cotton 54in, 280 GSM, 30 colours.", issues=["Stand A (HW-p8): one panel of the shared 3-fold board with Neo Crest and Eeco Dimout.",
+      xref="PL: Glory Cotton 54in, 280 GSM, 30 colours.", issues=["Own board again (owner 21 Nov: Stand A is now Neo Crest, Ecoluxe Dimout, Double Shade) - fold derived as 2-fold.",
               "Shade numbers for the 18 other swatches."]),
  dict(id="neo-soft", mode="range", mode_src="One quality, 8001-8029", name="Neo Soft", list_no=4, cat="lining", line="Lining", fold=2, fold_src="HW-p4",
       shades=7, mains=["8028"], others=[None]*6, gsm=180, width=54, comp=None, m_main=None, m_other=None,
@@ -133,7 +136,7 @@ BOOKS = [
       shades=52, mains=[], others=[None]*52, gsm=None, width=None, comp=None, m_main=None, m_other=None,
       status="Reconsider", notes="TEXTURE COATED - 52 SHADES [RE CONSIDERATION]",
       xref="Not in price list.", issues=["Marked 'reconsideration' - keep, cut down, or drop? 52 shades need a full 3-fold board at minimum swatch size."]),
- dict(id="eeco-dimout", draft=dict(shades=12, mains=[], others=[None]*12, src="price list: EECO DIMOUT 12 colours"), mode="range", mode_src="One quality, colour range", name="Eeco Dimout", list_no=16, cat="dimout", line="Dimout", fold=3, fold_src="HW-p8 Stand A",
+ dict(id="ecoluxe-dimout", draft=dict(shades=12, mains=[], others=[None]*12, src="price list: 12 colours (listed under the old name)"), mode="range", mode_src="One quality, colour range", name="Ecoluxe Dimout", list_no=16, cat="dimout", line="Dimout", fold=3, fold_src="HW-p8 Stand A",
       shades=None, mains=[], others=[], gsm=219, gsm_src="derived: 30 kg per 100 m at 54in", width=54, comp=None, m_main=None, m_other=None,
       status="Pending", notes="[EECO DIMOUT x DOUBLE SHADE] - 2 FOLD - 1 PAGE FOR EACH",
       xref="PL: EECO DIMOUT 54in, 12 colours, 30 kg / 100 m (= 219 GSM).",
@@ -142,7 +145,7 @@ BOOKS = [
  dict(id="double-shade", draft=dict(shades=8, mains=[], others=[None]*8, src="price list: Double Shaded 8 colours"), mode="range", mode_src="One quality, colour range", name="Double Shade", list_no=12, cat="dimout", line="Double-Shade Dimout", fold=2, fold_src="HW-p3",
       shades=None, mains=[], others=[], gsm=260, width=54, comp=None, m_main=None, m_other=None,
       status="Pending", notes="[EECO DIMOUT x DOUBLE SHADE] - 2 FOLD - 1 PAGE FOR EACH",
-      xref="PL: Double Shaded 54in, 260 GSM, 8 colours.", issues=["Now its own 2-fold board - Eeco Dimout moved to Stand A (HW-p8).", "Shade count and numbers pending."]),
+      xref="PL: Double Shaded 54in, 260 GSM, 8 colours.", issues=["Now its own 2-fold board - Ecoluxe Dimout moved to Stand A (HW-p8).", "Shade count and numbers pending."]),
  dict(id="lord-dimout", draft=dict(shades=23, mains=["424"], others=["425","461","462","2101","2103","2107","2109","2111","2112","2113","2114","2116","2120","2121","2122","2124","2125","2126","2127","2129","2130","2134"], src="e-catalogue Lord Dimout card (23 shades, hero 424)"), mode="range", mode_src="One quality, colour range", name="Lord Dimout", list_no=18, cat="dimout", line="Textured Dimout", fold=None, fold_src=None,
       shades=None, mains=[], others=[], gsm=260, width=54, comp=None, m_main=None, m_other=None,
       status="Details needed", notes="On book list only - no notes written.",
@@ -170,7 +173,7 @@ BOOKS = [
       shades=8, mains=["103"], others=[None]*7, gsm=200, width=54, comp=None, m_main=None, m_other=None,
       status="Confirmed", notes="NEO CREST - 2FOLD - 8 SHADES - MAIN 103",
       xref="PL: Neo Crest (101-111) 54in, 200 GSM, 8 colours - matches. EC: 101,102,103,105,106,108,109,110.",
-      issues=["Stand A (HW-p8): one panel of the shared 3-fold board with Glory Cotton and Eeco Dimout.",
+      issues=["Stand A (HW-p8): one panel of the shared 3-fold board with Glory Cotton and Ecoluxe Dimout.",
               "Confirm the other 7 = 101, 102, 105, 106, 108, 109, 110 (e-catalogue)."]),
  dict(id="neo-luna", mode="mixed", mode_src="Owner: different designs - same-size swatches", name="Neo Luna", list_no=7, cat="blackout", line="100% Blackout Curtain", fold=3, fold_src="HW-p4",
       shades=None, mains=rng(101, 106), others=[], gsm=None, width=None, comp=None, m_main=3, m_other=2,
@@ -188,14 +191,14 @@ BOOKS = [
 
 # ---------------------------------------------------------------- owner corrections, 18 Nov
 _by = {b["id"]: b for b in BOOKS}
-for _id in ("double-shade", "eeco-dimout"):                 # "DOUBLE SHADE 5*5", "EECO DIMOUT 5*5"
+for _id in ("double-shade", "ecoluxe-dimout"):                 # "DOUBLE SHADE 5*5", "EECO DIMOUT 5*5"
     _by[_id]["main_size"] = (5.0, 5.0)
 _ds = _by["double-shade"]                                    # "DOUBLE SHADE ... MAIN - 6"
 _ds["mains"] = [None] * 6
 _ds["draft"] = dict(shades=8, mains=[None] * 6, others=[None] * 2, src="owner 18 Nov: 6 mains; total 8 from the price list")
 _ds["issues"] = ["Owner 18 Nov: 6 main fabrics, 5 x 5 in. Price list shows 8 colours - so 6 mains + 2 other shades? Confirm the total and the shade numbers.",
-                 "Now its own 2-fold board - Eeco Dimout moved to Stand A (HW-p8)."]
-_ee = _by["eeco-dimout"]
+                 "Now its own 2-fold board - Ecoluxe Dimout moved to Stand A (HW-p8)."]
+_ee = _by["ecoluxe-dimout"]
 _ee["issues"] = ["Owner 18 Nov: main fabric 5 x 5 in - but the number of mains after 'MAIN -' is not written. How many, and which shade numbers?"] + _ee["issues"]
 _pd = _by["premium-dimouts"]                                 # "PREMIUM DIMOUT MAIN - 5"
 _pd["mains"], _pd["others"] = [None] * 5, [None] * 28
@@ -219,6 +222,22 @@ for _id in ROUND_2:
 _by["texture-dimout"]["issues"] = ["Owner 18 Nov: moved to Round 2 (swap with Texture Coated) - all 27 swatches the same size."] + \
     [q for q in _by["texture-dimout"]["issues"] if not q.startswith("4 mains")]
 
+# ---------------------------------------------------------------- owner changes, 21 Nov
+_ec = _by["ecoluxe-dimout"]
+_ec["notes"] += "  |  Owner 21 Nov: renamed ECOLUXE DIMOUT (was Eeco Dimout)"
+_ec["issues"] = [q.replace("with Neo Crest and Glory Cotton (was shared with Double Shade on p3)", "with Neo Crest and Double Shade")
+                 for q in _ec["issues"]]
+_nc = _by["neo-crest"]                                       # "NEO CREST - 100% BLACKOUT"
+_nc["cat"], _nc["line"] = "blackout", "100% Blackout"
+_nc["issues"] = ["Owner 21 Nov: 100% Blackout (was Lining). Stand A panel with Ecoluxe Dimout and Double Shade."] + \
+    [q for q in _nc["issues"] if not q.startswith("Stand A")]
+_ds["line"] = "One Side Black"                               # "DOUBLE SHADE - ONE SIDE BLACK"
+_ds["fold"], _ds["fold_src"] = 3, "Owner 21 Nov Stand A"
+_ds["issues"] = [q for q in _ds["issues"] if not q.startswith("Now its own")] + \
+    ["Owner 21 Nov: One Side Black; Stand A panel with Neo Crest and Ecoluxe Dimout."]
+_gc = _by["glory-cotton"]
+_gc["fold"], _gc["fold_src"] = None, "derived"
+
 for _b in BOOKS:
     _b["round"] = 1 if _b["id"] in ROUND_1 else 2
     if _b["id"] in STAND_A:
@@ -230,6 +249,9 @@ EXTRA = dict(name="3 Pass Blackout - Carnation", notes="* 3 PASS BLACKOUT CARNAT
              issue="Written in the notes but not on the 20-book list. Add as a 21st book?")
 
 TRANSCRIPT = [
+ ("Owner message, 21 Nov", "First change: book name EECO DIMOUT to ECOLUXE DIMOUT. Secondly: NEO CREST - 100% BLACKOUT; DOUBLE SHADE - ONE SIDE BLACK. "
+  "One mood board that will have 3 books' fabric: NEO CREST - 100% BLACKOUT, ECOLUXE DIMOUT and DOUBLE SHADE - ONE SIDE BLACK. "
+  "At the last page of every mood board cover: email - oshodecor@gmail.com."),
  ("Owner message, 18 Nov", "Round 1: book name one column, main fabric - 2 mtr requirement, list of other shades in another column - 0.6 mtr. "
   "Round 2: all same size except Neo Luna, main given. Round 1: DOUBLE SHADE 5*5 MAIN - 6. EECO DIMOUT 5*5 MAIN - . PREMIUM DIMOUT MAIN - 5. "
   "One correction - TEXTURE DIMOUT was mistakenly written and put instead of TEXTURE COATED."),

@@ -90,14 +90,14 @@ def design_guide(books, bds, spine_in, stack_mm):
       <p class="lead">A 4-ring master binder holds one fold-out mood-board leaf per collection, as in the reference binder. Each board opens on a hero swatch of the main fabric and a measured grid of every curated shade. The front of each board carries a photo and the collection name - and no company branding anywhere.</p>
       <div class="cols" style="margin:.3in 0">
         <div class="tile"><b>20</b><span>collections from the book list</span></div>
-        <div class="tile"><b>{len(bds)}</b><span>boards (Stand A: Neo Crest, Glory Cotton &amp; Eeco Dimout on one 3-fold board)</span></div>
+        <div class="tile"><b>{len(bds)}</b><span>boards (Stand A: Neo Crest, Ecoluxe Dimout &amp; Double Shade on one 3-fold board)</span></div>
         <div class="tile"><b>{len([b for b in ready if not b.get("draft")])}</b><span>inside layouts confirmed from the notes</span></div>
         <div class="tile"><b>{len([b for b in ready if b.get("draft")])}</b><span>draft layouts (count from price list / catalogue)</span></div>
         <div class="tile"><b>{len(pend)}</b><span>leaves waiting on shade lists (covers ready)</span></div>
         <div class="tile"><b>{stack_mm / 10:.1f}<small style="font-size:14pt"> cm</small></b><span>leaf stack (350 GSM card + fabric)</span></div></div>
       <h2>Design principles</h2>
       <div class="cols"><ul style="flex:1">
-        <li><b>No branding.</b> No logo, company name or contact on any leaf or the binder.</li>
+        <li><b>No logo.</b> The only contact is the e-mail oshodecor@gmail.com on the back of every mood board (owner, 21 Nov).</li>
         <li><b>Mood-board per collection.</b> Photo + name outside; hero swatch, specs and shade grid inside.</li>
         <li><b>Ordered by light control.</b> Sheer → Curtain → Texture Dimout → Dimout → Blackout → Lining, then by weight (GSM).</li></ul>
         <ul style="flex:1"><li><b>Measured layout.</b> Every grid is solved for the largest legible swatch; one grid per board.</li>
@@ -263,7 +263,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <tr><td>5</td><td>Facts</td><td>Shade count, width, GSM - only values from the notes / price list</td></tr>
       <tr><td>6</td><td>Light-control scale</td><td>6 steps, this book's level filled</td></tr>
       <tr><td>7</td><td>Index tab</td><td>0.2 in strip in the level colour on the hinge edge, book No. in white</td></tr></table>
-      <div class="note">No logo, company name, phone, address or website - by design. Metal corner protectors and a rope handle can be added as in the Neo Luna sample.</div></div></div>''')
+      <div class="note">No logo, phone, address or website on the cover - by design. The back of every mood board carries the e-mail oshodecor@gmail.com (owner, 21 Nov). Metal corner protectors and a rope handle can be added as in the Neo Luna sample.</div></div></div>''')
 
     # 10 inside anatomy
     tex = [bd for bd in bds if bd["books"][0]["id"] == "texture-dimout"][0]
@@ -312,7 +312,7 @@ def design_guide(books, bds, spine_in, stack_mm):
       <tr><td>Fittings</td><td>Black metal corner protectors (as Neo Luna sample), optional rope handle</td></tr>
       <tr><td>Colour</td><td>Hard proof one board before the run; match linen and ladder colours to proof</td></tr></table></div>
       <div style="flex:1"><h2 style="margin-top:0">QC checklist</h2><ul>
-      <li>No branding anywhere (logo, name, phone, address, website)</li>
+      <li>No logo, phone or address; e-mail oshodecor@gmail.com present on the back of every board</li>
       <li>Board sequence 01-20 matches the binder back index</li>
       <li>Every piece placed as in the proof; shade No. sticker matches the fabric</li>
       <li>Slot IDs match the Shade Register; blank lines filled or labelled</li>
@@ -356,13 +356,13 @@ def instructions(books, bds, spine_in, stack_mm, hw_pages):
       <h2>The book</h2><table><tr><th>Item</th><th>Specification</th><th>Source</th></tr>
       <tr><td>Master binder cover</td><td>{P["cover_w"]} × {P["cover_h"]} in, {P["ring_mm"]} mm 4-D-ring, spine {spine_in} in</td><td>Notes p.4; reference binder; spine from leaf stack</td></tr>
       <tr><td>Inside boards</td><td>{P["board_w"]} × {P["board_h"]} in per panel; 2-fold or 3-fold</td><td>Notes p.4</td></tr>
-      <tr><td>Collections</td><td>20 on {len(bds)} boards - Stand A: Neo Crest, Glory Cotton &amp; Eeco Dimout on one 3-fold board, one panel each</td><td>Notes p.1, p.8</td></tr>
+      <tr><td>Collections</td><td>20 on {len(bds)} boards - Stand A: Neo Crest, Ecoluxe Dimout &amp; Double Shade on one 3-fold board, one panel each</td><td>Notes p.1, p.8</td></tr>
       <tr><td>Production rounds</td><td>Round 1 = {sum(1 for b in books if b["round"] == 1)} double-ticked books · Round 2 = {sum(1 for b in books if b["round"] == 2)} books marked "2nd"</td><td>Notes p.8</td></tr>
       <tr><td>Main fabric</td><td>Ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces · {P["main_m"]:g} m of every main fabric</td><td>Notes p.8</td></tr>
       <tr><td>Small swatches</td><td>{P["swatch_m"]:g} m (60 cm) of every other shade</td><td>Notes p.8</td></tr>
       <tr><td>Inside card print</td><td>No swatch placement boxes - placement from the Book Proof (assembly guide)</td><td>Owner, 17 Nov</td></tr>
       <tr><td>Front covering</td><td>Photo + book name on every board; final book front "Trending - Curated Fabrics Collection"</td><td>Brief</td></tr>
-      <tr><td>Branding</td><td>None - no logo, company name or contact anywhere</td><td>Brief</td></tr>
+      <tr><td>Branding</td><td>No logo. Back of every mood board: e-mail oshodecor@gmail.com</td><td>Owner, 21 Nov</td></tr>
       <tr><td>Order</td><td>By light control (sheer → lining), then fabric weight</td><td>Design Guide p.3</td></tr>
       <tr><td>Status</td><td>{len([b for b in ready if not b.get("draft")])} leaves confirmed · {len([b for b in ready if b.get("draft")])} draft layouts to confirm · {len(bds) - len(ready)} covers only, inside waits for shade lists</td><td>-</td></tr></table>
       <h2>Files in this pack</h2><table><tr><th>File</th><th>Use</th></tr>
@@ -585,7 +585,7 @@ def rounds_doc(books, bds, hw_p8):
       <tr><td>Double tick</td><td><b>Round 1</b> - make now</td></tr>
       <tr><td>2nd</td><td><b>Round 2</b> - make after Round 1</td></tr>
       <tr><td>A</td><td><b>Stand A</b> - three books in ONE 3-fold board, one panel each: {stand_txt}</td></tr>
-      <tr><td>MAIN: 5 × 7 [READY] - 2 MTRS EACH</td><td>Main fabric as ready-cut <b>{P["main_w"]:g} × {P["main_h"]:g} in</b> pieces (Double Shade &amp; Eeco Dimout <b>5 × 5 in</b>, owner 18 Nov); <b>{P["main_m"]:g} m of every main fabric</b></td></tr>
+      <tr><td>MAIN: 5 × 7 [READY] - 2 MTRS EACH</td><td>Main fabric as ready-cut <b>{P["main_w"]:g} × {P["main_h"]:g} in</b> pieces (Double Shade &amp; Ecoluxe Dimout <b>5 × 5 in</b>, owner 18 Nov); <b>{P["main_m"]:g} m of every main fabric</b></td></tr>
       <tr><td>Round 2 (owner 18 Nov)</td><td>Every swatch the <b>same size</b>, no main - except <b>Neo Luna</b> (mains 101-106)</td></tr>
       <tr><td>Correction (18 Nov)</td><td><b>Texture Coated</b> is the Round 1 book (written as Texture Dimout by mistake); <b>Texture Dimout</b> moves to Round 2</td></tr>
       <tr><td>SWATCH: 0.6</td><td><b>{P["swatch_m"]:g} m (60 cm) of every other shade</b> for the small swatches</td></tr>
@@ -594,7 +594,7 @@ def rounds_doc(books, bds, hw_p8):
       <ol style="font-size:9.5pt;line-height:1.5">
         <li><b>Confirm the shades.</b> Every book in the round needs its main and shade numbers (pages 2-3; blanks are marked TBC). Fill gaps on the Missing Data Form.</li>
         <li><b>Pull the fabric.</b> {P["main_m"]:g} m of each main fabric and {P["swatch_m"]:g} m of each other shade (metres per book on the next pages).</li>
-        <li><b>Cut.</b> Mains: ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces (5 × 5 in for Double Shade and Eeco Dimout), one per book copy. Swatches: to the size in the Excel Board_Plan, pinked edge.</li>
+        <li><b>Cut.</b> Mains: ready-cut {P["main_w"]:g} × {P["main_h"]:g} in pieces (5 × 5 in for Double Shade and Ecoluxe Dimout), one per book copy. Swatches: to the size in the Excel Board_Plan, pinked edge.</li>
         <li><b>Label.</b> A shade-number sticker for every piece; bag the pieces board by board.</li>
         <li><b>Print the round's boards</b> from 04_Print_Ready (the slug line says ROUND 1 or ROUND 2); score, fold, punch.</li>
         <li><b>Mount.</b> Main piece(s) and swatches exactly as in the Book Proof assembly guide - the card has no boxes. Several mains: waterfall, each stepped down and right.</li>
