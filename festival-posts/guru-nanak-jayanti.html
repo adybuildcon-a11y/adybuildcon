@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Guru Nanak Jayanti - Osho Decor (98105 59026)</title>
+<style>
+@font-face{font-family:Corm;src:url(assets/fonts/CormorantGaramond-500i.ttf);font-weight:500;font-style:italic}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-500.ttf);font-weight:500}
+@font-face{font-family:Cinzel;src:url(assets/fonts/Cinzel-600.ttf);font-weight:600}
+@font-face{font-family:Gurmukhi;src:url(assets/fonts/NotoSerifGurmukhi-600.woff2);font-weight:600}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/Poppins-SemiBold.ttf);font-weight:600}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:center}
+.post{position:relative;width:1080px;height:1350px;overflow:hidden;font-family:Poppins;background:#FAF7EC}
+.post>svg{position:absolute;inset:0}
+.layer{position:absolute;left:0;right:0;text-align:center}
+
+/* saffron & gold, matching the portrait */
+.onkar{font-family:Gurmukhi;font-weight:600;font-size:64px;line-height:1;
+  background:linear-gradient(180deg,#F2A93B 0%,#E0861E 55%,#B8620F 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pa{font-family:Gurmukhi;font-weight:600;font-size:50px;line-height:1.3;
+  background:linear-gradient(180deg,#E79A2E 10%,#C9731A 60%,#9C5410 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.en{font-family:Cinzel;font-weight:500;font-size:21px;letter-spacing:.42em;margin-right:-.42em;color:#7A1450;
+  display:flex;align-items:center;justify-content:center;gap:20px}
+.en i{display:block;width:64px;height:1.5px;background:linear-gradient(90deg,transparent,#E0861E)}
+.en i:last-child{background:linear-gradient(90deg,#E0861E,transparent)}
+.art{position:absolute;left:236px;top:196px;width:608px;height:662px;mix-blend-mode:multiply;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 7%,#000 95%,transparent 100%);
+  -webkit-mask-composite:source-in;mask-composite:intersect}
+.pillars{font-family:Cinzel;font-weight:600;font-size:17px;letter-spacing:.32em;margin-right:-.32em;color:#B8620F}
+.pillars b{color:#E20886;font-weight:600;margin:0 14px}
+.msg{font-family:Corm;font-style:italic;font-weight:500;font-size:33px;line-height:1.28;color:#3A2230;padding:0 130px;margin-top:12px}
+.sign{font-family:Cinzel;font-size:16px;letter-spacing:.3em;margin-top:10px;color:#C2186B}
+.frame{position:absolute;inset:30px;bottom:276px;border:2px solid #D9A645;pointer-events:none}
+.frame:after{content:"";position:absolute;inset:8px;border:1px solid rgba(226,8,134,.35)}
+
+/* Osho Decor footer (as on the other Osho Decor festival posts) */
+.foot{position:absolute;left:0;right:0;bottom:0;height:262px;text-align:center;color:#fff;
+  background:linear-gradient(180deg,#2A1638,#1C0E26);border-top:4px solid #E20886}
+.foot .logo{margin-top:26px;height:72px}
+.foot .cols{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin:14px 80px 0}
+.foot h6{font-weight:600;font-size:15px;letter-spacing:.18em;color:#E7B04A;margin-bottom:4px}
+.foot p{font-size:15.5px;line-height:1.45;color:#E9E2D2}
+.foot .contact{position:absolute;left:0;right:0;bottom:18px;font-size:21px;font-weight:500;letter-spacing:.04em;
+  display:flex;justify-content:center;gap:12px;align-items:center}
+.foot .contact svg{width:20px;height:20px}
+</style>
+</head>
+<body>
+<script>const W = 1080, H = 1350;</script>
+<script src="assets/motifs.js"></script>
+<script>
+const phone = c => `<svg viewBox="0 0 24 24"><path fill="${c}" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`;
+
+const sp = [[118, 300], [962, 320], [160, 580], [920, 600], [135, 440], [945, 460], [205, 720], [875, 730]]
+  .map(([x, y], i) => sparkle(x, y, i % 2 ? 10 : 14, '#E0A13A', .75)).join('');
+const scene = `<svg viewBox="0 0 ${W} ${H}">
+  ${glow(540, 530, 440, '#F5A623', .28)}${glow(540, 500, 300, '#FFD27A', .30)}
+  <circle cx="540" cy="512" r="334" fill="none" stroke="#D9A645" stroke-width="1.5" opacity=".5"/>
+  <circle cx="540" cy="512" r="350" fill="none" stroke="#D9A645" stroke-width="1" stroke-dasharray="2 9" opacity=".65"/>
+  ${sp}${diya(150, 820, .6)}${diya(930, 820, .6)}
+</svg>`;
+
+const post = `<section class="post" id="osho-decor-guru-nanak-jayanti-9810559026">
+  ${scene}
+  <div class="frame"></div>
+  <div class="layer" style="top:66px"><div class="pa">ਗੁਰਪੁਰਬ ਦੀਆਂ ਲੱਖ ਲੱਖ ਵਧਾਈਆਂ</div></div>
+  <div class="layer" style="top:150px"><div class="en"><i></i>PRAKASH PURAB<i></i></div></div>
+  <img class="art" src="assets/guru-nanak.jpg" alt="Guru Nanak Dev Ji">
+  <div class="layer" style="top:872px">
+    <div class="pillars">NAAM JAPO<b>·</b>KIRAT KARO<b>·</b>VAND CHHAKO</div>
+    <p class="msg">May the divine light of Guru Nanak Dev Ji fill your home<br>with peace, love and prosperity.</p>
+    <p class="sign">— Warm wishes from Osho Decor —</p>
+  </div>
+  <div class="foot">
+    <img class="logo" src="assets/osho-decor-logo-white.png" alt="Osho Decor">
+    <div class="cols">
+      <div><h6>OSHO INTERNATIONAL</h6><p>1/29, 2nd Floor, WHS Timber Market, Opp. Richi Rich<br>Banquet, Near Mayapuri Metro Station, Delhi 110015</p></div>
+      <div><h6>OUR WAREHOUSE</h6><p>Plot No. 11, Sector 25 Part 2, Industrial Area,<br>Sector 25, Panipat, Haryana 132104</p></div>
+    </div>
+    <div class="contact">${phone('#E7B04A')}<span>CONTACT : +91 98105 59026</span></div>
+  </div>
+</section>`;
+
+document.body.insertAdjacentHTML('beforeend', post);
+const imgs = [...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; }));
+Promise.all([document.fonts.ready, ...imgs]).then(() => document.body.setAttribute('data-ready', '1'));
+</script>
+</body>
+</html>
