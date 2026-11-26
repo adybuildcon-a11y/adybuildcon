@@ -18,6 +18,9 @@ def main():
         out = os.path.join(HERE, "output", "osho-decor-hiring-junior-accountant-panipat.png")
         page.locator("#accountant-panipat").screenshot(path=out)
         print("wrote", out)
+        out = os.path.join(HERE, "output", "osho-decor-hiring-junior-accountant-panipat-1x1.png")
+        page.locator("#accountant-panipat-square").screenshot(path=out)
+        print("wrote", out)
         b.close()
 
 
